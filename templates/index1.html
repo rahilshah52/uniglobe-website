@@ -30,15 +30,15 @@ body {
   z-index: 2;
 }
 
-/* SECTION SPACING */
+/* SECTION */
 .section {
-  padding: 60px 0;
+  padding: 70px 0;
 }
 
 .section-title {
   font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 /* WHO WE ARE */
@@ -46,21 +46,32 @@ body {
   background: #111;
   color: white;
   padding: 35px;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 .about-image-wrapper img {
   width: 100%;
   max-height: 420px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
+}
+
+/* WHY CHOOSE */
+.why-item {
+  text-align: center;
+  padding: 20px;
+}
+
+.why-item strong {
+  display: block;
+  margin-bottom: 8px;
 }
 
 /* PRODUCTS */
 .scroll-wrapper {
-  overflow-x: auto;
   display: flex;
   gap: 2rem;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -70,34 +81,39 @@ body {
 
 .scroll-item {
   flex: 0 0 auto;
-  width: 220px;
+  width: 230px;
 }
 
 .scroll-item img {
   width: 100%;
-  height: 160px;
+  height: 170px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
-/* SERVICES PREMIUM */
-.services-premium {
-  margin-top: 40px;
-  text-align: center;
+/* SERVICES DESKTOP */
+.service-card {
+  border-radius: 16px;
+  transition: all 0.25s ease;
+  padding: 20px;
 }
 
-.services-premium div {
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: 1px;
-  padding: 18px 0;
+.service-card img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
 
 /* FOOTER STRIP */
 .footer-strip {
   background: #111;
   color: white;
-  padding: 50px 20px;
+  padding: 60px 20px;
   text-align: center;
 }
 
@@ -106,7 +122,7 @@ body {
   text-decoration: underline;
 }
 
-/* MOBILE */
+/* MOBILE ONLY */
 @media (max-width: 768px) {
 
   .hero {
@@ -114,7 +130,7 @@ body {
   }
 
   .section {
-    padding: 45px 20px;
+    padding: 50px 20px;
   }
 
   .section-title {
@@ -126,30 +142,26 @@ body {
     display: none;
   }
 
-  .scroll-item {
-    width: 170px;
+  /* Services mobile style */
+  .service-card {
+    box-shadow: none !important;
+    padding: 0;
+    margin-bottom: 40px;
   }
 
-  .services-premium div {
-    font-size: 1rem;
+  .service-card img {
+    border-radius: 14px;
+  }
+
+  .service-card p {
+    display: none;
+  }
+
+  .service-card:hover {
+    transform: none;
   }
 
 }
-
-/* Swipe hint */
-.swipe-hint {
-  position: absolute;
-  top: -25px;
-  right: 10px;
-  font-size: 0.85rem;
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
-}
-
-@media (min-width: 769px) {
-  .swipe-hint { display: none; }
-}
-
 </style>
 
 <!-- HERO -->
@@ -180,49 +192,71 @@ body {
       </div>
     </div>
     <div class="col-md-6 mt-4 mt-md-0 about-image-wrapper">
-      <img src="{{ url_for('static', filename='images/about.webp') }}"
-           alt="About"
-           loading="lazy">
+      <img src="{{ url_for('static', filename='images/about.webp') }}" loading="lazy">
+    </div>
+  </div>
+</div>
+
+<!-- WHY CHOOSE -->
+<div class="section bg-light text-center">
+  <div class="container">
+    <h2 class="section-title">Why Designers Work With Us</h2>
+    <div class="row">
+      <div class="col-md-3 col-6 why-item">
+        <strong>Curated Factory Network</strong>
+        Direct access to vetted manufacturers.
+      </div>
+      <div class="col-md-3 col-6 why-item">
+        <strong>Customization Standard</strong>
+        Built to your exact specifications.
+      </div>
+      <div class="col-md-3 col-6 why-item">
+        <strong>End-to-End Execution</strong>
+        From sourcing to delivery.
+      </div>
+      <div class="col-md-3 col-6 why-item">
+        <strong>One Shipment Strategy</strong>
+        Consolidated global procurement.
+      </div>
     </div>
   </div>
 </div>
 
 <!-- PRODUCTS -->
-<div class="section text-center" style="background:#f7f7f7;">
+<div class="section text-center">
   <h2 class="section-title">Our Products</h2>
-
-  <div class="position-relative mt-4">
-    <div class="swipe-hint" id="swipeHint">Swipe to explore →</div>
-
-    <div class="scroll-wrapper" id="productScroll">
-      {% for cat, img in homepage_display.items() %}
-      <div class="scroll-item">
-        <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-          <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-          <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-        </a>
-      </div>
-      {% endfor %}
+  <div class="scroll-wrapper mt-4">
+    {% for cat, img in homepage_display.items() %}
+    <div class="scroll-item">
+      <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
+        <img src="{{ url_for('static', filename=img) }}" loading="lazy">
+        <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+      </a>
     </div>
+    {% endfor %}
   </div>
 </div>
 
 <!-- SERVICES -->
-<div class="section text-center">
+<div class="section text-center bg-white">
   <div class="container">
     <h2 class="section-title">Our Services</h2>
-
-    <div class="services-premium">
-      <div>Custom Design</div>
-      <div>Global Sourcing</div>
-      <div>Factory Coordination</div>
-      <div>Quality Control</div>
-      <div>Project Procurement</div>
-      <div>Logistics & Shipping</div>
-      <div>Material Sourcing</div>
-      <div>Vendor Negotiation</div>
+    <div class="row g-4 mt-4">
+      {% set services = [
+        ("custom.webp", "Custom Design"),
+        ("global.webp", "Global Sourcing"),
+        ("logistics.webp", "Logistics & Shipping"),
+        ("support.webp", "End-to-End Service")
+      ] %}
+      {% for img, label in services %}
+      <div class="col-md-3 col-12">
+        <div class="service-card">
+          <img src="{{ url_for('static', filename='images/services/' + img) }}" loading="lazy">
+          <p class="fw-semibold">{{ label }}</p>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-
   </div>
 </div>
 
@@ -230,25 +264,7 @@ body {
 <div class="footer-strip">
   <p>Mumbai, India</p>
   <p>Foshan, China</p>
-  <p>
-    <a href="/contact">Contact Us</a>
-  </p>
+  <p><a href="/contact">Contact Us</a></p>
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const scrollContainer = document.getElementById("productScroll");
-  const hint = document.getElementById("swipeHint");
-
-  if (!scrollContainer || !hint) return;
-
-  scrollContainer.addEventListener("scroll", function() {
-    if (scrollContainer.scrollLeft > 20) {
-      hint.style.opacity = "0";
-      setTimeout(() => hint.style.display = "none", 300);
-    }
-  }, { once: true });
-});
-</script>
 
 {% endblock %}
