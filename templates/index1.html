@@ -33,7 +33,7 @@ body {
 
 /* SECTION */
 .section {
-  padding: 60px 0;
+  padding: 70px 0;
 }
 
 .section-title {
@@ -46,28 +46,20 @@ body {
 .about-dark {
   background: #111;
   color: white;
-  padding: 40px;
+  padding: 45px;
   border-radius: 12px;
-  height: 100%;
-}
-
-.about-image-wrapper {
-  height: 100%;
-  display: flex;
-  align-items: stretch;
 }
 
 .about-image-wrapper img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
   border-radius: 12px;
+  object-fit: cover;
 }
 
 /* HIGHLIGHT */
 .highlight-section {
   background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
-  padding: 60px 20px;
+  padding: 70px 20px;
 }
 
 /* CAROUSEL */
@@ -103,9 +95,7 @@ body {
 
 /* DESKTOP AUTO SCROLL */
 @media (min-width: 769px) {
-  .scroll-wrapper {
-    overflow: hidden;
-  }
+  .scroll-wrapper { overflow: hidden; }
 
   .scroll-track {
     animation: scroll-left 40s linear infinite;
@@ -126,16 +116,15 @@ body {
   }
 
   .hero {
-    padding: 80px 15px;
+    padding: 90px 20px;
   }
 
   .section {
-    padding: 35px 15px;
+    padding: 50px 20px;
   }
 
   .section-title {
-    font-size: 1.4rem;
-    margin-bottom: 15px;
+    font-size: 1.5rem;
   }
 
   /* Shorten Who We Are */
@@ -149,34 +138,30 @@ body {
   }
 
   .scroll-item {
-    width: 160px;
+    width: 170px;
   }
 
-  /* Premium Services Grid */
-  .services-mobile-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    text-align: left;
+  /* LUXURY SERVICES STYLE */
+  .services-mobile-luxury {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .services-mobile-luxury div {
+    font-size: 1.05rem;
     font-weight: 500;
-    letter-spacing: 0.5px;
+    padding: 18px 0;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
   }
 
-  .services-mobile-grid div {
-    padding: 14px 10px;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .services-mobile-grid div:nth-child(odd) {
-    border-right: 1px solid #ddd;
+  .services-mobile-luxury div:last-child {
+    border-bottom: none;
   }
 
 }
 
-/* Hide swipe hint on desktop */
-@media (min-width: 769px) {
-  .swipe-hint { display: none; }
-}
-
+/* Swipe hint */
 .swipe-hint {
   position: absolute;
   top: -25px;
@@ -184,6 +169,23 @@ body {
   font-size: 0.85rem;
   opacity: 0.7;
   transition: opacity 0.3s ease;
+}
+
+@media (min-width: 769px) {
+  .swipe-hint { display: none; }
+}
+
+/* FOOTER STRIP */
+.footer-strip {
+  background: #111;
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.footer-strip a {
+  color: white;
+  text-decoration: underline;
 }
 
 </style>
@@ -199,7 +201,7 @@ body {
 
 <!-- ABOUT -->
 <div class="container section">
-  <div class="row align-items-stretch">
+  <div class="row align-items-center">
     <div class="col-md-6">
       <div class="about-dark">
         <h2 class="section-title text-white">Who We Are</h2>
@@ -217,12 +219,10 @@ body {
         </a>
       </div>
     </div>
-    <div class="col-md-6">
-      <div class="about-image-wrapper">
-        <img src="{{ url_for('static', filename='images/about.webp') }}"
-             alt="About"
-             loading="lazy">
-      </div>
+    <div class="col-md-6 mt-4 mt-md-0 about-image-wrapper">
+      <img src="{{ url_for('static', filename='images/about.webp') }}"
+           alt="About"
+           loading="lazy">
     </div>
   </div>
 </div>
@@ -278,7 +278,7 @@ body {
   <div class="container">
     <h2 class="section-title">Our Services</h2>
 
-    <!-- Desktop -->
+    <!-- Desktop unchanged -->
     <div class="row g-4 justify-content-center d-none d-md-flex">
       {% set services = [
         ("custom.webp", "Custom Design"),
@@ -298,8 +298,8 @@ body {
       {% endfor %}
     </div>
 
-    <!-- Mobile Premium Grid -->
-    <div class="services-mobile-grid d-md-none mt-4">
+    <!-- Luxury Mobile -->
+    <div class="services-mobile-luxury d-md-none">
       <div>Custom Design</div>
       <div>Global Sourcing</div>
       <div>Factory Coordination</div>
@@ -311,6 +311,18 @@ body {
     </div>
 
   </div>
+</div>
+
+<!-- FOOTER STRIP -->
+<div class="footer-strip">
+  <h5>Indian Headquarters</h5>
+  <p>Mumbai, India</p>
+  <p>
+    Email: <a href="mailto:uniglobelifestyles@gmail.com">uniglobelifestyles@gmail.com</a>
+  </p>
+  <p>
+    <a href="/contact">Contact Us</a>
+  </p>
 </div>
 
 <script>

@@ -3,121 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#F4F1EC">
+  <title>Rahi Imports - Uniglobe Lifestyle</title>
 
-  <title>Uniglobe Lifestyles | Global Sourcing Studio</title>
-
-  <!-- Bootstrap -->
+  <!-- Stylesheets -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-omL5xqDBQHg0eoyS8+Ef0nJzNhRtPvoMZSh5K0xHZqILG2Q4OZ+g3z8dNzrZ1fpvG1JrILyg++oL7dY4p7sbvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #F4F1EC;
-      color: #1C1C1C;
-      margin: 0;
-      overflow-x: hidden;
+    .navbar-brand img {
+      max-height: 50px;
+    }
+      @media (max-width: 576px) {
+    .navbar-brand {
+      flex-wrap: nowrap !important;
     }
 
-    html {
-      overflow-x: hidden;
-      scroll-behavior: smooth;
+    .navbar-brand img {
+      max-height: 40px !important;
+      margin-right: 8px;
     }
 
+    .navbar-brand span {
+      font-size: 1.1rem !important;
+      white-space: nowrap;
+    }
+  }
+    .navbar-brand {
+      margin-left: 0 !important;
+      padding-left: 0 !important;
+    }
     .navbar {
-      background: #F4F1EC;
-      border-bottom: 1px solid #e5e1db;
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
-
-    .nav-link {
-      font-weight: 500;
-      font-size: 0.95rem;
-      color: #1C1C1C !important;
+    .navbar-nav .nav-link {
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
-
-    .nav-link:hover {
-      opacity: 0.7;
+    .navbar .container {
+      max-width: 100%;
     }
-
-    footer {
-      background: #1C1C1C;
-      color: #F4F1EC;
-      padding: 40px 20px;
-      text-align: center;
-      font-size: 0.85rem;
-    }
-
-    /* WhatsApp */
-    .whatsapp-float {
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      width: 55px;
-      height: 55px;
-      background: #25D366;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    }
-
-    .whatsapp-float img {
-      width: 28px;
-      height: 28px;
-    }
-
-    /* Global section spacing */
-    .section {
-      padding: 70px 0;
-    }
-
-    @media (max-width:768px){
-      .section {
-        padding: 35px 15px;
+    @media (max-width: 768px) {
+      .navbar-brand span {
+        font-size: 1rem;
       }
     }
   </style>
 </head>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    once: true,           // Animates only once per scroll
+    duration: 600,        // Animation duration in ms
+    easing: 'ease-in-out' // Easing type
+  });
+</script>
 
 <body>
 
-<nav class="navbar navbar-expand-lg py-3">
-  <div class="container">
-    <a class="navbar-brand fw-semibold" href="/">Uniglobe Lifestyles</a>
-
-    <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a class="navbar-brand d-flex flex-wrap align-items-center gap-2" href="/">
+      <img src="{{ url_for('static', filename='images/Black.webp') }}" alt="Uniglobe Logo" style="max-height: 60px;">
+      <span class="fw-semibold text-nowrap" style="font-size: 1.3rem; color: #000;">Rahi Imports</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
-        <li class="nav-item"><a class="nav-link" href="/services">Services</a></li>
-        <li class="nav-item"><a class="nav-link" href="/showroom">Showroom</a></li>
-        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link" href="/about"><span style="font-size: 1.4rem; color: black;">About Us</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/products" onclick="localStorage.removeItem('activeCategory')"><span style="font-size: 1.4rem; color: #000;">Products</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/catalogs"><span style="font-size: 1.4rem; color: #000;">Catalogs</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/services"><span style="font-size: 1.4rem; color: #000;">Services</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/showroom"><span style="font-size: 1.4rem; color: #000;">Showroom</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact"><span style="font-size: 1.4rem; color: #000;">Contact Us</span></a></li>
       </ul>
     </div>
   </div>
 </nav>
 
-{% block content %}{% endblock %}
+<!-- Page Content -->
+<div class="content">
+  {% block content %}{% endblock %}
+</div>
 
-<footer>
-  India Headquarters · Foshan Operations · Global Supply Execution
-</footer>
-
-<a href="https://wa.me/919821524678" target="_blank" class="whatsapp-float">
-  <img src="{{ url_for('static', filename='images/whatsapp.png') }}" alt="WhatsApp">
-</a>
-
+<!-- Bootstrap Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- AOS CSS -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init();
+</script>
 </body>
 </html>
