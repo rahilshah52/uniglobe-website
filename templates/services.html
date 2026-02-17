@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .services-section {
+    padding: 80px 20px;
+  }
+
+  .services-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .services-subtitle {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 60px auto;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .service-card {
+    background: white;
+    padding: 30px 25px;
+    border-radius: 16px;
+    height: 100%;
+    transition: 0.3s ease;
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .service-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+  }
+
+  .process-step {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    text-align: center;
+  }
+
+  .cta-box {
+    background: #1C1C1C;
+    color: #F4F1EC;
+    padding: 60px 30px;
+    border-radius: 18px;
+    text-align: center;
+    margin-top: 80px;
+  }
+
+  .cta-box a {
+    margin-top: 20px;
+    display: inline-block;
+    background: #F4F1EC;
+    color: #1C1C1C;
+    padding: 10px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .services-section {
+      padding: 60px 20px;
+    }
+  }
+</style>
+
+<div class="services-section container">
+
+  <h2 class="services-title">Our Services</h2>
+  <p class="services-subtitle">
+    Uniglobe Lifestyles provides structured global sourcing solutions —
+    from furniture and interiors to industrial-scale manufacturing orders.
+  </p>
+
+  <!-- CORE SOURCING -->
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="service-card shadow-sm">
+        <h4>Furniture & Interiors</h4>
+        <p>Luxury furniture, lighting, decor, sanitary ware, tiles, and custom pieces sourced directly from trusted Chinese manufacturers.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="service-card shadow-sm">
+        <h4>Factory Matching</h4>
+        <p>We identify the right manufacturing partners based on your specifications, budget, and project scale.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="service-card shadow-sm">
+        <h4>Customization</h4>
+        <p>Made-to-order production aligned with architectural drawings, material requirements, and branding standards.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXTENDED SOURCING -->
+  <div class="row g-4 mt-5">
+    <div class="col-md-4">
+      <div class="service-card shadow-sm">
+        <h4>Electronics & Equipment</h4>
+        <p>Consumer electronics, specialized components, and custom industrial equipment sourcing.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="service-card shadow-sm">
+        <h4>Chemicals & Industrial Goods</h4>
+        <p>Industrial materials, chemical products, and bulk manufacturing supplies.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="service-card shadow-sm">
+        <h4>Private Label Manufacturing</h4>
+        <p>Custom branding and OEM production tailored to your business requirements.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCESS -->
+  <div class="mt-5">
+    <h3 class="services-title">How We Work</h3>
+    <div class="row g-4">
+      <div class="col-md-3 col-6">
+        <div class="process-step shadow-sm">Consultation</div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="process-step shadow-sm">Factory Matching</div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="process-step shadow-sm">Quality Control</div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="process-step shadow-sm">Global Shipping</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h3>Ready to Source Globally?</h3>
+    <p>Tell us what you need. We’ll handle the execution.</p>
+    <a href="/contact">Start Your Project</a>
+  </div>
+
+</div>
+
+{% endblock %}

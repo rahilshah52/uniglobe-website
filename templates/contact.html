@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .contact-section {
+    padding: 90px 20px;
+  }
+
+  .contact-title {
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .contact-subtitle {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 60px auto;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .contact-card {
+    background: white;
+    padding: 40px;
+    border-radius: 18px;
+  }
+
+  .form-control {
+    border-radius: 12px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+  }
+
+  .btn-contact {
+    background: #1C1C1C;
+    color: #F4F1EC;
+    padding: 10px 25px;
+    border-radius: 30px;
+    border: none;
+    font-weight: 500;
+  }
+
+  .contact-info {
+    margin-top: 60px;
+    text-align: center;
+  }
+
+  .contact-info p {
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 768px) {
+    .contact-card {
+      padding: 25px;
+    }
+  }
+</style>
+
+<div class="contact-section container">
+
+  <h2 class="contact-title">Start Your Project</h2>
+  <p class="contact-subtitle">
+    Tell us what you need — from luxury interiors to specialized manufacturing.
+    Our team will connect with you shortly.
+  </p>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="contact-card shadow-sm">
+
+        <form method="POST" action="/contact">
+          <div class="mb-3">
+            <input type="text" class="form-control" name="name" placeholder="Full Name" required>
+          </div>
+
+          <div class="mb-3">
+            <input type="email" class="form-control" name="email" placeholder="Email Address" required>
+          </div>
+
+          <div class="mb-3">
+            <input type="text" class="form-control" name="company" placeholder="Company (Optional)">
+          </div>
+
+          <div class="mb-3">
+            <textarea class="form-control" name="message" rows="5"
+                      placeholder="Tell us about your project..." required></textarea>
+          </div>
+
+          <div class="text-center">
+            <button type="submit" class="btn-contact">Submit Inquiry</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT INFO -->
+  <div class="contact-info">
+    <p><strong>Email:</strong> uniglobelifestyles@gmail.com</p>
+    <p><strong>WhatsApp:</strong> +91 98215 24678</p>
+    <p><strong>India Headquarters · Foshan Operations</strong></p>
+  </div>
+
+</div>
+
+{% endblock %}

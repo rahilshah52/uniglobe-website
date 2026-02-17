@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Fonts and AOS -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
+
+
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #333;
+  }
+  .hero {
+    background: url("{{ url_for('static', filename='images/hero.webp') }}") no-repeat center center / cover;
+    color: white;
+    padding: 140px 20px;
+    text-align: center;
+  }
+  .section {
+    padding: 60px 0;
+  }
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+  .about-dark {
+    background: #111;
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+  }
+  .product-img {
+    width: 100%;
+    max-width: 360px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .highlight-section {
+  background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
+  padding: 60px 20px;
+  box-shadow: inset 0 1px 6px rgba(0,0,0,0.08);
+}
+
+.highlight-section h2 {
+  font-size: 2.4rem;
+}
+
+.highlight-section p {
+  font-size: 1.1rem;
+}
+
+.highlight-section strong {
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+  .whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 25px;
+    right: 25px;
+    background-color: #25d366;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    z-index: 1000;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+  .whatsapp-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .section-link {
+    margin-top: 15px;
+    display: inline-block;
+    font-weight: 500;
+    color: #0066cc;
+    text-decoration: none;
+  }
+  .section-link:hover {
+    text-decoration: underline;
+  }
+  .scrolling-wrapper {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 1rem;
+  padding: 0 1rem;
+  scrollbar-width: none;
+}
+
+.scrolling-wrapper {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  gap: 1rem;
+  padding: 0 1rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.scrolling-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-card {
+  flex-shrink: 0;
+  width: 280px;
+  scroll-snap-align: start;
+  text-decoration: none;
+}
+
+.scroll-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+</style>
+
+<!-- Hero -->
+<div class="hero" data-aos="fade-in">
+  <h1 class="display-5">Global Sourcing, Seamless Delivery</h1>
+  <p class="lead mt-3">Luxury Furniture, Lighting & Interior Solutions – Delivered Internationally</p>
+  <a href="/contact" class="btn btn-light btn-lg mt-4">Get a Quote</a>
+</div>
+
+<!-- About Section -->
+<div class="container section">
+  <div class="row align-items-center" data-aos="fade-up">
+    <div class="col-md-6">
+      <div class="about-dark">
+        <h2 class="section-title text-white">Who We Are</h2>
+        <p>At Rahi Imports, powered by Uniglobe Lifestyle, we deliver more than furniture — we deliver visions. We assist India's top architects and developers with end-to-end sourcing, customization, and delivery from China directly to your project site.</p>
+        <p>Whether you're crafting iconic spaces or finishing luxury interiors, we partner with you to make every detail count.</p>
+        <a href="/about" class="btn btn-outline-light mt-3">Discover Our Story →</a>
+      </div>
+    </div>
+    <div class="col-md-6 mt-4 mt-md-0">
+      <img src="{{ url_for('static', filename='images/interior-about.webp') }}" class="img-fluid rounded shadow" alt="About Us">
+    </div>
+  </div>
+</div>
+
+<!-- Highlighted Why Choose Us -->
+<div class="highlight-section text-center" data-aos="fade-up">
+  <h2 class="section-title text-dark">Why Top Designers Work With Us</h2>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-3 col-6"><strong>🏭 Curated Factory Network</strong><p>Trusted Chinese manufacturers at your fingertips.</p></div>
+      <div class="col-md-3 col-6"><strong>🧰 Customization as Standard</strong><p>Your design, your specs — always possible.</p></div>
+      <div class="col-md-3 col-6"><strong>🚚 End-to-End Fulfilment</strong><p>We handle sourcing, QC, packaging and shipping.</p></div>
+      <div class="col-md-3 col-6"><strong>📦 Everything Under One Roof</strong><p>Furniture, tiles, lighting & decor in one shipment.</p></div>
+    </div>
+  </div>
+</div>
+<!-- Products Carousel Section -->
+<div class="section text-center" style="padding: 60px 0; background-color: #f9f9f9;">
+  <h2 class="section-title">Our Products</h2>
+
+  <div id="product-carousel" class="scrolling-wrapper">
+    <a href="/products?category=bedroom" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/bedroom/download.jpeg') }}" alt="Bedroom">
+      <p class="mt-2 text-center"><strong>Bedroom</strong></p>
+    </a>
+    <a href="/products?category=living" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/living/download.jpeg') }}" alt="Living">
+      <p class="mt-2 text-center"><strong>Living</strong></p>
+    </a>
+    <a href="/products?category=dining" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/dining/mycustom.jpeg') }}" alt="Dining">
+      <p class="mt-2 text-center"><strong>Dining</strong></p>
+    </a>
+    <a href="/products?category=office" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/office/office1.jpeg') }}" alt="Office">
+      <p class="mt-2 text-center"><strong>Office</strong></p>
+    </a>
+    <a href="/products?category=lighting" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/lighting/lighting1.jpeg') }}" alt="Lighting">
+      <p class="mt-2 text-center"><strong>Lighting</strong></p>
+    </a>
+    <a href="/products?category=decor" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/decor/decor1.jpeg') }}" alt="Decor">
+      <p class="mt-2 text-center"><strong>Decor</strong></p>
+    </a>
+    <a href="/products?category=sanitaryware" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/sanitaryware/san1.jpeg') }}" alt="Sanitaryware">
+      <p class="mt-2 text-center"><strong>Sanitaryware</strong></p>
+    </a>
+    <a href="/products?category=tiles" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/tiles/tile1.jpeg') }}" alt="Tiles">
+      <p class="mt-2 text-center"><strong>Tiles</strong></p>
+    </a>
+    <a href="/products?category=outdoor" class="scroll-card">
+      <img src="{{ url_for('static', filename='images/outdoor/outdoor1.jpeg') }}" alt="Outdoor">
+      <p class="mt-2 text-center"><strong>Outdoor</strong></p>
+    </a>
+  </div>
+
+  <a href="/products" class="section-link mt-3 d-block">See All Product Categories →</a>
+</div>
+
+
+<!-- Services Section -->
+<div class="container section text-center" data-aos="fade-up">
+  <h2 class="section-title">Our Services</h2>
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <img src="{{ url_for('static', filename='images/workflow-logistics.webp') }}" class="product-img" alt="Logistics">
+      <p><strong>Logistics & Consolidation</strong><br>End-to-end container handling and delivery solutions.</p>
+    </div>
+    <div class="col-md-4">
+      <img src="{{ url_for('static', filename='images/workflow-qc.webp') }}" class="product-img" alt="QC">
+      <p><strong>Quality Control</strong><br>Rigorous checks, safe packaging, damage-free arrivals.</p>
+    </div>
+  </div>
+  <a href="/services" class="section-link">Explore Full Services →</a>
+</div>
+
+
+
+<!-- Showroom CTA -->
+<div class="container section text-center" data-aos="fade-up">
+  <h2 class="section-title">Visit Our Foshan Showroom</h2>
+  <p>Experience our curated collection first-hand in China’s design capital.</p>
+  <a href="/showroom" class="section-link">Plan Your Visit →</a>
+</div>
+
+<!-- Contact Section -->
+<div class="section text-center">
+  <div class="container" data-aos="fade-up">
+    <h2 class="section-title">Get in Touch</h2>
+    <p>Email us at <a href="mailto:info@uniglobelifestyles.com">info@uniglobelifestyles.com</a><br>
+    Or chat with us directly via WhatsApp.</p>
+  </div>
+</div>
+
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/919821524678" class="whatsapp-float" target="_blank" title="Chat with us on WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="whatsapp-icon" fill="white">
+    <path d="M380.9 97.1C339.1 55.3... (trimmed for brevity; full SVG path already in your previous code) ..."/>
+  </svg>
+</a>
+
+{% endblock %}

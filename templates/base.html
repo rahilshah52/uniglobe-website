@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Uniglobe Lifestyles",
+  "url": "https://yourdomain.com",
+  "logo": "https://yourdomain.com/static/images/hero.webp",
+  "description": "Global Sourcing Studio connecting architects and businesses to verified Chinese manufacturers."
+}
+</script>
+
+  <!-- Basic Meta -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- SEO -->
+  <title>Uniglobe Lifestyles | Global Sourcing Studio</title>
+  <meta name="description" content="Uniglobe Lifestyles is a Global Sourcing Studio connecting architects, designers, developers and businesses to verified Chinese manufacturers across industries.">
+  <meta name="keywords" content="Global sourcing studio India, China sourcing partner, furniture import from China, Foshan sourcing, manufacturing sourcing India">
+  <meta name="author" content="Uniglobe Lifestyles">
+  <link rel="canonical" href="https://yourdomain.com/">
+
+  <!-- Open Graph (WhatsApp & Social Sharing) -->
+  <meta property="og:title" content="Uniglobe Lifestyles | Global Sourcing Studio">
+  <meta property="og:description" content="Luxury interiors to industrial manufacturing — structured global sourcing from China to projects worldwide.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{{ url_for('static', filename='images/hero.webp') }}">
+
+  <!-- Performance Preconnect -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Fonts (Lightweight) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap (Minimal Only CSS) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#F4F1EC">
+
+  <!-- Global Styles -->
+  <style>
+    :root {
+      --beige: #F4F1EC;
+      --dark: #1C1C1C;
+      --stone: #D8CFC4;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--beige);
+      color: var(--dark);
+      margin: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 {
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .section {
+      padding: 90px 20px;
+    }
+
+    @media (max-width: 768px) {
+      .section { padding: 60px 20px; }
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: rgba(244,241,236,0.95);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid #e3dfd8;
+    }
+
+    .nav-link {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--dark) !important;
+    }
+
+    .nav-link:hover {
+      opacity: 0.6;
+    }
+
+    /* BUTTON SYSTEM */
+    .btn-modern {
+      background: var(--dark);
+      color: var(--beige);
+      border-radius: 30px;
+      padding: 10px 25px;
+      border: none;
+      font-weight: 500;
+    }
+
+    .btn-outline-modern {
+      border: 1px solid var(--dark);
+      color: var(--dark);
+      border-radius: 30px;
+      padding: 10px 25px;
+      background: transparent;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark);
+      color: var(--beige);
+      padding: 40px 20px;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    /* WHATSAPP FLOAT */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 55px;
+      height: 55px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .whatsapp-float img {
+      width: 26px;
+      height: 26px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg py-3">
+  <div class="container">
+    <a class="navbar-brand fw-semibold" href="/">
+      Uniglobe Lifestyles
+    </a>
+
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
+        <li class="nav-item"><a class="nav-link" href="/services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="/showroom">Showroom</a></li>
+        <li class="nav-item"><a class="nav-link" href="/blog">Insights</a></li>
+        <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<footer>
+  India Headquarters · Foshan Operations · Global Supply Execution
+</footer>
+
+<!-- WhatsApp Button -->
+<a href="https://wa.me/919821524678"
+   target="_blank"
+   class="whatsapp-float">
+  <img src="{{ url_for('static', filename='images/whatsapp.png') }}"
+       alt="WhatsApp"
+       loading="lazy">
+</a>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+</body>
+</html>

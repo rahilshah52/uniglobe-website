@@ -1,0 +1,643 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Fonts and AOS -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
+
+
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #333;
+  }
+  .hero {
+  background: url("{{ url_for('static', filename='images/hero.png') }}") no-repeat center center / cover;
+  position: relative;
+  padding: 140px 20px;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-content h1,
+.hero-content p {
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+  color: white;
+}
+.hero-content .btn {
+  background-color: white;
+  color: #000;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.hero-content .btn:hover {
+  transform: scale(1.05);
+}
+
+
+
+  .section {
+    padding: 60px 0;
+  }
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+  .about-dark {
+    background: #111;
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+  }
+  .product-img {
+    width: 100%;
+    max-width: 360px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .highlight-section {
+  background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
+  padding: 60px 20px;
+  box-shadow: inset 0 1px 6px rgba(0,0,0,0.08);
+}
+
+.highlight-section h2 {
+  font-size: 2.4rem;
+}
+
+.highlight-section p {
+  font-size: 1.1rem;
+}
+
+.highlight-section strong {
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+  .whatsapp-float {
+  position: fixed;
+  bottom: 25px;
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  background-color: #25d366;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.whatsapp-icon {
+  font-size: 28px;
+}
+  .section-link {
+    margin-top: 15px;
+    display: inline-block;
+    font-weight: 500;
+    color: #0066cc;
+    text-decoration: none;
+  }
+  .section-link:hover {
+    text-decoration: underline;
+  }
+  
+.scroll-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  touch-action: pan-x;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.scroll-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.scroll-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  scroll-snap-align: start;
+  scroll-behavior: smooth;
+  will-change: transform;
+}
+
+
+
+.scroll-item {
+  flex: 0 0 auto;
+  width: 220px;
+  transition: transform 0.3s ease;
+  scroll-snap-align: start;
+}
+
+.scroll-item:hover {
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.scroll-item img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 576px) {
+  .scroll-item {
+    width: 160px; /* smaller cards */
+  }
+
+  .scroll-item img {
+    height: 100px; /* smaller images */
+  }
+
+  .scroll-item p {
+    font-size: 0.85rem; /* smaller text */
+    margin-top: 0.3rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .scroll-item {
+    width: 160px;
+  }
+
+  .scroll-item p {
+    font-size: 0.85rem;
+    text-align: center;
+    line-height: 1.2;
+    margin: 6px 0 0;
+    padding: 0 5px;
+    white-space: normal;
+  }
+
+  .scroll-item img {
+    height: 120px;
+  }
+}
+
+@media (max-width: 576px) {
+  .highlight-section .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .highlight-section .col-6:last-child {
+    border-bottom: none;
+  }
+
+  .highlight-section strong {
+    font-size: 1rem;
+  }
+
+  .highlight-section p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .section .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 15px 0;
+  }
+
+  .section .col-6 img {
+    max-width: 100px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+
+  .section .col-6 p {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
+  .section .mt-4 a {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .section .container p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .section h2.section-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .section a {
+    word-break: break-word;
+    font-size: 0.95rem;
+  }
+
+  .section {
+    padding: 30px 15px;
+  }
+}
+
+@media (max-width: 576px) {
+
+  /* Reduce top/bottom padding for sections */
+  .section,
+  .highlight-section,
+  .container.section {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+
+  /* Tighter spacing for highlight section columns */
+  .highlight-section .row.g-4 > div {
+    padding: 10px;
+  }
+
+  /* Reduce hero padding on mobile */
+  .hero {
+    padding: 80px 15px;
+  }
+
+  /* Tweak button sizes */
+  .btn-lg {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+
+  /* Prevent big shadow on images from feeling too bulky */
+  .product-img,
+  .img-fluid.rounded.shadow {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+}
+
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Keep other elements restricted, but DO NOT restrict scroll-wrapper or scroll-track */
+  .container, .container-fluid, .row, .col,
+  img, section {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  /* ALLOW scroll-wrapper to scroll horizontally */
+  .scroll-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .scroll-track {
+    display: flex;
+    gap: 2rem;
+    width: max-content;
+    will-change: transform;
+  }
+}
+
+
+@media (max-width: 576px) {
+  .about-dark {
+    padding: 25px;
+    border-radius: 10px;
+  }
+
+  .about-dark h2.section-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .about-dark p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .about-dark .btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+
+  .col-md-6.mt-4.mt-md-0 img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+  }
+
+  .container.section .row {
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .section.bg-light .row.g-4 > div {
+    text-align: center;
+    padding: 15px 5px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .section.bg-light .row.g-4 > div:last-child {
+    border-bottom: none;
+  }
+
+  .section.bg-light .row.g-4 img {
+    max-width: 80px;
+    height: auto;
+    margin-bottom: 8px;
+  }
+
+  .section.bg-light .row.g-4 p {
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .section.bg-light .mt-4 a {
+    font-size: 1rem;
+    display: inline-block;
+    margin-top: 12px;
+  }
+}
+.card img {
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover img {
+  transform: scale(1.05);
+}
+
+@media (max-width: 576px) {
+  .card {
+    padding: 10px !important;
+  }
+
+  .card img {
+    height: 100px;
+    object-fit: contain;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  p, .lead, .fw-semibold {
+    font-size: 0.92rem !important;
+    line-height: 1.5;
+  }
+
+  .section-title {
+    font-size: 1.35rem !important;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+  }
+
+  .btn-lg {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .btn:hover {
+    transform: scale(1.03);
+    transition: all 0.2s ease;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+  }
+
+  .scroll-wrapper,
+  .scroll-track,
+  .scroll-item {
+    overflow-y: hidden !important;
+    max-height: 100% !important;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+.scroll-track {
+  animation: scroll-left 40s linear infinite;
+  animation-play-state: running;
+}
+
+</style>
+
+<!-- Hero -->
+<div class="hero" data-aos="fade-in">
+  <div class="hero-content">
+    <h1 class="display-5">Global Sourcing, Seamless Delivery</h1>
+    <p class="lead mt-3">Luxury Furniture, Lighting & Interior Solutions – Delivered Internationally</p>
+    <a href="/contact" class="btn btn-light btn-lg mt-4">Get a Quote</a>
+  </div>
+</div>
+
+
+<!-- About Section -->
+<div class="container section">
+  <div class="row align-items-center" data-aos="fade-up">
+    <div class="col-md-6">
+      <div class="about-dark">
+        <h2 class="section-title text-white">Who We Are</h2>
+        <p>At Rahi Imports, powered by Uniglobe Lifestyle, we deliver more than furniture — we deliver visions. We assist India's top architects and developers with end-to-end sourcing, customization, and delivery from China directly to your project site.</p>
+        <p>Whether you're crafting iconic spaces or finishing luxury interiors, we partner with you to make every detail count.</p>
+        <a href="/about" class="btn btn-outline-light mt-3">Discover Our Story →</a>
+      </div>
+    </div>
+    <div class="col-md-6 mt-4 mt-md-0">
+      <img src="{{ url_for('static', filename='images/about.webp') }}" class="img-fluid rounded shadow" alt="About Us">
+    </div>
+  </div>
+</div>
+
+<!-- Highlighted Why Choose Us -->
+<div class="highlight-section text-center" data-aos="fade-up">
+  <h2 class="section-title text-dark">Why Top Designers Work With Us</h2>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-3 col-6"><strong>🏭 Curated Factory Network</strong><p>Trusted Chinese manufacturers at your fingertips.</p></div>
+      <div class="col-md-3 col-6"><strong>🧰 Customization as Standard</strong><p>Your design, your specs — always possible.</p></div>
+      <div class="col-md-3 col-6"><strong>🚚 End-to-End Fulfilment</strong><p>We handle sourcing, QC, packaging and shipping.</p></div>
+      <div class="col-md-3 col-6"><strong>📦 Everything Under One Roof</strong><p>Furniture, tiles, lighting & decor in one shipment.</p></div>
+    </div>
+  </div>
+</div>
+  
+<!-- Our Products - Auto-Scrolling Infinite Carousel -->
+<div class="section text-center" style="padding: 60px 0; background-color: #f9f9f9;">
+  <h2 class="section-title">Our Products</h2>
+
+  <div class="scroll-wrapper">
+    <div class="scroll-track" id="scrollTrack">
+  {% for cat, img in homepage_display.items() %}
+    <div class="scroll-item">
+      <a href="/products?category={{ cat }}" style="text-decoration: none; color: black;">
+        <img src="{{ url_for('static', filename=img) }}" alt="{{ cat }}">
+        <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+      </a>
+    </div>
+  {% endfor %}
+
+  <!-- Repeat for seamless scroll -->
+  {% for cat, img in homepage_display.items() %}
+    <div class="scroll-item">
+      <a href="/products?category={{ cat }}" style="text-decoration: none; color: black;">
+        <img src="{{ url_for('static', filename=img) }}" alt="{{ cat }}">
+        <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/products" style="text-decoration: none; color: black; font-weight: 500;">
+      Browse Our Full Product Line →
+    </a>
+  </div>
+</div>
+  
+<!-- Our Services Section - Updated for Better Mobile UX -->
+<div class="section text-center bg-light" data-aos="fade-up">
+  <div class="container">
+    <h2 class="section-title">Our Services</h2>
+    <div class="row g-4 justify-content-center">
+      {% set services = [
+        ("custom.webp", "Custom Design"),
+        ("global.webp", "Global Sourcing"),
+        ("logistics.webp", "Logistics & Shipping"),
+        ("support.webp", "End-to-End Service")
+      ] %}
+      {% for img, label in services %}
+      <div class="col-6 col-md-3">
+        <a href="/services" style="text-decoration: none; color: inherit;">
+          <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
+            <img src="{{ url_for('static', filename='images/services/' + img) }}" class="img-fluid rounded-3 mb-2" alt="{{ label }}">
+            <p class="fw-semibold mb-0">{{ label }}</p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-4">
+      <a href="/services" class="btn btn-dark px-4 py-2 rounded-pill fw-semibold">
+        End-to-End Service →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Showroom CTA - Updated -->
+<div class="container section text-center" data-aos="fade-up">
+  <h2 class="section-title">Visit Our Foshan Showroom</h2>
+  <p class="mb-3">Experience our curated collection first-hand in China’s design capital.</p>
+  <a href="/showroom" class="btn btn-outline-dark fw-semibold px-4 py-2 rounded-pill">
+    Plan Your Visit →
+  </a>
+</div>
+
+
+<!-- Contact Section - Refined -->
+<div class="section text-center bg-white">
+  <div class="container" data-aos="fade-up">
+    <h2 class="section-title">Get in Touch</h2>
+    <p class="mb-3">
+      Email us at<br>
+      <a href="mailto:uniglobelifestyles@gmail.com" class="fw-semibold">
+        uniglobelifestyles@gmail.com
+      </a>
+      <br>
+      Or message us on WhatsApp anytime.
+    </p>
+    <a href="https://wa.me/919821524678" target="_blank" class="btn btn-success rounded-pill px-4 py-2">
+      Chat on WhatsApp
+    </a>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const track = document.getElementById("scrollTrack");
+    // Ensure scroll is animated on load
+    track.style.animationPlayState = "running";
+  });
+</script>
+
+
+
+{% endblock %}
+
+

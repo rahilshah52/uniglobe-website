@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  .showroom-hero {
+    position: relative;
+    min-height: 65vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+  }
+
+  .showroom-hero img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .showroom-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+  }
+
+  .showroom-content {
+    position: relative;
+    z-index: 2;
+    max-width: 650px;
+    padding: 0 20px;
+  }
+
+  .section {
+    padding: 80px 20px;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .info-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    height: 100%;
+  }
+
+  .cta-section {
+    background: #1C1C1C;
+    color: #F4F1EC;
+    padding: 70px 30px;
+    text-align: center;
+    border-radius: 18px;
+    margin-top: 80px;
+  }
+
+  .cta-section a {
+    display: inline-block;
+    margin-top: 20px;
+    background: #F4F1EC;
+    color: #1C1C1C;
+    padding: 10px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .section {
+      padding: 60px 20px;
+    }
+  }
+</style>
+
+<!-- HERO -->
+<div class="showroom-hero">
+  <img src="{{ url_for('static', filename='images/showroom.webp') }}"
+       alt="Foshan Showroom"
+       loading="eager">
+  <div class="showroom-content">
+    <h1>Our Foshan Showroom</h1>
+    <p>Experience global sourcing at the heart of China’s manufacturing capital.</p>
+  </div>
+</div>
+
+<!-- ABOUT SHOWROOM -->
+<div class="section container">
+  <h2 class="section-title">Why Visit Foshan?</h2>
+  <p class="text-center mb-5" style="max-width:700px;margin:0 auto;">
+    Foshan is one of the world’s largest furniture and manufacturing hubs.
+    Our on-ground presence gives clients direct access to curated factories,
+    exclusive collections, and real-time customization.
+  </p>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="info-card shadow-sm">
+        <h5>Curated Factory Visits</h5>
+        <p>Meet verified manufacturers personally and see production capabilities firsthand.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="info-card shadow-sm">
+        <h5>Material & Finish Selection</h5>
+        <p>Touch, test, and customize materials to match your architectural vision.</p>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="info-card shadow-sm">
+        <h5>Real-Time Negotiation</h5>
+        <p>Transparent pricing discussions and direct communication with suppliers.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW WE SUPPORT -->
+<div class="section container text-center">
+  <h2 class="section-title">End-to-End Support</h2>
+  <p style="max-width:700px;margin:0 auto;">
+    From travel coordination to factory scheduling, translation assistance,
+    and logistics planning — we manage every step of your sourcing visit.
+  </p>
+</div>
+
+<!-- CTA -->
+<div class="container">
+  <div class="cta-section">
+    <h3>Plan Your Visit to Foshan</h3>
+    <p>Experience global sourcing in person.</p>
+    <a href="/contact">Schedule a Consultation</a>
+  </div>
+</div>
+
+{% endblock %}

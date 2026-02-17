@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero position-relative text-white d-flex align-items-center">
+  <img src="{{ url_for('static', filename='images/hero.webp') }}"
+       alt="Global Sourcing Studio"
+       loading="eager"
+       style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+
+  <div style="position:absolute; inset:0; background:rgba(0,0,0,0.55);"></div>
+
+  <div class="container position-relative text-center" style="z-index:2; max-width:800px;">
+    <h1 style="font-size:2.4rem;">
+      Global Sourcing. Structured Execution.
+    </h1>
+    <p class="mt-3">
+      From Luxury Interiors to Industrial-Scale Manufacturing —
+      Manufactured in China. Delivered Worldwide.
+    </p>
+    <div class="mt-4">
+      <a href="/contact" class="btn-modern me-2">Start a Project</a>
+      <a href="{{ url_for('static', filename='catalog.pdf') }}"
+         class="btn-outline-modern"
+         download>
+        Download Catalog
+      </a>
+    </div>
+    <p class="mt-4" style="font-size:0.85rem; opacity:0.8;">
+      India Headquarters · Foshan Operations · Global Supply Execution
+    </p>
+  </div>
+</section>
+
+<!-- POSITIONING -->
+<section class="section text-center">
+  <div class="container" style="max-width:800px;">
+    <h2>Global Sourcing Studio for Architects & Developers</h2>
+    <p class="mt-3">
+      Uniglobe Lifestyles connects interior designers, architects,
+      developers, retailers, and industrial buyers with verified Chinese manufacturers.
+      We manage sourcing, customization, quality control, and global logistics
+      — ensuring seamless execution at scale.
+    </p>
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section class="section">
+  <div class="container">
+    <h2 class="text-center mb-5">Industries We Support</h2>
+
+    <div class="row g-4 text-center">
+      {% for cat, img in homepage_display.items() %}
+      <div class="col-6 col-md-3">
+        <a href="/products?category={{ cat }}" style="text-decoration:none; color:inherit;">
+          <div class="card-modern shadow-sm">
+            <img src="{{ url_for('static', filename=img) }}"
+                 alt="{{ cat }}"
+                 loading="lazy"
+                 style="height:150px; object-fit:cover; border-radius:12px;">
+            <p class="mt-3 fw-semibold">
+              {{ homepage_display_names[cat] }}
+            </p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- SCALE SECTION -->
+<section class="section bg-white">
+  <div class="container text-center">
+    <h2>Built for Scale</h2>
+    <div class="row g-4 mt-4">
+      <div class="col-md-4">
+        <div class="card-modern">
+          <h5>Verified Manufacturing Network</h5>
+          <p>Direct factory access across multiple industries.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-modern">
+          <h5>Quality-Control Driven</h5>
+          <p>Structured inspections before international dispatch.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card-modern">
+          <h5>Global Logistics Management</h5>
+          <p>From factory floor to final project site.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section text-center">
+  <div class="container">
+    <h2>Our Process</h2>
+    <div class="row g-4 mt-4">
+      <div class="col-6 col-md-3">
+        <div class="card-modern">Consultation</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card-modern">Factory Matching</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card-modern">Quality Control</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card-modern">Global Shipping</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS PLACEHOLDER -->
+<section class="section bg-white text-center">
+  <div class="container">
+    <h2>Client Experiences</h2>
+    <p class="mt-3" style="max-width:600px; margin:0 auto;">
+      We collaborate with architects, designers, and developers across projects of varying scales.
+      Testimonials coming soon.
+    </p>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="section text-center">
+  <div class="container" style="max-width:700px;">
+    <h2>Ready to Source Globally?</h2>
+    <p class="mt-3">
+      Tell us what you need. We’ll manage the execution.
+    </p>
+    <div class="mt-4">
+      <a href="/contact" class="btn-modern me-2">Submit Inquiry</a>
+      <a href="https://wa.me/919821524678"
+         target="_blank"
+         class="btn-outline-modern">
+        Chat on WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
