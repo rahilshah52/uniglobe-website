@@ -49,7 +49,7 @@ body {
   border-radius: 12px;
 }
 
-/* ===== CAROUSEL ===== */
+/* ===== CAROUSEL STRUCTURE ===== */
 .scroll-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
@@ -61,6 +61,11 @@ body {
 
 .scroll-wrapper::-webkit-scrollbar {
   display: none;
+}
+
+.scroll-track {
+  display: flex;
+  gap: 2rem;
 }
 
 .scroll-item {
@@ -75,9 +80,21 @@ body {
   border-radius: 10px;
 }
 
-/* Swipe indicator */
-.swipe-hint {
-  display: none;
+/* ===== DESKTOP AUTO SCROLL ===== */
+@media (min-width: 769px) {
+
+  .scroll-wrapper {
+    overflow: hidden;
+  }
+
+  .scroll-track {
+    animation: scroll-left 40s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 }
 
 /* ===== MOBILE ONLY REFINEMENT ===== */
@@ -88,7 +105,6 @@ body {
     overflow-y: auto;
   }
 
-  /* Hero smaller */
   .hero {
     padding: 80px 15px;
   }
@@ -102,8 +118,8 @@ body {
     margin-bottom: 15px;
   }
 
-  /* Shorten Who We Are */
-  .about-dark p:nth-child(3) {
+  /* Shorten Who We Are (mobile only) */
+  .about-dark p:nth-of-type(2) {
     display: none;
   }
 
@@ -112,7 +128,7 @@ body {
     display: none;
   }
 
-  /* Services cleaner */
+  /* Simplify Services */
   .section.bg-light img {
     display: none;
   }
@@ -121,7 +137,7 @@ body {
     width: 160px;
   }
 
-  /* Swipe hint visible */
+  /* Swipe hint */
   .swipe-hint {
     display: block;
     position: absolute;
@@ -132,6 +148,13 @@ body {
     transition: opacity 0.3s ease;
   }
 
+}
+
+/* Hide swipe hint on desktop */
+@media (min-width: 769px) {
+  .swipe-hint {
+    display: none;
+  }
 }
 
 </style>
@@ -152,9 +175,9 @@ body {
       <div class="about-dark">
         <h2 class="section-title text-white">Who We Are</h2>
         <p>
-          At Rahi Imports, powered by Uniglobe Lifestyle, we assist architects
-          and developers with structured sourcing and delivery from China
-          directly to your project site.
+          At Rahi Imports, powered by Uniglobe Lifestyle, we deliver more than furniture — we deliver visions.
+          We assist India's top architects and developers with end-to-end sourcing, customization,
+          and delivery from China directly to your project site.
         </p>
         <p>
           Whether you're crafting iconic spaces or finishing luxury interiors,
@@ -205,15 +228,28 @@ body {
   <div class="position-relative mt-4">
     <div class="swipe-hint" id="swipeHint">Swipe to explore →</div>
 
-    <div class="scroll-wrapper" id="productScroll">
-      {% for cat, img in homepage_display.items() %}
-        <div class="scroll-item">
-          <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-            <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-            <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-          </a>
-        </div>
-      {% endfor %}
+    <div class="scroll-wrapper">
+      <div class="scroll-track" id="productScroll">
+
+        {% for cat, img in homepage_display.items() %}
+          <div class="scroll-item">
+            <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
+              <img src="{{ url_for('static', filename=img) }}" loading="lazy">
+              <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+            </a>
+          </div>
+        {% endfor %}
+
+        {% for cat, img in homepage_display.items() %}
+          <div class="scroll-item">
+            <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
+              <img src="{{ url_for('static', filename=img) }}" loading="lazy">
+              <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+            </a>
+          </div>
+        {% endfor %}
+
+      </div>
     </div>
   </div>
 
@@ -221,38 +257,6 @@ body {
     <a href="/products" style="text-decoration:none; color:black; font-weight:500;">
       Browse Our Full Product Line →
     </a>
-  </div>
-</div>
-
-<!-- SERVICES -->
-<div class="section text-center bg-light" data-aos="fade-up">
-  <div class="container">
-    <h2 class="section-title">Our Services</h2>
-    <div class="row g-4 justify-content-center">
-      {% set services = [
-        ("custom.webp", "Custom Design"),
-        ("global.webp", "Global Sourcing"),
-        ("logistics.webp", "Logistics & Shipping"),
-        ("support.webp", "End-to-End Service")
-      ] %}
-      {% for img, label in services %}
-      <div class="col-6 col-md-3">
-        <a href="/services" style="text-decoration:none; color:inherit;">
-          <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
-            <img src="{{ url_for('static', filename='images/services/' + img) }}"
-                 class="img-fluid rounded-3 mb-2"
-                 alt="{{ label }}">
-            <p class="fw-semibold mb-0">{{ label }}</p>
-          </div>
-        </a>
-      </div>
-      {% endfor %}
-    </div>
-    <div class="mt-4">
-      <a href="/services" class="btn btn-dark px-4 py-2 rounded-pill fw-semibold">
-        End-to-End Service →
-      </a>
-    </div>
   </div>
 </div>
 
