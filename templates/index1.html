@@ -31,12 +31,6 @@ body {
   z-index: 2;
 }
 
-.hero-content .btn {
-  background-color: white;
-  color: #000;
-  font-weight: 600;
-}
-
 /* SECTIONS */
 .section {
   padding: 60px 0;
@@ -55,24 +49,14 @@ body {
   border-radius: 12px;
 }
 
-/* HIGHLIGHT */
-.highlight-section {
-  background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
-  padding: 60px 20px;
-}
-
-.highlight-section strong {
-  display: block;
-  font-size: 1.2rem;
-}
-
-/* ===== CLEAN CAROUSEL (NO SCROLL LOCK) ===== */
+/* ===== CAROUSEL ===== */
 .scroll-wrapper {
-  display: flex;
   overflow-x: auto;
   overflow-y: hidden;
+  display: flex;
   gap: 2rem;
   -webkit-overflow-scrolling: touch;
+  position: relative;
 }
 
 .scroll-wrapper::-webkit-scrollbar {
@@ -91,7 +75,12 @@ body {
   border-radius: 10px;
 }
 
-/* ===== MOBILE FIX ONLY ===== */
+/* Swipe indicator */
+.swipe-hint {
+  display: none;
+}
+
+/* ===== MOBILE ONLY REFINEMENT ===== */
 @media (max-width: 768px) {
 
   html, body {
@@ -99,6 +88,7 @@ body {
     overflow-y: auto;
   }
 
+  /* Hero smaller */
   .hero {
     padding: 80px 15px;
   }
@@ -109,13 +99,41 @@ body {
 
   .section-title {
     font-size: 1.4rem;
+    margin-bottom: 15px;
+  }
+
+  /* Shorten Who We Are */
+  .about-dark p:nth-child(3) {
+    display: none;
+  }
+
+  /* Simplify Why section */
+  .highlight-section p {
+    display: none;
+  }
+
+  /* Services cleaner */
+  .section.bg-light img {
+    display: none;
   }
 
   .scroll-item {
     width: 160px;
   }
 
+  /* Swipe hint visible */
+  .swipe-hint {
+    display: block;
+    position: absolute;
+    top: -25px;
+    right: 10px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
 }
+
 </style>
 
 <!-- HERO -->
@@ -135,8 +153,8 @@ body {
         <h2 class="section-title text-white">Who We Are</h2>
         <p>
           At Rahi Imports, powered by Uniglobe Lifestyle, we assist architects
-          and developers with structured sourcing, customization, and delivery
-          from China directly to your project site.
+          and developers with structured sourcing and delivery from China
+          directly to your project site.
         </p>
         <p>
           Whether you're crafting iconic spaces or finishing luxury interiors,
@@ -156,7 +174,7 @@ body {
 </div>
 
 <!-- WHY -->
-<div class="highlight-section text-center" data-aos="fade-up">
+<div class="highlight-section text-center section" data-aos="fade-up">
   <h2 class="section-title text-dark">Why Top Designers Work With Us</h2>
   <div class="container">
     <div class="row g-4">
@@ -184,23 +202,19 @@ body {
 <div class="section text-center" style="background-color: #f9f9f9;">
   <h2 class="section-title">Our Products</h2>
 
-  <div class="scroll-wrapper mt-4">
-    {% for cat, img in homepage_display.items() %}
-      <div class="scroll-item">
-        <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-          <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-          <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-        </a>
-      </div>
-    {% endfor %}
-    {% for cat, img in homepage_display.items() %}
-      <div class="scroll-item">
-        <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-          <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-          <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-        </a>
-      </div>
-    {% endfor %}
+  <div class="position-relative mt-4">
+    <div class="swipe-hint" id="swipeHint">Swipe to explore →</div>
+
+    <div class="scroll-wrapper" id="productScroll">
+      {% for cat, img in homepage_display.items() %}
+        <div class="scroll-item">
+          <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
+            <img src="{{ url_for('static', filename=img) }}" loading="lazy">
+            <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 
   <div class="mt-4">
@@ -241,5 +255,22 @@ body {
     </div>
   </div>
 </div>
+
+<script>
+/* Swipe hint disappears after first horizontal scroll */
+document.addEventListener("DOMContentLoaded", function() {
+  const scrollContainer = document.getElementById("productScroll");
+  const hint = document.getElementById("swipeHint");
+
+  if (!scrollContainer || !hint) return;
+
+  scrollContainer.addEventListener("scroll", function() {
+    if (scrollContainer.scrollLeft > 20) {
+      hint.style.opacity = "0";
+      setTimeout(() => hint.style.display = "none", 300);
+    }
+  }, { once: true });
+});
+</script>
 
 {% endblock %}
