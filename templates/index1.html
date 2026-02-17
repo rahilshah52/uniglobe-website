@@ -31,7 +31,7 @@ body {
   z-index: 2;
 }
 
-/* SECTIONS */
+/* SECTION */
 .section {
   padding: 60px 0;
 }
@@ -42,14 +42,35 @@ body {
   margin-bottom: 30px;
 }
 
+/* ABOUT */
 .about-dark {
   background: #111;
   color: white;
   padding: 40px;
   border-radius: 12px;
+  height: 100%;
 }
 
-/* ===== CAROUSEL STRUCTURE ===== */
+.about-image-wrapper {
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.about-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* HIGHLIGHT */
+.highlight-section {
+  background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
+  padding: 60px 20px;
+}
+
+/* CAROUSEL */
 .scroll-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
@@ -80,9 +101,8 @@ body {
   border-radius: 10px;
 }
 
-/* ===== DESKTOP AUTO SCROLL ===== */
+/* DESKTOP AUTO SCROLL */
 @media (min-width: 769px) {
-
   .scroll-wrapper {
     overflow: hidden;
   }
@@ -97,7 +117,7 @@ body {
   }
 }
 
-/* ===== MOBILE ONLY REFINEMENT ===== */
+/* MOBILE REFINEMENT */
 @media (max-width: 768px) {
 
   html, body {
@@ -118,18 +138,13 @@ body {
     margin-bottom: 15px;
   }
 
-  /* Shorten Who We Are (mobile only) */
+  /* Shorten Who We Are */
   .about-dark p:nth-of-type(2) {
     display: none;
   }
 
-  /* Simplify Why section */
+  /* Simplify Why */
   .highlight-section p {
-    display: none;
-  }
-
-  /* Simplify Services */
-  .section.bg-light img {
     display: none;
   }
 
@@ -137,30 +152,44 @@ body {
     width: 160px;
   }
 
-  /* Swipe hint */
-  .swipe-hint {
-    display: block;
-    position: absolute;
-    top: -25px;
-    right: 10px;
-    font-size: 0.85rem;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
+  /* Premium Services Grid */
+  .services-mobile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    text-align: left;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .services-mobile-grid div {
+    padding: 14px 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .services-mobile-grid div:nth-child(odd) {
+    border-right: 1px solid #ddd;
   }
 
 }
 
 /* Hide swipe hint on desktop */
 @media (min-width: 769px) {
-  .swipe-hint {
-    display: none;
-  }
+  .swipe-hint { display: none; }
+}
+
+.swipe-hint {
+  position: absolute;
+  top: -25px;
+  right: 10px;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
 }
 
 </style>
 
 <!-- HERO -->
-<div class="hero" data-aos="fade-in">
+<div class="hero">
   <div class="hero-content">
     <h1 class="display-5">Global Sourcing, Seamless Delivery</h1>
     <p class="lead mt-3">Luxury Furniture, Lighting & Interior Solutions – Delivered Internationally</p>
@@ -170,14 +199,14 @@ body {
 
 <!-- ABOUT -->
 <div class="container section">
-  <div class="row align-items-center" data-aos="fade-up">
+  <div class="row align-items-stretch">
     <div class="col-md-6">
       <div class="about-dark">
         <h2 class="section-title text-white">Who We Are</h2>
         <p>
           At Rahi Imports, powered by Uniglobe Lifestyle, we deliver more than furniture — we deliver visions.
-          We assist India's top architects and developers with end-to-end sourcing, customization,
-          and delivery from China directly to your project site.
+          We assist India's top architects and developers with end-to-end sourcing,
+          customization and delivery from China directly to your project site.
         </p>
         <p>
           Whether you're crafting iconic spaces or finishing luxury interiors,
@@ -188,41 +217,31 @@ body {
         </a>
       </div>
     </div>
-    <div class="col-md-6 mt-4 mt-md-0">
-      <img src="{{ url_for('static', filename='images/about.webp') }}"
-           class="img-fluid rounded shadow"
-           loading="lazy">
+    <div class="col-md-6">
+      <div class="about-image-wrapper">
+        <img src="{{ url_for('static', filename='images/about.webp') }}"
+             alt="About"
+             loading="lazy">
+      </div>
     </div>
   </div>
 </div>
 
 <!-- WHY -->
-<div class="highlight-section text-center section" data-aos="fade-up">
+<div class="highlight-section text-center section">
   <h2 class="section-title text-dark">Why Top Designers Work With Us</h2>
   <div class="container">
     <div class="row g-4">
-      <div class="col-md-3 col-6">
-        <strong>🏭 Curated Factory Network</strong>
-        <p>Trusted Chinese manufacturers at your fingertips.</p>
-      </div>
-      <div class="col-md-3 col-6">
-        <strong>🧰 Customization as Standard</strong>
-        <p>Your design, your specs — always possible.</p>
-      </div>
-      <div class="col-md-3 col-6">
-        <strong>🚚 End-to-End Fulfilment</strong>
-        <p>We handle sourcing, QC, packaging and shipping.</p>
-      </div>
-      <div class="col-md-3 col-6">
-        <strong>📦 Everything Under One Roof</strong>
-        <p>Furniture, tiles, lighting & decor in one shipment.</p>
-      </div>
+      <div class="col-md-3 col-6"><strong>Curated Factory Network</strong><p>Trusted Chinese manufacturers.</p></div>
+      <div class="col-md-3 col-6"><strong>Customization as Standard</strong><p>Your design, your specs.</p></div>
+      <div class="col-md-3 col-6"><strong>End-to-End Fulfilment</strong><p>We handle sourcing to shipping.</p></div>
+      <div class="col-md-3 col-6"><strong>Everything Under One Roof</strong><p>Furniture, tiles & lighting.</p></div>
     </div>
   </div>
 </div>
 
 <!-- PRODUCTS -->
-<div class="section text-center" style="background-color: #f9f9f9;">
+<div class="section text-center" style="background-color:#f9f9f9;">
   <h2 class="section-title">Our Products</h2>
 
   <div class="position-relative mt-4">
@@ -232,36 +251,69 @@ body {
       <div class="scroll-track" id="productScroll">
 
         {% for cat, img in homepage_display.items() %}
-          <div class="scroll-item">
-            <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-              <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-              <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-            </a>
-          </div>
+        <div class="scroll-item">
+          <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
+            <img src="{{ url_for('static', filename=img) }}" loading="lazy">
+            <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+          </a>
+        </div>
         {% endfor %}
 
         {% for cat, img in homepage_display.items() %}
-          <div class="scroll-item">
-            <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-              <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-              <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-            </a>
-          </div>
+        <div class="scroll-item">
+          <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
+            <img src="{{ url_for('static', filename=img) }}" loading="lazy">
+            <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+          </a>
+        </div>
         {% endfor %}
 
       </div>
     </div>
   </div>
+</div>
 
-  <div class="mt-4">
-    <a href="/products" style="text-decoration:none; color:black; font-weight:500;">
-      Browse Our Full Product Line →
-    </a>
+<!-- SERVICES -->
+<div class="section text-center bg-light">
+  <div class="container">
+    <h2 class="section-title">Our Services</h2>
+
+    <!-- Desktop -->
+    <div class="row g-4 justify-content-center d-none d-md-flex">
+      {% set services = [
+        ("custom.webp", "Custom Design"),
+        ("global.webp", "Global Sourcing"),
+        ("logistics.webp", "Logistics & Shipping"),
+        ("support.webp", "End-to-End Service")
+      ] %}
+      {% for img, label in services %}
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
+          <img src="{{ url_for('static', filename='images/services/' + img) }}"
+               class="img-fluid rounded-3 mb-2"
+               alt="{{ label }}">
+          <p class="fw-semibold mb-0">{{ label }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Mobile Premium Grid -->
+    <div class="services-mobile-grid d-md-none mt-4">
+      <div>Custom Design</div>
+      <div>Global Sourcing</div>
+      <div>Factory Coordination</div>
+      <div>Quality Control</div>
+      <div>Project Procurement</div>
+      <div>Logistics & Shipping</div>
+      <div>Material Sourcing</div>
+      <div>Vendor Negotiation</div>
+    </div>
+
   </div>
 </div>
 
 <script>
-/* Swipe hint disappears after first horizontal scroll */
 document.addEventListener("DOMContentLoaded", function() {
   const scrollContainer = document.getElementById("productScroll");
   const hint = document.getElementById("swipeHint");
