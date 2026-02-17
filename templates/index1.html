@@ -6,14 +6,14 @@
 <style>
 body {
   font-family: 'Inter', sans-serif;
-  color: #333;
+  color: #222;
 }
 
 /* HERO */
 .hero {
   background: url("{{ url_for('static', filename='images/hero.webp') }}") no-repeat center center / cover;
   position: relative;
-  padding: 140px 20px;
+  padding: 120px 20px;
   text-align: center;
   color: white;
 }
@@ -22,8 +22,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.55);
-  z-index: 1;
+  background: rgba(0,0,0,0.55);
 }
 
 .hero-content {
@@ -31,54 +30,42 @@ body {
   z-index: 2;
 }
 
-/* SECTION */
+/* SECTION SPACING */
 .section {
-  padding: 70px 0;
+  padding: 60px 0;
 }
 
 .section-title {
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 600;
   margin-bottom: 30px;
 }
 
-/* ABOUT */
+/* WHO WE ARE */
 .about-dark {
   background: #111;
   color: white;
-  padding: 45px;
-  border-radius: 12px;
+  padding: 35px;
+  border-radius: 10px;
 }
 
 .about-image-wrapper img {
   width: 100%;
-  border-radius: 12px;
+  max-height: 420px;
   object-fit: cover;
+  border-radius: 10px;
 }
 
-/* HIGHLIGHT */
-.highlight-section {
-  background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
-  padding: 70px 20px;
-}
-
-/* CAROUSEL */
+/* PRODUCTS */
 .scroll-wrapper {
   overflow-x: auto;
-  overflow-y: hidden;
   display: flex;
   gap: 2rem;
   -webkit-overflow-scrolling: touch;
-  position: relative;
 }
 
 .scroll-wrapper::-webkit-scrollbar {
   display: none;
-}
-
-.scroll-track {
-  display: flex;
-  gap: 2rem;
 }
 
 .scroll-item {
@@ -88,43 +75,50 @@ body {
 
 .scroll-item img {
   width: 100%;
-  height: 150px;
+  height: 160px;
   object-fit: cover;
   border-radius: 10px;
 }
 
-/* DESKTOP AUTO SCROLL */
-@media (min-width: 769px) {
-  .scroll-wrapper { overflow: hidden; }
-
-  .scroll-track {
-    animation: scroll-left 40s linear infinite;
-  }
-
-  @keyframes scroll-left {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+/* SERVICES PREMIUM */
+.services-premium {
+  margin-top: 40px;
+  text-align: center;
 }
 
-/* MOBILE REFINEMENT */
-@media (max-width: 768px) {
+.services-premium div {
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  padding: 18px 0;
+}
 
-  html, body {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
+/* FOOTER STRIP */
+.footer-strip {
+  background: #111;
+  color: white;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.footer-strip a {
+  color: white;
+  text-decoration: underline;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
 
   .hero {
     padding: 90px 20px;
   }
 
   .section {
-    padding: 50px 20px;
+    padding: 45px 20px;
   }
 
   .section-title {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   /* Shorten Who We Are */
@@ -132,31 +126,12 @@ body {
     display: none;
   }
 
-  /* Simplify Why */
-  .highlight-section p {
-    display: none;
-  }
-
   .scroll-item {
     width: 170px;
   }
 
-  /* LUXURY SERVICES STYLE */
-  .services-mobile-luxury {
-    margin-top: 40px;
-    text-align: center;
-  }
-
-  .services-mobile-luxury div {
-    font-size: 1.05rem;
-    font-weight: 500;
-    padding: 18px 0;
-    letter-spacing: 1px;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-  }
-
-  .services-mobile-luxury div:last-child {
-    border-bottom: none;
+  .services-premium div {
+    font-size: 1rem;
   }
 
 }
@@ -167,25 +142,12 @@ body {
   top: -25px;
   right: 10px;
   font-size: 0.85rem;
-  opacity: 0.7;
+  opacity: 0.6;
   transition: opacity 0.3s ease;
 }
 
 @media (min-width: 769px) {
   .swipe-hint { display: none; }
-}
-
-/* FOOTER STRIP */
-.footer-strip {
-  background: #111;
-  color: white;
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.footer-strip a {
-  color: white;
-  text-decoration: underline;
 }
 
 </style>
@@ -199,20 +161,18 @@ body {
   </div>
 </div>
 
-<!-- ABOUT -->
+<!-- WHO WE ARE -->
 <div class="container section">
   <div class="row align-items-center">
     <div class="col-md-6">
       <div class="about-dark">
         <h2 class="section-title text-white">Who We Are</h2>
         <p>
-          At Rahi Imports, powered by Uniglobe Lifestyle, we deliver more than furniture — we deliver visions.
-          We assist India's top architects and developers with end-to-end sourcing,
-          customization and delivery from China directly to your project site.
+          We partner with architects and developers to deliver curated sourcing,
+          custom manufacturing and seamless global logistics from China to your project site.
         </p>
         <p>
-          Whether you're crafting iconic spaces or finishing luxury interiors,
-          we partner with you to make every detail count.
+          From concept to completion, we execute with precision and reliability.
         </p>
         <a href="/about" class="btn btn-outline-light mt-3">
           Discover Our Story →
@@ -227,79 +187,32 @@ body {
   </div>
 </div>
 
-<!-- WHY -->
-<div class="highlight-section text-center section">
-  <h2 class="section-title text-dark">Why Top Designers Work With Us</h2>
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-md-3 col-6"><strong>Curated Factory Network</strong><p>Trusted Chinese manufacturers.</p></div>
-      <div class="col-md-3 col-6"><strong>Customization as Standard</strong><p>Your design, your specs.</p></div>
-      <div class="col-md-3 col-6"><strong>End-to-End Fulfilment</strong><p>We handle sourcing to shipping.</p></div>
-      <div class="col-md-3 col-6"><strong>Everything Under One Roof</strong><p>Furniture, tiles & lighting.</p></div>
-    </div>
-  </div>
-</div>
-
 <!-- PRODUCTS -->
-<div class="section text-center" style="background-color:#f9f9f9;">
+<div class="section text-center" style="background:#f7f7f7;">
   <h2 class="section-title">Our Products</h2>
 
   <div class="position-relative mt-4">
     <div class="swipe-hint" id="swipeHint">Swipe to explore →</div>
 
-    <div class="scroll-wrapper">
-      <div class="scroll-track" id="productScroll">
-
-        {% for cat, img in homepage_display.items() %}
-        <div class="scroll-item">
-          <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-            <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-            <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-          </a>
-        </div>
-        {% endfor %}
-
-        {% for cat, img in homepage_display.items() %}
-        <div class="scroll-item">
-          <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-            <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-            <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-          </a>
-        </div>
-        {% endfor %}
-
+    <div class="scroll-wrapper" id="productScroll">
+      {% for cat, img in homepage_display.items() %}
+      <div class="scroll-item">
+        <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
+          <img src="{{ url_for('static', filename=img) }}" loading="lazy">
+          <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+        </a>
       </div>
+      {% endfor %}
     </div>
   </div>
 </div>
 
 <!-- SERVICES -->
-<div class="section text-center bg-light">
+<div class="section text-center">
   <div class="container">
     <h2 class="section-title">Our Services</h2>
 
-    <!-- Desktop unchanged -->
-    <div class="row g-4 justify-content-center d-none d-md-flex">
-      {% set services = [
-        ("custom.webp", "Custom Design"),
-        ("global.webp", "Global Sourcing"),
-        ("logistics.webp", "Logistics & Shipping"),
-        ("support.webp", "End-to-End Service")
-      ] %}
-      {% for img, label in services %}
-      <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
-          <img src="{{ url_for('static', filename='images/services/' + img) }}"
-               class="img-fluid rounded-3 mb-2"
-               alt="{{ label }}">
-          <p class="fw-semibold mb-0">{{ label }}</p>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-
-    <!-- Luxury Mobile -->
-    <div class="services-mobile-luxury d-md-none">
+    <div class="services-premium">
       <div>Custom Design</div>
       <div>Global Sourcing</div>
       <div>Factory Coordination</div>
@@ -315,11 +228,8 @@ body {
 
 <!-- FOOTER STRIP -->
 <div class="footer-strip">
-  <h5>Indian Headquarters</h5>
   <p>Mumbai, India</p>
-  <p>
-    Email: <a href="mailto:uniglobelifestyles@gmail.com">uniglobelifestyles@gmail.com</a>
-  </p>
+  <p>Foshan, China</p>
   <p>
     <a href="/contact">Contact Us</a>
   </p>
