@@ -1,116 +1,164 @@
 {% extends "base.html" %}
 {% block content %}
 
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
+
+
 <style>
-
-/* ================= GLOBAL ================= */
-
-body {
-  font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-/* ================= HERO ================= */
-
-.hero {
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #333;
+  }
+  .hero {
   background: url("{{ url_for('static', filename='images/hero.webp') }}") no-repeat center center / cover;
   position: relative;
-  padding: 140px 20px; /* Desktop unchanged */
+  padding: 140px 20px;
   text-align: center;
   color: white;
+  overflow: hidden;
 }
 
 .hero::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  z-index: 1;
 }
-
 .hero-content {
   position: relative;
   z-index: 2;
 }
 
-/* Mobile Hero Only */
-@media (max-width: 768px) {
-  .hero {
-    padding: 80px 15px !important;
-  }
-
-  .hero .display-5 {
-    font-size: 1.7rem !important;
-  }
-
-  .hero .lead {
-    font-size: 1rem !important;
-  }
-}
-
-/* ================= SECTIONS ================= */
-
-.section {
-  padding: 60px 0;
-}
-
-.section-title {
-  font-size: 2.2rem;
-  font-weight: 600;
-  margin-bottom: 30px;
-}
-
-.about-dark {
-  background: #111;
+.hero-content h1,
+.hero-content p {
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 40px;
-  border-radius: 12px;
+}
+.hero-content .btn {
+  background-color: white;
+  color: #000;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  transition: all 0.2s ease-in-out;
 }
 
-.highlight-section {
+.hero-content .btn:hover {
+  transform: scale(1.05);
+}
+
+
+
+  .section {
+    padding: 60px 0;
+  }
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+  }
+  .about-dark {
+    background: #111;
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+  }
+  .product-img {
+    width: 100%;
+    max-width: 360px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    background: #f3f3f3;
+    filter: blur(8px);
+    transition: filter 0.4s;
+  }
+  .product-img.loaded {
+    filter: none;
+  }
+  .highlight-section {
   background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
   padding: 60px 20px;
+  box-shadow: inset 0 1px 6px rgba(0,0,0,0.08);
 }
 
-/* ================= CAROUSEL ================= */
+.highlight-section h2 {
+  font-size: 2.4rem;
+}
 
+.highlight-section p {
+  font-size: 1.1rem;
+}
+
+.highlight-section strong {
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+  .section-link {
+    margin-top: 15px;
+    display: inline-block;
+    font-weight: 500;
+    color: #0066cc;
+    text-decoration: none;
+  }
+  .section-link:hover {
+    text-decoration: underline;
+  }
+  
 .scroll-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
-  position: relative;
+  touch-action: pan-x;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: none;
 }
 
 .scroll-wrapper::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome/Safari */
 }
 
 .scroll-track {
   display: flex;
   gap: 2rem;
   width: max-content;
-  animation: scroll-left 40s linear infinite; /* Desktop only */
+  min-width: 100vw; /* Prevents initial iOS bounce */
+  scroll-snap-align: start;
+  scroll-behavior: smooth;
+  will-change: transform;
+  animation: scroll-left 40s linear infinite;
+  animation-play-state: running;
 }
+
+
 
 .scroll-item {
   flex: 0 0 auto;
   width: 220px;
+  transition: transform 0.3s ease;
   scroll-snap-align: start;
 }
 
-.scroll-item img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 10px;
-  background: #f2f2f2;
-  content-visibility: auto;
+.scroll-item:hover {
+  transform: scale(1.05);
+  z-index: 2;
 }
 
 @keyframes scroll-left {
@@ -118,88 +166,352 @@ html {
   100% { transform: translateX(-50%); }
 }
 
-/* Mobile carousel adjustments */
-@media (max-width: 768px) {
+.scroll-item img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 
-  .scroll-track {
-    animation: none !important;
+@media (max-width: 576px) {
+  .scroll-item {
+    width: 160px; /* smaller cards */
   }
 
+  .scroll-item img {
+    height: 100px; /* smaller images */
+  }
+
+  .scroll-item p {
+    font-size: 0.85rem; /* smaller text */
+    margin-top: 0.3rem;
+  }
+}
+
+@media (max-width: 576px) {
   .scroll-item {
     width: 160px;
+  }
+
+  .scroll-item p {
+    font-size: 0.85rem;
+    text-align: center;
+    line-height: 1.2;
+    margin: 6px 0 0;
+    padding: 0 5px;
+    white-space: normal;
   }
 
   .scroll-item img {
     height: 120px;
   }
+}
 
-  .swipe-hint {
-    display: block;
+@media (max-width: 576px) {
+  .highlight-section .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .highlight-section .col-6:last-child {
+    border-bottom: none;
+  }
+
+  .highlight-section strong {
+    font-size: 1rem;
+  }
+
+  .highlight-section p {
+    font-size: 0.9rem;
   }
 }
 
-/* Swipe hint */
-.swipe-hint {
-  display: none;
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.45);
-  color: white;
-  padding: 8px 14px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 0.4s ease;
-  z-index: 5;
+@media (max-width: 576px) {
+  .section .col-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 15px 0;
+  }
+
+  .section .col-6 img {
+    max-width: 100px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+
+  .section .col-6 p {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
+  .section .mt-4 a {
+    font-size: 1rem;
+  }
 }
 
-.swipe-hint.hidden {
-  opacity: 0;
+@media (max-width: 576px) {
+  .section .container p {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .section h2.section-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .section a {
+    word-break: break-word;
+    font-size: 0.95rem;
+  }
+
+  .section {
+    padding: 30px 15px;
+  }
 }
 
-/* ================= FLOATING BUTTONS ================= */
+@media (max-width: 576px) {
+
+  .section,
+  .highlight-section,
+  .container.section {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+
+  .highlight-section .row.g-4 > div {
+    padding: 10px;
+  }
+
+  .hero {
+    padding: 80px 15px;
+  }
+
+  .btn-lg {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+
+  .product-img,
+  .img-fluid.rounded.shadow {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+}
 
 #backToTop {
   display: none;
   position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  font-size: 18px;
+  bottom: 32px;
+  right: 24px;
   z-index: 999;
+  width: 44px;
+  height: 44px;
+  font-size: 1.5rem;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.3s;
+  opacity: 0.85;
+}
+#backToTop:hover {
+  opacity: 1;
 }
 
-#whatsappFloat {
-  position: fixed;
-  bottom: 25px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  background: #25D366;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  z-index: 999;
-  text-decoration: none;
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    margin: 0;
+    padding: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-wrapper {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+
+  .scroll-track {
+    display: flex;
+    gap: 2rem;
+    width: max-content;
+  }
+
+  .scroll-item {
+    flex: 0 0 auto;
+    width: 160px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
 }
 
-#whatsappFloat:hover {
-  background: #1ebe5d;
+
+
+@media (max-width: 576px) {
+  .about-dark {
+    padding: 25px;
+    border-radius: 10px;
+  }
+
+  .about-dark h2.section-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .about-dark p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .about-dark .btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+
+  .col-md-6.mt-4.mt-md-0 img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+  }
+
+  .container.section .row {
+    margin: 0 !important;
+  }
 }
 
+@media (max-width: 576px) {
+  .section.bg-light .row.g-4 > div {
+    flex: 0 0 100%;
+    max-width: 100%;
+    text-align: center;
+    padding: 18px 0;
+  }
+  .section.bg-light .row.g-4 img {
+    display: block;
+    margin: 0 auto 12px auto;
+    max-width: 140px;   /* Increase image size */
+    width: 70vw;        /* Responsive, but not too big */
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  }
+  .section.bg-light .row.g-4 p {
+    font-size: 1.08rem;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 576px) {
+  .card {
+    padding: 10px !important;
+  }
+
+  .card img {
+    height: 100px;
+    object-fit: contain;
+  }
+
+  .card p {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  p, .lead, .fw-semibold {
+    font-size: 0.92rem !important;
+    line-height: 1.5;
+  }
+
+  .section-title {
+    font-size: 1.35rem !important;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+  }
+
+  .btn-lg {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .btn:hover {
+    transform: scale(1.03);
+    transition: all 0.2s ease;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+  }
+
+  .scroll-wrapper,
+  .scroll-track,
+  .scroll-item {
+    overflow-y: hidden !important;
+    max-height: 100% !important;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+.scroll-track {
+  animation: scroll-left 40s linear infinite;
+  animation-play-state: running;
+}
+
+.img-ratio-box {
+  position: relative;
+  width: 100%;
+  padding-top: 66.66%; /* 3:2 aspect ratio */
+  background: #f3f3f3;
+  overflow: hidden;
+}
+.img-ratio-box img {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .img-ratio-box {
+    padding-top: 60%; /* Adjust aspect ratio as needed */
+    min-height: 320px;
+    max-width: 100%;
+  }
+  .img-ratio-box img {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  }
+}
 </style>
 
-<!-- HERO -->
+<!-- Hero -->
 <div class="hero">
   <div class="hero-content">
     <h1 class="display-5">Global Sourcing, Seamless Delivery</h1>
@@ -208,68 +520,134 @@ html {
   </div>
 </div>
 
-<!-- ABOUT -->
+
+<!-- About Section -->
 <div class="container section">
   <div class="row align-items-center">
     <div class="col-md-6">
       <div class="about-dark">
         <h2 class="section-title text-white">Who We Are</h2>
-        <p>We deliver more than furniture — we deliver visions.</p>
+        <p>At Rahi Imports, powered by Uniglobe Lifestyle, we deliver more than furniture — we deliver visions. We assist India's top architects and developers with end-to-end sourcing, customization, and delivery from China directly to your project site.</p>
+        <p>Whether you're crafting iconic spaces or finishing luxury interiors, we partner with you to make every detail count.</p>
         <a href="/about" class="btn btn-outline-light mt-3">Discover Our Story →</a>
       </div>
     </div>
     <div class="col-md-6 mt-4 mt-md-0">
-      <img src="{{ url_for('static', filename='images/about.webp') }}"
-           class="img-fluid rounded shadow"
-           loading="lazy"
-           alt="About Us">
+      <div class="img-ratio-box">
+        <img 
+          src="{{ url_for('static', filename='images/about.webp') }}"
+          srcset="
+            {{ url_for('static', filename='images/about.webp') }} 400w,
+            {{ url_for('static', filename='images/about.webp') }} 800w
+          "
+          sizes="(max-width: 600px) 400px, 800px"
+          class="img-fluid rounded shadow product-img"
+          alt="About Us">
+      </div>
     </div>
   </div>
 </div>
 
-<!-- WHY CHOOSE -->
+<!-- Highlighted Why Choose Us -->
 <div class="highlight-section text-center">
   <h2 class="section-title text-dark">Why Top Designers Work With Us</h2>
   <div class="container">
     <div class="row g-4">
-      <div class="col-md-3 col-6"><strong>🏭 Curated Factory Network</strong><p>Trusted manufacturers.</p></div>
-      <div class="col-md-3 col-6"><strong>🧰 Customization</strong><p>Your specs possible.</p></div>
-      <div class="col-md-3 col-6"><strong>🚚 End-to-End</strong><p>We handle everything.</p></div>
-      <div class="col-md-3 col-6"><strong>📦 One Shipment</strong><p>All categories together.</p></div>
+      <div class="col-md-3 col-6"><strong>🏭 Curated Factory Network</strong><p>Trusted Chinese manufacturers at your fingertips.</p></div>
+      <div class="col-md-3 col-6"><strong>🧰 Customization as Standard</strong><p>Your design, your specs — always possible.</p></div>
+      <div class="col-md-3 col-6"><strong>🚚 End-to-End Fulfilment</strong><p>We handle sourcing, QC, packaging and shipping.</p></div>
+      <div class="col-md-3 col-6"><strong>📦 Everything Under One Roof</strong><p>Furniture, lighting, decor & a lot more in just one shipment.</p></div>
     </div>
   </div>
 </div>
-
-<!-- PRODUCTS -->
-<div class="section text-center" style="background:#f9f9f9;">
+  
+<!-- Our Products - Auto-Scrolling Infinite Carousel -->
+<div class="section text-center" style="padding: 60px 0; background-color: #f9f9f9;">
   <h2 class="section-title">Our Products</h2>
 
-  <div class="scroll-wrapper" id="carouselWrapper">
-    <div class="swipe-hint" id="swipeHint">Swipe →</div>
-
-    <div class="scroll-track">
-      {% for cat, img in homepage_display.items() %}
+  <div class="scroll-wrapper">
+    <div class="scroll-track" id="scrollTrack">
+    {% for cat, img in homepage_display.items() %}
       <div class="scroll-item">
-        <a href="/products?category={{ cat }}" style="text-decoration:none;color:black;">
-          <img src="{{ url_for('static', filename=img) }}" loading="lazy" alt="{{ cat }}">
+        <a href="/products?category={{ cat }}" style="text-decoration: none; color: black;">
+          <img 
+            src="{{ url_for('static', filename=img) }}"
+            srcset="
+              {{ url_for('static', filename=img) }} 400w,
+              {{ url_for('static', filename=img) }} 800w
+            "
+            sizes="(max-width: 600px) 400px, 800px"
+            alt="{{ cat }}"
+            loading="lazy">
           <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
         </a>
       </div>
-      {% endfor %}
-
-      {% for cat, img in homepage_display.items() %}
+    {% endfor %}
+    <!-- Repeat for seamless scroll -->
+    {% for cat, img in homepage_display.items() %}
       <div class="scroll-item">
-        <a href="/products?category={{ cat }}" style="text-decoration:none;color:black;">
-          <img src="{{ url_for('static', filename=img) }}" loading="lazy" alt="{{ cat }}">
+        <a href="/products?category={{ cat }}" style="text-decoration: none; color: black;">
+          <img 
+            src="{{ url_for('static', filename=img) }}"
+            srcset="
+              {{ url_for('static', filename=img) }} 400w,
+              {{ url_for('static', filename=img) }} 800w
+            "
+            sizes="(max-width: 600px) 400px, 800px"
+            alt="{{ cat }}"
+            loading="lazy">
           <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/products" style="text-decoration: none; color: black; font-weight: 500;">
+      Browse Our Full Product Line →
+    </a>
+  </div>
+</div>
+  
+<!-- Our Services Section - Updated for Better Mobile UX -->
+<div class="section text-center bg-light">
+  <div class="container">
+    <h2 class="section-title">Our Services</h2>
+    <div class="row g-4 justify-content-center">
+      {% set services = [
+        ("custom.webp", "Custom Design"),
+        ("global.webp", "Global Sourcing"),
+        ("logistics.webp", "Logistics & Shipping"),
+        ("support.webp", "End-to-End Service")
+      ] %}
+      {% for img, label in services %}
+      <div class="col-6 col-md-3">
+        <a href="/services" style="text-decoration: none; color: inherit;">
+          <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
+            <img src="{{ url_for('static', filename='images/services/' + img) }}"
+            srcset="
+              {{ url_for('static', filename='images/services/' + img) }} 100w,
+              {{ url_for('static', filename='images/services/' + img) }} 200w
+            "
+            sizes="(max-width: 600px) 100px, 200px"
+            class="img-fluid rounded-3 mb-2"
+            alt="{{ label }}">
+            <p class="fw-semibold mb-0">{{ label }}</p>
+          </div>
         </a>
       </div>
       {% endfor %}
     </div>
+    <div class="mt-4">
+      <a href="/services" class="btn btn-dark px-4 py-2 rounded-pill fw-semibold">
+        End-to-End Service →
+      </a>
+    </div>
   </div>
 </div>
 
-<!-- SHOWROOM CTA -->
+<!-- Showroom CTA - Updated -->
 <div class="container section text-center">
   <h2 class="section-title">Visit Our Foshan Showroom</h2>
   <p class="mb-3">Experience our curated collection first-hand in China’s design capital.</p>
@@ -278,40 +656,76 @@ html {
   </a>
 </div>
 
-<!-- BACK TO TOP -->
-<button id="backToTop" class="btn btn-dark shadow">↑</button>
 
-<!-- FLOATING WHATSAPP -->
-<a id="whatsappFloat"
-   href="https://wa.me/919821524678"
-   target="_blank">
-   <i class="fab fa-whatsapp"></i>
-</a>
+<!-- Contact Section - Refined -->
+<div class="section text-center bg-white">
+  <div class="container">
+    <h2 class="section-title">Get in Touch</h2>
+    <p class="mb-3">
+      Email us at<br>
+      <a href="mailto:uniglobelifestyles@gmail.com" class="fw-semibold">
+        uniglobelifestyles@gmail.com
+      </a>
+      <br>
+      Or message us on WhatsApp anytime.
+    </p>
+    <a href="https://wa.me/919821524678" target="_blank" class="btn btn-success rounded-pill px-4 py-2">
+      Chat on WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- Back to Top Button -->
+<button id="backToTop" title="Back to Top" class="btn btn-dark rounded-circle shadow">
+  ↑
+</button>
+
+
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-
-  const wrapper = document.getElementById("carouselWrapper");
-  const hint = document.getElementById("swipeHint");
-  const backBtn = document.getElementById("backToTop");
-
-  wrapper.addEventListener("scroll", function () {
-    hint.classList.add("hidden");
+  document.addEventListener("DOMContentLoaded", function () {
+    const track = document.getElementById("scrollTrack");
+    // Ensure scroll is animated on load
+    track.style.animationPlayState = "running";
   });
-
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("backToTop");
   window.addEventListener("scroll", function () {
-    if (window.scrollY > 400) {
-      backBtn.style.display = "flex";
+    if (window.scrollY > 300) {
+      btn.style.display = "flex";
     } else {
-      backBtn.style.display = "none";
+      btn.style.display = "none";
     }
   });
-
-  backBtn.addEventListener("click", function () {
+  btn.onclick = function () {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-
+  };
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('.product-img').forEach(img => {
+    img.addEventListener('load', function() {
+      img.classList.add('loaded');
+    });
+    // If already loaded (from cache)
+    if (img.complete) img.classList.add('loaded');
+  });
+});
+</script>
+<script>
+  // Always scroll to top on reload (for index1.html only)
+  window.onbeforeunload = function () {
+    window.scrollTo(0, 0);
+    const wrapper = document.querySelector('.scroll-wrapper');
+    if (wrapper) wrapper.scrollLeft = 0;
+  };
+</script>
+
+
 
 {% endblock %}
+
+
