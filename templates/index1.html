@@ -215,7 +215,13 @@
   z-index: 9999;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;   /* FIX underline */
+  line-height: 1;          /* Prevent vertical misalignment */
 }
+.whatsapp-float i {
+  text-decoration: none;
+}
+
 
 .whatsapp-float:hover {
   transform: scale(1.08);
@@ -257,8 +263,12 @@
 
   /* About Section */
   .about-dark {
-    padding: 25px;
+    padding: 18px;
   }
+.img-ratio-box img {
+  max-height: 260px;
+  object-fit: cover;
+}
 
   /* Product Carousel */
   .scroll-wrapper {
@@ -318,6 +328,22 @@
 }
 }
 
+@media (min-width: 768px) {
+  .img-ratio-box {
+    height: 100%;
+  }
+
+  .img-ratio-box img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .about-dark {
+    height: 100%;
+  }
+}
+
 
 
 </style>
@@ -333,7 +359,7 @@
 
 <!-- About Section -->
 <div class="container section">
-  <div class="row align-items-center">
+  <div class="row align-items-stretch">
     <div class="col-md-6">
       <div class="about-dark">
         <h2 class="section-title text-white">Who We Are</h2>
@@ -342,7 +368,7 @@
         <a href="/about" class="btn btn-outline-light mt-3">Discover More →</a>
       </div>
     </div>
-    <div class="col-md-6 mt-4 mt-md-0">
+    <div class="col-md-6 mt-3 mt-md-0">
       <div class="img-ratio-box">
         <img 
           src="{{ url_for('static', filename='images/about.webp') }}"
@@ -411,7 +437,6 @@ Walk through curated showrooms, compare finishes firsthand, and finalize selecti
         </a>
       </div>
     {% endfor %}
-  </div>
   </div>
 
   <div class="text-center mt-4">
