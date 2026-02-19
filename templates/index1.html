@@ -5,13 +5,9 @@
 
 <style>
 
-/* =========================
-   GLOBAL
-========================= */
-
+/* GLOBAL */
 body {
   font-family: 'Inter', sans-serif;
-  color: #333;
   overflow-x: hidden;
 }
 
@@ -19,14 +15,11 @@ html {
   scroll-behavior: smooth;
 }
 
-/* =========================
-   HERO
-========================= */
-
+/* HERO (Desktop unchanged) */
 .hero {
   background: url("{{ url_for('static', filename='images/hero.webp') }}") no-repeat center center / cover;
   position: relative;
-  padding: 140px 20px; /* DESKTOP unchanged */
+  padding: 140px 20px;
   text-align: center;
   color: white;
 }
@@ -43,15 +36,22 @@ html {
   z-index: 2;
 }
 
-.hero-content h1,
-.hero-content p {
-  text-shadow: 0 3px 6px rgba(0,0,0,0.7);
+/* MOBILE HERO ONLY */
+@media (max-width: 768px) {
+  .hero {
+    padding: 80px 15px !important;
+  }
+
+  .hero .display-5 {
+    font-size: 1.7rem !important;
+  }
+
+  .hero .lead {
+    font-size: 1rem !important;
+  }
 }
 
-/* =========================
-   SECTIONS
-========================= */
-
+/* SECTIONS */
 .section {
   padding: 60px 0;
 }
@@ -69,10 +69,13 @@ html {
   border-radius: 12px;
 }
 
-/* =========================
-   CAROUSEL
-========================= */
+/* HIGHLIGHT SECTION */
+.highlight-section {
+  background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
+  padding: 60px 20px;
+}
 
+/* CAROUSEL */
 .scroll-wrapper {
   overflow-x: auto;
   overflow-y: hidden;
@@ -89,18 +92,13 @@ html {
   display: flex;
   gap: 2rem;
   width: max-content;
-  animation: scroll-left 40s linear infinite; /* Desktop auto */
+  animation: scroll-left 40s linear infinite; /* Desktop auto only */
 }
 
 .scroll-item {
   flex: 0 0 auto;
-  width: 220px; /* desktop unchanged */
+  width: 220px;
   scroll-snap-align: start;
-  transition: transform 0.3s ease;
-}
-
-.scroll-item:hover {
-  transform: scale(1.05);
 }
 
 .scroll-item img {
@@ -108,6 +106,8 @@ html {
   height: 150px;
   object-fit: cover;
   border-radius: 10px;
+  background: #f2f2f2;
+  content-visibility: auto;
 }
 
 @keyframes scroll-left {
@@ -115,49 +115,13 @@ html {
   100% { transform: translateX(-50%); }
 }
 
-/* =========================
-   SWIPE OVERLAY (Mobile Only)
-========================= */
-
-.swipe-hint {
-  display: none;
-}
-
-/* =========================
-   MOBILE OPTIMIZATION
-========================= */
-
+/* MOBILE CAROUSEL */
 @media (max-width: 768px) {
 
-  /* Disable auto animation */
   .scroll-track {
     animation: none !important;
   }
 
-  /* Fix scroll freeze */
-  html, body {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  .scroll-wrapper {
-    touch-action: auto;
-  }
-
-  /* Hero smaller */
-  .hero {
-    padding: 70px 15px;
-  }
-
-  .hero h1 {
-    font-size: 1.6rem;
-  }
-
-  .hero p {
-    font-size: 1rem;
-  }
-
-  /* Carousel smaller */
   .scroll-item {
     width: 160px;
   }
@@ -166,27 +130,31 @@ html {
     height: 120px;
   }
 
-  /* Swipe overlay visible */
   .swipe-hint {
     display: block;
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.45);
-    color: white;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    pointer-events: none;
-    opacity: 1;
-    transition: opacity 0.4s ease;
-    z-index: 5;
   }
+}
 
-  .swipe-hint.hidden {
-    opacity: 0;
-  }
+/* SWIPE HINT */
+.swipe-hint {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.45);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  z-index: 5;
+}
+
+.swipe-hint.hidden {
+  opacity: 0;
 }
 
 </style>
@@ -219,6 +187,19 @@ html {
   </div>
 </div>
 
+<!-- WHY CHOOSE -->
+<div class="highlight-section text-center">
+  <h2 class="section-title text-dark">Why Top Designers Work With Us</h2>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-3 col-6"><strong>🏭 Curated Factory Network</strong><p>Trusted Chinese manufacturers.</p></div>
+      <div class="col-md-3 col-6"><strong>🧰 Customization</strong><p>Your specs always possible.</p></div>
+      <div class="col-md-3 col-6"><strong>🚚 End-to-End</strong><p>We handle everything.</p></div>
+      <div class="col-md-3 col-6"><strong>📦 One Shipment</strong><p>All categories together.</p></div>
+    </div>
+  </div>
+</div>
+
 <!-- PRODUCTS -->
 <div class="section text-center" style="background:#f9f9f9;">
   <h2 class="section-title">Our Products</h2>
@@ -227,13 +208,10 @@ html {
     <div class="swipe-hint" id="swipeHint">Swipe →</div>
 
     <div class="scroll-track">
-
       {% for cat, img in homepage_display.items() %}
       <div class="scroll-item">
         <a href="/products?category={{ cat }}" style="text-decoration:none;color:black;">
-          <img src="{{ url_for('static', filename=img) }}"
-               loading="lazy"
-               alt="{{ cat }}">
+          <img src="{{ url_for('static', filename=img) }}" loading="lazy" alt="{{ cat }}">
           <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
         </a>
       </div>
@@ -242,71 +220,23 @@ html {
       {% for cat, img in homepage_display.items() %}
       <div class="scroll-item">
         <a href="/products?category={{ cat }}" style="text-decoration:none;color:black;">
-          <img src="{{ url_for('static', filename=img) }}"
-               loading="lazy"
-               alt="{{ cat }}">
+          <img src="{{ url_for('static', filename=img) }}" loading="lazy" alt="{{ cat }}">
           <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
         </a>
       </div>
       {% endfor %}
-
     </div>
-  </div>
-
-</div>
-
-<!-- SERVICES -->
-<div class="section text-center bg-light">
-  <div class="container">
-    <h2 class="section-title">Our Services</h2>
-    <div class="row g-4 justify-content-center">
-      {% set services = [
-        ("custom.webp", "Custom Design"),
-        ("global.webp", "Global Sourcing"),
-        ("logistics.webp", "Logistics & Shipping"),
-        ("support.webp", "End-to-End Service")
-      ] %}
-      {% for img, label in services %}
-      <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
-          <img src="{{ url_for('static', filename='images/services/' + img) }}"
-               class="img-fluid rounded-3 mb-2"
-               loading="lazy"
-               alt="{{ label }}">
-          <p class="fw-semibold mb-0">{{ label }}</p>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-
-<!-- CONTACT -->
-<div class="section text-center bg-white">
-  <div class="container">
-    <h2 class="section-title">Get in Touch</h2>
-    <p>Email us at<br>
-      <a href="mailto:uniglobelifestyles@gmail.com" class="fw-semibold">
-        uniglobelifestyles@gmail.com
-      </a>
-    </p>
-    <a href="https://wa.me/919821524678" target="_blank"
-       class="btn btn-success rounded-pill px-4 py-2">
-      Chat on WhatsApp
-    </a>
   </div>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
   const wrapper = document.getElementById("carouselWrapper");
   const hint = document.getElementById("swipeHint");
 
   wrapper.addEventListener("scroll", function () {
     hint.classList.add("hidden");
   });
-
 });
 </script>
 

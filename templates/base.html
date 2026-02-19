@@ -6,9 +6,10 @@
   <title>Uniglobe Lifestyles</title>
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.webp') }}">
 
-  <!-- Stylesheets -->
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- Font Awesome -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         integrity="sha512-omL5xqDBQHg0eoyS8+Ef0nJzNhRtPvoMZSh5K0xHZqILG2Q4OZ+g3z8dNzrZ1fpvG1JrILyg++oL7dY4p7sbvA=="
@@ -20,11 +21,6 @@
       max-height: 50px;
     }
 
-    .navbar-brand {
-      margin-left: 0 !important;
-      padding-left: 0 !important;
-    }
-
     .navbar {
       padding-left: 1rem;
       padding-right: 1rem;
@@ -33,25 +29,14 @@
     .navbar-nav .nav-link {
       padding-left: 1rem;
       padding-right: 1rem;
-      font-size: 1.05rem;
     }
 
-    .navbar .container {
-      max-width: 100%;
-    }
-
-    @media (max-width: 576px) {
-      .navbar-brand img {
-        max-height: 40px !important;
-        margin-right: 8px;
-      }
-
-      .navbar-nav .nav-link {
-        font-size: 1rem;
-      }
-    }
-
+    /* MOBILE ONLY */
     @media (max-width: 768px) {
+      .navbar-brand img {
+        max-height: 40px;
+      }
+
       .navbar-nav .nav-link {
         font-size: 1rem;
       }
@@ -61,7 +46,6 @@
 
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
   <div class="container d-flex justify-content-between align-items-center">
     <a class="navbar-brand d-flex align-items-center gap-2" href="/">
@@ -89,12 +73,10 @@
   </div>
 </nav>
 
-<!-- Page Content -->
 <div class="content">
   {% block content %}{% endblock %}
 </div>
 
-<!-- Bootstrap Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
