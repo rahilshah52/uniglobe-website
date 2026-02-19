@@ -69,15 +69,12 @@
     border-radius: 12px;
   }
   .product-img {
-    width: 100%;
-    max-width: 360px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    background: #f3f3f3;
-    filter: blur(8px);
-    transition: filter 0.4s;
-  }
+  width: 100%;
+  filter: blur(8px);
+  transition: filter 0.4s;
+}
+
+
   .product-img.loaded {
     filter: none;
   }
@@ -320,8 +317,12 @@
 }
 
 @media (min-width: 768px) {
+
   .img-ratio-box {
     height: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   }
 
   .img-ratio-box img {
@@ -330,17 +331,13 @@
     object-fit: cover;
   }
 
-  .about-dark {
-    height: 100%;
+
+  .container.section {
+    max-width: 1140px;
   }
-    .img-ratio-box {
-    border-radius: 12px;
-    overflow: hidden;
-  }
-.container.section {
-  max-width: 1140px;
+
 }
-}
+
 
 
 
@@ -375,7 +372,7 @@
             {{ url_for('static', filename='images/about.webp') }} 800w
           "
           sizes="(max-width: 600px) 400px, 800px"
-          class="img-fluid rounded shadow product-img"
+          class="img-fluid product-img"
           alt="About Us">
       </div>
     </div>
