@@ -173,6 +173,55 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+#backToTop {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  width: 44px;
+  height: 44px;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#backToTop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#backToTop:hover {
+  transform: scale(1.08);
+}
+
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 48px;
+  height: 48px;
+  background-color: #25D366;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
 /* ===============================
    MOBILE CLEAN VERSION
    =============================== */
@@ -451,6 +500,14 @@ Walk through curated showrooms, compare finishes firsthand, and finalize selecti
   ↑
 </button>
 
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/919821524678"
+   target="_blank"
+   class="whatsapp-float"
+   aria-label="Chat on WhatsApp">
+   <i class="fa-brands fa-whatsapp"></i>
+</a>
+
 
 
 <script>
@@ -463,13 +520,15 @@ Walk through curated showrooms, compare finishes firsthand, and finalize selecti
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const btn = document.getElementById("backToTop");
+
   window.addEventListener("scroll", function () {
-    if (window.scrollY > 300) {
-      btn.style.display = "flex";
+    if (window.scrollY > 150) {
+      btn.classList.add("show");
     } else {
-      btn.style.display = "none";
+      btn.classList.remove("show");
     }
   });
+
   btn.onclick = function () {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
