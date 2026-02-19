@@ -65,7 +65,7 @@
   .about-dark {
     background: #111;
     color: white;
-    padding: 40px;
+    padding: 30px 36px;
     border-radius: 12px;
   }
   .product-img {
@@ -263,7 +263,7 @@
 
   /* About Section */
   .about-dark {
-    padding: 18px;
+    padding: 16px;
   }
 .img-ratio-box img {
   max-height: 260px;
@@ -317,15 +317,6 @@
   .btn-lg {
     padding: 10px 20px;
   }
-/* Reduce product section bottom spacing on mobile */
-.section.text-center[style*="padding: 60px 0"] {
-  padding-bottom: 25px !important;
-}
-
-/* Reduce space above Browse link */
-.section.text-center + .text-center.mt-4 {
-  margin-top: 10px !important;
-}
 }
 
 @media (min-width: 768px) {
@@ -342,6 +333,13 @@
   .about-dark {
     height: 100%;
   }
+    .img-ratio-box {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+.container.section {
+  max-width: 1140px;
+}
 }
 
 
