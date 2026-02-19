@@ -270,12 +270,9 @@
   .scroll-wrapper {
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x proximity;
   }
 
-  .scroll-track {
-    animation: none; /* STOP auto scroll on mobile */
-  }
 
   .scroll-item {
     width: 160px;
@@ -359,7 +356,7 @@
   }
 
   .about-dark {
-    max-height: 450px;
+    max-height: 480px;
   }
 
   .container.section {
