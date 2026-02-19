@@ -4,16 +4,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
+
+/* =========================
+   GLOBAL
+========================= */
+
 body {
   font-family: 'Inter', sans-serif;
-  color: #222;
+  color: #333;
+  overflow-x: hidden;
 }
 
-/* HERO */
+html {
+  scroll-behavior: smooth;
+}
+
+/* =========================
+   HERO
+========================= */
+
 .hero {
   background: url("{{ url_for('static', filename='images/hero.webp') }}") no-repeat center center / cover;
   position: relative;
-  padding: 120px 20px;
+  padding: 140px 20px; /* DESKTOP unchanged */
   text-align: center;
   color: white;
 }
@@ -30,138 +43,152 @@ body {
   z-index: 2;
 }
 
-/* SECTION */
+.hero-content h1,
+.hero-content p {
+  text-shadow: 0 3px 6px rgba(0,0,0,0.7);
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
 .section {
-  padding: 70px 0;
+  padding: 60px 0;
 }
 
 .section-title {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 600;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 
-/* WHO WE ARE */
 .about-dark {
   background: #111;
   color: white;
-  padding: 35px;
+  padding: 40px;
   border-radius: 12px;
 }
 
-.about-image-wrapper img {
-  width: 100%;
-  max-height: 420px;
-  object-fit: cover;
-  border-radius: 12px;
-}
+/* =========================
+   CAROUSEL
+========================= */
 
-/* WHY CHOOSE */
-.why-item {
-  text-align: center;
-  padding: 20px;
-}
-
-.why-item strong {
-  display: block;
-  margin-bottom: 8px;
-}
-
-/* PRODUCTS */
 .scroll-wrapper {
-  display: flex;
-  gap: 2rem;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  position: relative;
 }
 
 .scroll-wrapper::-webkit-scrollbar {
   display: none;
 }
 
+.scroll-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  animation: scroll-left 40s linear infinite; /* Desktop auto */
+}
+
 .scroll-item {
   flex: 0 0 auto;
-  width: 230px;
+  width: 220px; /* desktop unchanged */
+  scroll-snap-align: start;
+  transition: transform 0.3s ease;
+}
+
+.scroll-item:hover {
+  transform: scale(1.05);
 }
 
 .scroll-item img {
   width: 100%;
-  height: 170px;
+  height: 150px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
-/* SERVICES DESKTOP */
-.service-card {
-  border-radius: 16px;
-  transition: all 0.25s ease;
-  padding: 20px;
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.service-card img {
-  width: 100%;
-  border-radius: 12px;
-  margin-bottom: 15px;
+/* =========================
+   SWIPE OVERLAY (Mobile Only)
+========================= */
+
+.swipe-hint {
+  display: none;
 }
 
-.service-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-}
+/* =========================
+   MOBILE OPTIMIZATION
+========================= */
 
-/* FOOTER STRIP */
-.footer-strip {
-  background: #111;
-  color: white;
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.footer-strip a {
-  color: white;
-  text-decoration: underline;
-}
-
-/* MOBILE ONLY */
 @media (max-width: 768px) {
 
+  /* Disable auto animation */
+  .scroll-track {
+    animation: none !important;
+  }
+
+  /* Fix scroll freeze */
+  html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .scroll-wrapper {
+    touch-action: auto;
+  }
+
+  /* Hero smaller */
   .hero {
-    padding: 90px 20px;
+    padding: 70px 15px;
   }
 
-  .section {
-    padding: 50px 20px;
+  .hero h1 {
+    font-size: 1.6rem;
   }
 
-  .section-title {
-    font-size: 1.4rem;
+  .hero p {
+    font-size: 1rem;
   }
 
-  /* Shorten Who We Are */
-  .about-dark p:nth-of-type(2) {
-    display: none;
+  /* Carousel smaller */
+  .scroll-item {
+    width: 160px;
   }
 
-  /* Services mobile style */
-  .service-card {
-    box-shadow: none !important;
-    padding: 0;
-    margin-bottom: 40px;
+  .scroll-item img {
+    height: 120px;
   }
 
-  .service-card img {
-    border-radius: 14px;
+  /* Swipe overlay visible */
+  .swipe-hint {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.45);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    z-index: 5;
   }
 
-  .service-card p {
-    display: none;
+  .swipe-hint.hidden {
+    opacity: 0;
   }
-
-  .service-card:hover {
-    transform: none;
-  }
-
 }
+
 </style>
 
 <!-- HERO -->
@@ -173,75 +200,66 @@ body {
   </div>
 </div>
 
-<!-- WHO WE ARE -->
+<!-- ABOUT -->
 <div class="container section">
   <div class="row align-items-center">
     <div class="col-md-6">
       <div class="about-dark">
         <h2 class="section-title text-white">Who We Are</h2>
-        <p>
-          We partner with architects and developers to deliver curated sourcing,
-          custom manufacturing and seamless global logistics from China to your project site.
-        </p>
-        <p>
-          From concept to completion, we execute with precision and reliability.
-        </p>
-        <a href="/about" class="btn btn-outline-light mt-3">
-          Discover Our Story →
-        </a>
+        <p>At Rahi Imports, powered by Uniglobe Lifestyle, we deliver more than furniture — we deliver visions.</p>
+        <a href="/about" class="btn btn-outline-light mt-3">Discover Our Story →</a>
       </div>
     </div>
-    <div class="col-md-6 mt-4 mt-md-0 about-image-wrapper">
-      <img src="{{ url_for('static', filename='images/about.webp') }}" loading="lazy">
-    </div>
-  </div>
-</div>
-
-<!-- WHY CHOOSE -->
-<div class="section bg-light text-center">
-  <div class="container">
-    <h2 class="section-title">Why Designers Work With Us</h2>
-    <div class="row">
-      <div class="col-md-3 col-6 why-item">
-        <strong>Curated Factory Network</strong>
-        Direct access to vetted manufacturers.
-      </div>
-      <div class="col-md-3 col-6 why-item">
-        <strong>Customization Standard</strong>
-        Built to your exact specifications.
-      </div>
-      <div class="col-md-3 col-6 why-item">
-        <strong>End-to-End Execution</strong>
-        From sourcing to delivery.
-      </div>
-      <div class="col-md-3 col-6 why-item">
-        <strong>One Shipment Strategy</strong>
-        Consolidated global procurement.
-      </div>
+    <div class="col-md-6 mt-4 mt-md-0">
+      <img src="{{ url_for('static', filename='images/about.webp') }}"
+           class="img-fluid rounded shadow"
+           loading="lazy"
+           alt="About Us">
     </div>
   </div>
 </div>
 
 <!-- PRODUCTS -->
-<div class="section text-center">
+<div class="section text-center" style="background:#f9f9f9;">
   <h2 class="section-title">Our Products</h2>
-  <div class="scroll-wrapper mt-4">
-    {% for cat, img in homepage_display.items() %}
-    <div class="scroll-item">
-      <a href="/products?category={{ cat }}" style="text-decoration:none; color:black;">
-        <img src="{{ url_for('static', filename=img) }}" loading="lazy">
-        <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
-      </a>
+
+  <div class="scroll-wrapper" id="carouselWrapper">
+    <div class="swipe-hint" id="swipeHint">Swipe →</div>
+
+    <div class="scroll-track">
+
+      {% for cat, img in homepage_display.items() %}
+      <div class="scroll-item">
+        <a href="/products?category={{ cat }}" style="text-decoration:none;color:black;">
+          <img src="{{ url_for('static', filename=img) }}"
+               loading="lazy"
+               alt="{{ cat }}">
+          <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+        </a>
+      </div>
+      {% endfor %}
+
+      {% for cat, img in homepage_display.items() %}
+      <div class="scroll-item">
+        <a href="/products?category={{ cat }}" style="text-decoration:none;color:black;">
+          <img src="{{ url_for('static', filename=img) }}"
+               loading="lazy"
+               alt="{{ cat }}">
+          <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+        </a>
+      </div>
+      {% endfor %}
+
     </div>
-    {% endfor %}
   </div>
+
 </div>
 
 <!-- SERVICES -->
-<div class="section text-center bg-white">
+<div class="section text-center bg-light">
   <div class="container">
     <h2 class="section-title">Our Services</h2>
-    <div class="row g-4 mt-4">
+    <div class="row g-4 justify-content-center">
       {% set services = [
         ("custom.webp", "Custom Design"),
         ("global.webp", "Global Sourcing"),
@@ -249,10 +267,13 @@ body {
         ("support.webp", "End-to-End Service")
       ] %}
       {% for img, label in services %}
-      <div class="col-md-3 col-12">
-        <div class="service-card">
-          <img src="{{ url_for('static', filename='images/services/' + img) }}" loading="lazy">
-          <p class="fw-semibold">{{ label }}</p>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
+          <img src="{{ url_for('static', filename='images/services/' + img) }}"
+               class="img-fluid rounded-3 mb-2"
+               loading="lazy"
+               alt="{{ label }}">
+          <p class="fw-semibold mb-0">{{ label }}</p>
         </div>
       </div>
       {% endfor %}
@@ -260,11 +281,33 @@ body {
   </div>
 </div>
 
-<!-- FOOTER STRIP -->
-<div class="footer-strip">
-  <p>Mumbai, India</p>
-  <p>Foshan, China</p>
-  <p><a href="/contact">Contact Us</a></p>
+<!-- CONTACT -->
+<div class="section text-center bg-white">
+  <div class="container">
+    <h2 class="section-title">Get in Touch</h2>
+    <p>Email us at<br>
+      <a href="mailto:uniglobelifestyles@gmail.com" class="fw-semibold">
+        uniglobelifestyles@gmail.com
+      </a>
+    </p>
+    <a href="https://wa.me/919821524678" target="_blank"
+       class="btn btn-success rounded-pill px-4 py-2">
+      Chat on WhatsApp
+    </a>
+  </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const wrapper = document.getElementById("carouselWrapper");
+  const hint = document.getElementById("swipeHint");
+
+  wrapper.addEventListener("scroll", function () {
+    hint.classList.add("hidden");
+  });
+
+});
+</script>
 
 {% endblock %}
