@@ -173,244 +173,69 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-@media (max-width: 576px) {
-  .scroll-item {
-    width: 160px; /* smaller cards */
+/* ===============================
+   MOBILE CLEAN VERSION
+   =============================== */
+
+@media (max-width: 768px) {
+
+  /* Reset scroll behavior safely */
+  html, body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
   }
 
-  .scroll-item img {
-    height: 100px; /* smaller images */
+  /* Section spacing */
+  .section,
+  .highlight-section {
+    padding: 40px 15px;
   }
 
-  .scroll-item p {
-    font-size: 0.85rem; /* smaller text */
-    margin-top: 0.3rem;
+  /* Hero adjustments */
+  .hero {
+    padding: 80px 15px;
   }
-}
 
-@media (max-width: 576px) {
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  p, .lead {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* About Section */
+  .about-dark {
+    padding: 25px;
+  }
+
+  /* Product Carousel */
+  .scroll-wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+  }
+
+  .scroll-track {
+    animation: none; /* STOP auto scroll on mobile */
+  }
+
   .scroll-item {
     width: 160px;
-  }
-
-  .scroll-item p {
-    font-size: 0.85rem;
-    text-align: center;
-    line-height: 1.2;
-    margin: 6px 0 0;
-    padding: 0 5px;
-    white-space: normal;
   }
 
   .scroll-item img {
     height: 120px;
   }
-}
 
-@media (max-width: 576px) {
-  .highlight-section .col-6 {
-    flex: 0 0 100%;
-    max-width: 100%;
-    padding: 12px 0;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .highlight-section .col-6:last-child {
-    border-bottom: none;
-  }
-
-  .highlight-section strong {
-    font-size: 1rem;
-  }
-
-  .highlight-section p {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .section .col-6 {
-    flex: 0 0 100%;
-    max-width: 100%;
-    padding: 15px 0;
-  }
-
-  .section .col-6 img {
-    max-width: 100px;
-    height: auto;
-    margin-bottom: 10px;
-  }
-
-  .section .col-6 p {
-    font-size: 0.95rem;
-    margin-bottom: 0;
-  }
-
-  .section .mt-4 a {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .section .container p {
-    font-size: 0.95rem;
-    line-height: 1.4;
-  }
-
-  .section h2.section-title {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-  }
-
-  .section a {
-    word-break: break-word;
-    font-size: 0.95rem;
-  }
-
-  .section {
-    padding: 30px 15px;
-  }
-}
-
-@media (max-width: 576px) {
-
-  .section,
-  .highlight-section,
-  .container.section {
-    padding-top: 40px !important;
-    padding-bottom: 40px !important;
-  }
-
-  .highlight-section .row.g-4 > div {
-    padding: 10px;
-  }
-
-  .hero {
-    padding: 80px 15px;
-  }
-
-  .btn-lg {
-    padding: 10px 20px;
-    font-size: 1rem;
-  }
-
-  .product-img,
-  .img-fluid.rounded.shadow {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  }
-
-}
-
-#backToTop {
-  display: none;
-  position: fixed;
-  bottom: 32px;
-  right: 24px;
-  z-index: 999;
-  width: 44px;
-  height: 44px;
-  font-size: 1.5rem;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.3s;
-  opacity: 0.85;
-}
-#backToTop:hover {
-  opacity: 1;
-}
-
-@media (max-width: 768px) {
-  html, body {
-    overflow-x: hidden !important;
-    margin: 0;
-    padding: 0;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .scroll-wrapper {
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
-  }
-
-  .scroll-track {
-    display: flex;
-    gap: 2rem;
-    width: max-content;
-  }
-
-  .scroll-item {
-    flex: 0 0 auto;
-    width: 160px;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-}
-
-
-
-@media (max-width: 576px) {
-  .about-dark {
-    padding: 25px;
-    border-radius: 10px;
-  }
-
-  .about-dark h2.section-title {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-  }
-
-  .about-dark p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin-bottom: 0.75rem;
-  }
-
-  .about-dark .btn {
-    font-size: 0.9rem;
-    padding: 8px 16px;
-  }
-
-  .col-md-6.mt-4.mt-md-0 img {
-    max-width: 100%;
-    height: auto;
-    margin-top: 1rem;
-  }
-
-  .container.section .row {
-    margin: 0 !important;
-  }
-}
-
-@media (max-width: 576px) {
+  /* Services cards */
   .section.bg-light .row.g-4 > div {
     flex: 0 0 100%;
     max-width: 100%;
     text-align: center;
     padding: 18px 0;
-  }
-  .section.bg-light .row.g-4 img {
-    display: block;
-    margin: 0 auto 12px auto;
-    max-width: 140px;   /* Increase image size */
-    width: 70vw;        /* Responsive, but not too big */
-    height: auto;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  }
-  .section.bg-light .row.g-4 p {
-    font-size: 1.08rem;
-    margin: 0;
-    font-weight: 500;
-  }
-}
-
-@media (max-width: 576px) {
-  .card {
-    padding: 10px !important;
   }
 
   .card img {
@@ -418,96 +243,18 @@
     object-fit: contain;
   }
 
-  .card p {
-    font-size: 0.95rem;
-    margin-bottom: 0;
-  }
-}
-
-@media (max-width: 576px) {
-  p, .lead, .fw-semibold {
-    font-size: 0.92rem !important;
-    line-height: 1.5;
-  }
-
-  .section-title {
-    font-size: 1.35rem !important;
-  }
-
+  /* Buttons */
   .btn {
     font-size: 0.95rem;
   }
 
   .btn-lg {
-    font-size: 1rem;
     padding: 10px 20px;
   }
+
 }
 
-@media (min-width: 768px) {
-  .btn:hover {
-    transform: scale(1.03);
-    transition: all 0.2s ease;
-  }
-}
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (max-width: 768px) {
-  html, body {
-    overflow-x: hidden !important;
-    overflow-y: auto;
-    margin: 0;
-    padding: 0;
-  }
-
-  .scroll-wrapper,
-  .scroll-track,
-  .scroll-item {
-    overflow-y: hidden !important;
-    max-height: 100% !important;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-}
-.scroll-track {
-  animation: scroll-left 40s linear infinite;
-  animation-play-state: running;
-}
-
-.img-ratio-box {
-  position: relative;
-  width: 100%;
-  padding-top: 66.66%; /* 3:2 aspect ratio */
-  background: #f3f3f3;
-  overflow: hidden;
-}
-.img-ratio-box img {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  object-fit: cover;
-}
-
-@media (min-width: 768px) {
-  .img-ratio-box {
-    padding-top: 60%; /* Adjust aspect ratio as needed */
-    min-height: 320px;
-    max-width: 100%;
-  }
-  .img-ratio-box img {
-    max-width: 100%;
-    width: 100%;
-    height: 100%;
-    min-height: 320px;
-    object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-  }
-}
 </style>
 
 <!-- Hero -->
