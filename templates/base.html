@@ -8,126 +8,94 @@
 
   <!-- Stylesheets -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
 
   <style>
     .navbar-brand img {
       max-height: 50px;
     }
-
-    @media (max-width: 576px) {
-      .navbar-brand {
-        flex-wrap: nowrap !important;
-      }
-
-      .navbar-brand img {
-        max-height: 40px !important;
-        margin-right: 8px;
-      }
-
-      .navbar-brand span {
-        font-size: 1.1rem !important;
-        white-space: nowrap;
-      }
+      @media (max-width: 576px) {
+    .navbar-brand {
+      flex-wrap: nowrap !important;
     }
 
+    .navbar-brand img {
+      max-height: 40px !important;
+      margin-right: 8px;
+    }
+
+    .navbar-brand span {
+      font-size: 1.1rem !important;
+      white-space: nowrap;
+    }
+  }
     .navbar-brand {
       margin-left: 0 !important;
       padding-left: 0 !important;
     }
-
     .navbar {
       padding-left: 1rem;
       padding-right: 1rem;
     }
-
     .navbar-nav .nav-link {
       padding-left: 1rem;
       padding-right: 1rem;
     }
-
     .navbar .container {
       max-width: 100%;
     }
-
-    .nav-icon {
-      font-size: 1.3rem;
-      color: #000;
-    }
-
     @media (max-width: 768px) {
       .navbar-brand span {
         font-size: 1rem;
       }
     }
+    /* Navbar Hover Effect */
+.navbar-nav .nav-link {
+  transition: transform 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  transform: scale(1.08);
+}
   </style>
 </head>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    once: true,           // Animates only once per scroll
+    duration: 600,        // Animation duration in ms
+    easing: 'ease-in-out' // Easing type
+  });
+</script>
 
 <body>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
   <div class="container d-flex justify-content-between align-items-center">
-
-    <!-- Logo -->
-    <a class="navbar-brand d-flex align-items-center" href="/">
+    <a class="navbar-brand d-flex flex-wrap align-items-center gap-2" href="/">
       <img src="{{ url_for('static', filename='images/Black.webp') }}" alt="Uniglobe Logo" style="max-height: 80px;">
+    
     </a>
-
-    <!-- Mobile Toggle -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-    <!-- Navbar Links -->
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center">
-
-        <!-- Home Icon -->
+          <!-- Home Icon -->
         <li class="nav-item">
           <a class="nav-link" href="/" title="Home">
             <i class="fa-solid fa-house nav-icon"></i>
           </a>
         </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/about">
-            <span style="font-size: 1.4rem; color: #000;">About Us</span>
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/products" onclick="localStorage.removeItem('activeCategory')">
-            <span style="font-size: 1.4rem; color: #000;">Products</span>
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/catalogs">
-            <span style="font-size: 1.4rem; color: #000;">Catalogs</span>
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/services">
-            <span style="font-size: 1.4rem; color: #000;">Services</span>
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/showroom">
-            <span style="font-size: 1.4rem; color: #000;">Offices</span>
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="/contact">
-            <span style="font-size: 1.4rem; color: #000;">Contact Us</span>
-          </a>
-        </li>
-
+        <li class="nav-item"><a class="nav-link" href="/about"><span style="font-size: 1.4rem; color: black;">About Us</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/products" onclick="localStorage.removeItem('activeCategory')"><span style="font-size: 1.4rem; color: #000;">Products</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/catalogs"><span style="font-size: 1.4rem; color: #000;">Catalogs</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/services"><span style="font-size: 1.4rem; color: #000;">Services</span></a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact"><span style="font-size: 1.4rem; color: #000;">Contact Us</span></a></li>
       </ul>
     </div>
   </div>
@@ -141,15 +109,13 @@
 <!-- Bootstrap Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+
+<!-- AOS CSS -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <!-- AOS JS -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-  AOS.init({
-    once: true,
-    duration: 600,
-    easing: 'ease-in-out'
-  });
+  AOS.init();
 </script>
-
 </body>
 </html>
