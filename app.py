@@ -68,47 +68,14 @@ import os
 
 @app.route('/products')
 def products():
-    base_path = os.path.join(app.static_folder, 'images')
 
-    category_display_names = {
-        'bedroom': 'Bedroom & Beds',
-        'living': 'Sofa & Lounge Seating',
-        'dining': 'Dining & Coffee Tables',
-        'modular': 'Modular Furniture and Cabinets',
-        'lighting': 'Lighting & Fixtures',
-        'sanitaryware': 'Sanitaryware & Bathroom Fittings',
-        'Premium': 'Premuim Collection'
-    }
+    if not os.path.exists(DATA_FILE):
+        return render_template("products.html", product_data={})
 
-    category_prefixes = {
-        'bedroom': 'BD',
-        'living': 'LV',
-        'dining': 'DG',
-        'modular': 'MC',
-        'lighting': 'LG',
-        'sanitaryware': 'SW',
-        'premium': 'PC'
-    }
+    with open(DATA_FILE, "r") as f:
+        product_data = json.load(f)
 
-    product_images = {}
-
-    for category, prefix in category_prefixes.items():
-        folder_path = os.path.join(base_path, category)
-        if os.path.isdir(folder_path):
-            images = sorted(os.listdir(folder_path))
-            product_images[category] = {
-                'display_name': category_display_names.get(category, category.title()),
-                'items': []
-            }
-            for i, img in enumerate(images, start=1):
-                if img.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
-                    code = f"{prefix}{i}"
-                    product_images[category]['items'].append({
-                        'filename': img,
-                        'code': code
-                    })
-
-    return render_template('products.html', product_images=product_images)
+    return render_template("products.html", product_data=product_data)
 
 @app.route('/services')
 def services():

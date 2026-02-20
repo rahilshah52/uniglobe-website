@@ -1,132 +1,79 @@
 {% extends "base.html" %}
 {% block content %}
 
-<style>
-  .products-section {
-    padding: 70px 20px;
-  }
+<div class="container py-5">
 
-  .products-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 40px;
-    text-align: center;
-  }
+  {% if not product_data %}
+    <p class="text-center text-muted">No products available.</p>
+  {% endif %}
 
-  /* CATEGORY FILTER */
-  .category-filter {
-    text-align: center;
-    margin-bottom: 40px;
-  }
+  {% for category, cat_data in product_data.items() %}
 
-  .category-filter button {
-    background: white;
-    border: 1px solid #ddd;
-    padding: 8px 18px;
-    border-radius: 25px;
-    margin: 5px;
-    font-size: 0.9rem;
-    transition: 0.2s;
-  }
+    <div class="mb-5">
 
-  .category-filter button.active,
-  .category-filter button:hover {
-    background: #1C1C1C;
-    color: white;
-  }
+      <h3 class="fw-semibold mb-4">
+        {{ cat_data.display_name }}
+      </h3>
 
-  /* PRODUCT GRID */
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
+      <div class="row g-4">
 
-  .product-card {
-    background: white;
-    border-radius: 14px;
-    overflow: hidden;
-    transition: 0.3s ease;
-  }
+        {% for item in cat_data.items %}
 
-  .product-card:hover {
-    transform: translateY(-4px);
-  }
+        <div class="col-6 col-md-4 col-lg-3">
 
-  .product-card img {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-  }
+          <a href="{{ url_for('product_detail', category=category, code=item.code) }}"
+             class="text-decoration-none text-dark">
 
-  .product-info {
-    padding: 12px 15px;
-  }
+            <div class="card border-0 shadow-sm h-100 product-card">
 
-  .product-code {
-    font-size: 0.8rem;
-    opacity: 0.6;
-  }
+              <img src="{{ url_for('static', filename=item.images[0]) }}"
+                   class="card-img-top product-image">
 
-  @media (min-width: 768px) {
-    .product-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-</style>
+              <div class="card-body text-center">
+                <h6 class="fw-semibold mb-1">{{ item.title }}</h6>
+                <small class="text-muted">{{ item.code }}</small>
+              </div>
 
-<div class="products-section container">
+            </div>
 
-  <h2 class="products-title">Our Collection</h2>
+          </a>
 
-  <!-- CATEGORY FILTER -->
-  <div class="category-filter">
-    <button class="active" onclick="filterCategory('all')">All</button>
-    {% for category in product_images.keys() %}
-      <button onclick="filterCategory('{{ category }}')">
-        {{ category|capitalize }}
-      </button>
-    {% endfor %}
-  </div>
-
-  <!-- PRODUCT GRID -->
-  <div class="product-grid">
-
-    {% for category, images in product_images.items() %}
-      {% for image in images %}
-      <div class="product-card"
-           data-category="{{ category }}">
-        <img src="{{ url_for('static', filename=image) }}"
-             loading="lazy"
-             alt="{{ category }}">
-        <div class="product-info">
-          <div class="product-code">{{ image.split('/')[-1].split('.')[0] }}</div>
         </div>
-      </div>
-      {% endfor %}
-    {% endfor %}
 
-  </div>
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+  {% endfor %}
 
 </div>
 
-<script>
-  function filterCategory(category) {
-    const buttons = document.querySelectorAll('.category-filter button');
-    buttons.forEach(btn => btn.classList.remove('active'));
+<style>
 
-    event.target.classList.add('active');
+.product-image {
+  height: 250px;
+  object-fit: contain;
+  background: #f9f9f9;
+  padding: 15px;
+}
 
-    const cards = document.querySelectorAll('.product-card');
+.product-card {
+  transition: 0.3s ease;
+  border-radius: 12px;
+}
 
-    cards.forEach(card => {
-      if (category === 'all' || card.dataset.category === category) {
-        card.style.display = "block";
-      } else {
-        card.style.display = "none";
-      }
-    });
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+@media (max-width: 768px) {
+  .product-image {
+    height: 180px;
   }
-</script>
+}
+
+</style>
 
 {% endblock %}

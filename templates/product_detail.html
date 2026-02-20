@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-5">
+
+  <div class="row g-5">
+
+    <!-- IMAGE SECTION -->
+    <div class="col-lg-6">
+
+      <div class="main-image-wrapper">
+        <img id="mainImage"
+             src="{{ url_for('static', filename=product.images[0]) }}"
+             class="img-fluid rounded shadow-sm main-image">
+      </div>
+
+      <!-- THUMBNAILS -->
+      <div class="d-flex gap-2 mt-3 flex-wrap">
+        {% for img in product.images %}
+          <img src="{{ url_for('static', filename=img) }}"
+               class="thumb-img"
+               onclick="changeImage(this)">
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- PRODUCT INFO -->
+    <div class="col-lg-6">
+
+      <h2 class="fw-semibold mb-3">{{ product.title }}</h2>
+
+      <p class="text-muted mb-4">
+        {{ product.description }}
+      </p>
+
+      {% if product.specs %}
+      <div class="mb-4">
+        <h6 class="fw-semibold mb-3">Specifications</h6>
+        <ul class="list-unstyled">
+          {% for key, value in product.specs.items() %}
+            <li class="mb-2">
+              <strong>{{ key }}:</strong> {{ value }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <a href="/contact" class="btn btn-dark px-4 py-2 rounded-pill">
+        Inquire Now
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FULLSCREEN MODAL -->
+<div id="imageModal" class="image-modal">
+  <span class="close-btn" onclick="closeModal()">&times;</span>
+  <img id="modalImage">
+</div>
+
+<style>
+
+.main-image {
+  width: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+  transition: 0.3s ease;
+}
+
+.main-image:hover {
+  transform: scale(1.02);
+}
+
+.thumb-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #eee;
+  transition: 0.2s;
+}
+
+.thumb-img:hover {
+  border-color: black;
+}
+
+.image-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9);
+}
+
+.image-modal img {
+  display: block;
+  margin: auto;
+  max-width: 90%;
+  max-height: 85%;
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .thumb-img {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+</style>
+
+<script>
+
+function changeImage(element) {
+  document.getElementById("mainImage").src = element.src;
+}
+
+document.getElementById("mainImage").onclick = function() {
+  document.getElementById("imageModal").style.display = "block";
+  document.getElementById("modalImage").src = this.src;
+};
+
+function closeModal() {
+  document.getElementById("imageModal").style.display = "none";
+}
+
+</script>
+
+{% endblock %}
