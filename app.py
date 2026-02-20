@@ -3,6 +3,8 @@ from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import os
 from flask import Flask, render_template
+import json
+from werkzeug.utils import secure_filename
 
 # List of product categories (editable!)
 categories = ['bedroom', 'living', 'dining', 'modular', 'lighting', 'sanitaryware', 'premium']
@@ -197,6 +199,80 @@ Message: {product_message}
         return redirect(url_for('contact'))
 
     return render_template('contact.html')
+UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
+DATA_FILE = os.path.join(app.static_folder, "data", "products.json")
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+
+    # Load existing categories
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as f:
+            data = json.load(f)
+    else:
+        data = {}
+
+    existing_categories = list(data.keys())
+
+    if request.method == "POST":
+
+        selected_category = request.form.get("category_select")
+        new_category = request.form.get("new_category")
+
+        # Decide final category
+        if selected_category == "new":
+            category = new_category.strip().lower()
+        else:
+            category = selected_category
+
+        code = request.form.get("code")
+        title = request.form.get("title")
+        description = request.form.get("description")
+
+        specs_keys = request.form.getlist("spec_key[]")
+        specs_values = request.form.getlist("spec_value[]")
+
+        specs = {}
+        for k, v in zip(specs_keys, specs_values):
+            if k and v:
+                specs[k] = v
+
+        files = request.files.getlist("images")
+
+        # Create product folder
+        product_folder = os.path.join(UPLOAD_FOLDER, category, code)
+        os.makedirs(product_folder, exist_ok=True)
+
+        image_paths = []
+
+        for file in files:
+            if file:
+                filename = secure_filename(file.filename)
+                save_path = os.path.join(product_folder, filename)
+                file.save(save_path)
+                image_paths.append(f"uploads/{category}/{code}/{filename}")
+
+        # Create category if new
+        if category not in data:
+            data[category] = {
+                "display_name": category.title(),
+                "items": []
+            }
+
+        data[category]["items"].append({
+            "code": code,
+            "title": title,
+            "description": description,
+            "specs": specs,
+            "images": image_paths
+        })
+
+        with open(DATA_FILE, "w") as f:
+            json.dump(data, f, indent=4)
+
+        return "Product Uploaded Successfully"
+
+    return render_template("upload.html", categories=existing_categories)
 
 if __name__ == '__main__':
     app.run(debug=True)
