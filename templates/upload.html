@@ -1,74 +1,114 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Upload Product</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
 
-<h2>Upload New Product</h2>
+<div class="container py-5" style="max-width: 900px;">
 
-<form method="POST" enctype="multipart/form-data">
+  <h2 class="mb-4 text-center fw-semibold">Upload New Product</h2>
 
-    <label>Select Category:</label>
-    <select name="category_select" id="category_select" required>
+  <form method="POST" enctype="multipart/form-data">
+
+    <!-- CATEGORY -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Category</label>
+      <select name="category_select" class="form-select" id="categorySelect" required>
+        <option value="">Select Category</option>
         {% for cat in categories %}
-            <option value="{{ cat }}">{{ cat.title() }}</option>
+          <option value="{{ cat }}">{{ cat.title() }}</option>
         {% endfor %}
         <option value="new">+ Create New Category</option>
-    </select>
-
-    <br><br>
-
-    <div id="new_category_field" style="display:none;">
-        <label>New Category Name:</label>
-        <input type="text" name="new_category">
-        <br><br>
+      </select>
     </div>
 
-    <label>Product Code:</label>
-    <input type="text" name="code" required>
-    <br><br>
-
-    <label>Title:</label>
-    <input type="text" name="title" required>
-    <br><br>
-
-    <label>Description:</label><br>
-    <textarea name="description" rows="4"></textarea>
-    <br><br>
-
-    <h4>Specifications</h4>
-
-    <div>
-        <input type="text" name="spec_key[]" placeholder="Spec Name">
-        <input type="text" name="spec_value[]" placeholder="Spec Value">
+    <!-- NEW CATEGORY FIELD -->
+    <div class="mb-4 d-none" id="newCategoryDiv">
+      <label class="form-label fw-semibold">New Category Name</label>
+      <input type="text" name="new_category" class="form-control" placeholder="Enter new category name">
     </div>
 
-    <div>
-        <input type="text" name="spec_key[]" placeholder="Spec Name">
-        <input type="text" name="spec_value[]" placeholder="Spec Value">
+    <!-- TITLE -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Product Title</label>
+      <input type="text" name="title" class="form-control" required>
     </div>
 
-    <br>
+    <!-- DESCRIPTION -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Description</label>
+      <textarea name="description" class="form-control" rows="4"></textarea>
+    </div>
 
-    <label>Upload Images:</label>
-    <input type="file" name="images" multiple required>
+    <!-- SPECIFICATIONS -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Specifications</label>
+      <div id="specContainer">
+        <div class="row g-2 mb-2">
+          <div class="col">
+            <input type="text" name="spec_key[]" class="form-control" placeholder="Spec Name (e.g. Material)">
+          </div>
+          <div class="col">
+            <input type="text" name="spec_value[]" class="form-control" placeholder="Spec Value (e.g. Teak Wood)">
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-dark mt-2" onclick="addSpec()">+ Add Specification</button>
+    </div>
 
-    <br><br>
+    <!-- MAIN IMAGE -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Main Image (Required)</label>
+      <input type="file" name="main_image" class="form-control" accept="image/*" required>
+    </div>
 
-    <button type="submit">Upload Product</button>
+    <!-- ADDITIONAL IMAGES -->
+    <div class="mb-4">
+      <label class="form-label fw-semibold">Additional Images</label>
+      <input type="file" name="other_images" class="form-control" multiple accept="image/*">
+    </div>
 
-</form>
+    <!-- KEEP ORIGINAL -->
+    <div class="form-check mb-4">
+      <input class="form-check-input" type="checkbox" value="yes" name="keep_original" id="keepOriginal">
+      <label class="form-check-label" for="keepOriginal">
+        Keep original image copy
+      </label>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-dark px-5 py-2 rounded-pill">
+        Upload Product
+      </button>
+    </div>
+
+  </form>
+</div>
 
 <script>
-document.getElementById("category_select").addEventListener("change", function() {
+  const categorySelect = document.getElementById("categorySelect");
+  const newCategoryDiv = document.getElementById("newCategoryDiv");
+
+  categorySelect.addEventListener("change", function() {
     if (this.value === "new") {
-        document.getElementById("new_category_field").style.display = "block";
+      newCategoryDiv.classList.remove("d-none");
     } else {
-        document.getElementById("new_category_field").style.display = "none";
+      newCategoryDiv.classList.add("d-none");
     }
-});
+  });
+
+  function addSpec() {
+    const container = document.getElementById("specContainer");
+    const row = document.createElement("div");
+    row.className = "row g-2 mb-2";
+    row.innerHTML = `
+      <div class="col">
+        <input type="text" name="spec_key[]" class="form-control" placeholder="Spec Name">
+      </div>
+      <div class="col">
+        <input type="text" name="spec_value[]" class="form-control" placeholder="Spec Value">
+      </div>
+    `;
+    container.appendChild(row);
+  }
 </script>
 
-</body>
-</html>
+{% endblock %}

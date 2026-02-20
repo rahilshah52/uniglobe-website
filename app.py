@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import os
-from flask import Flask, render_template
 import json
 from werkzeug.utils import secure_filename
+from PIL import Image
 
 # List of product categories (editable!)
 categories = ['bedroom', 'living', 'dining', 'modular', 'lighting', 'sanitaryware', 'premium']
@@ -31,6 +31,13 @@ homepage_display_names = {
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
+
+UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
+DATA_FILE = os.path.join(app.static_folder, "data", "products.json")
+
+# Ensure folders exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
 
 # Email configuration
 app.config.update(
@@ -199,13 +206,43 @@ Message: {product_message}
         return redirect(url_for('contact'))
 
     return render_template('contact.html')
-UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
-DATA_FILE = os.path.join(app.static_folder, "data", "products.json")
+
+
+
+
+
+
+def process_image(image_file, save_path, keep_original=False):
+
+    img = Image.open(image_file)
+
+    # Convert to RGB safely
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGB")
+
+    max_width = 1600
+
+    # Resize proportionally (NO distortion)
+    if img.width > max_width:
+        ratio = max_width / float(img.width)
+        new_height = int(img.height * ratio)
+        img = img.resize((max_width, new_height), Image.LANCZOS)
+
+    img.save(save_path, "WEBP", quality=85, optimize=True)
+
+    # Save original if requested
+    if keep_original:
+        image_file.seek(0)
+        original_extension = image_file.filename.split('.')[-1]
+        original_path = save_path.replace(".webp", f"_original.{original_extension}")
+        with open(original_path, "wb") as f:
+            f.write(image_file.read())
+
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
 
-    # Load existing categories
+    # Load existing data
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, "r") as f:
             data = json.load(f)
@@ -216,18 +253,34 @@ def upload():
 
     if request.method == "POST":
 
+        # ---------------------------
+        # CATEGORY HANDLING
+        # ---------------------------
         selected_category = request.form.get("category_select")
         new_category = request.form.get("new_category")
 
-        # Decide final category
         if selected_category == "new":
+            if not new_category or new_category.strip() == "":
+                return "Please provide a valid category name."
             category = new_category.strip().lower()
         else:
             category = selected_category
 
-        code = request.form.get("code")
+        category = category.replace(" ", "_")
+
+        # ---------------------------
+        # AUTO PRODUCT CODE (PER CATEGORY)
+        # ---------------------------
+        prefix = category[:3].upper()   # first 3 letters
+        existing_count = len(data.get(category, {}).get("items", []))
+        code = f"{prefix}{existing_count + 1:03d}"
+
+        # ---------------------------
+        # OTHER FORM DATA
+        # ---------------------------
         title = request.form.get("title")
         description = request.form.get("description")
+        keep_original = request.form.get("keep_original") == "yes"
 
         specs_keys = request.form.getlist("spec_key[]")
         specs_values = request.form.getlist("spec_value[]")
@@ -237,22 +290,50 @@ def upload():
             if k and v:
                 specs[k] = v
 
-        files = request.files.getlist("images")
+        main_image = request.files.get("main_image")
+        other_images = request.files.getlist("other_images")
 
-        # Create product folder
+        # ---------------------------
+        # MAIN IMAGE VALIDATION
+        # ---------------------------
+        if not main_image or main_image.filename == "":
+            return "Main image is required."
+
+        # ---------------------------
+        # CREATE PRODUCT FOLDER
+        # ---------------------------
         product_folder = os.path.join(UPLOAD_FOLDER, category, code)
         os.makedirs(product_folder, exist_ok=True)
 
         image_paths = []
 
-        for file in files:
-            if file:
-                filename = secure_filename(file.filename)
-                save_path = os.path.join(product_folder, filename)
-                file.save(save_path)
-                image_paths.append(f"uploads/{category}/{code}/{filename}")
+        # ---------------------------
+        # PROCESS MAIN IMAGE
+        # ---------------------------
+        filename = secure_filename(main_image.filename)
+        base_name = os.path.splitext(filename)[0]
+        webp_name = base_name + ".webp"
+        save_path = os.path.join(product_folder, webp_name)
 
-        # Create category if new
+        process_image(main_image, save_path, keep_original)
+        image_paths.append(f"uploads/{category}/{code}/{webp_name}")
+
+        # ---------------------------
+        # PROCESS ADDITIONAL IMAGES
+        # ---------------------------
+        for file in other_images:
+            if file and file.filename != "":
+                filename = secure_filename(file.filename)
+                base_name = os.path.splitext(filename)[0]
+                webp_name = base_name + ".webp"
+                save_path = os.path.join(product_folder, webp_name)
+
+                process_image(file, save_path, keep_original)
+                image_paths.append(f"uploads/{category}/{code}/{webp_name}")
+
+        # ---------------------------
+        # UPDATE JSON
+        # ---------------------------
         if category not in data:
             data[category] = {
                 "display_name": category.title(),
@@ -270,7 +351,7 @@ def upload():
         with open(DATA_FILE, "w") as f:
             json.dump(data, f, indent=4)
 
-        return "Product Uploaded Successfully"
+        return f"Product Uploaded Successfully — Code: {code}"
 
     return render_template("upload.html", categories=existing_categories)
 
