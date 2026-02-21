@@ -3,10 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Uniglobe Lifestyles</title>
+  <title>
+{% block title %}Uniglobe Lifestyles Pvt Ltd | Guided China Furniture Sourcing & Global Project Procurement{% endblock %}
+</title>
+
+<meta name="description" content="{% block meta_description %}Uniglobe Lifestyles Pvt Ltd is a global furniture sourcing and procurement company specializing in guided China factory visits, project-based sourcing, and consolidated international delivery for developers and architects worldwide.{% endblock %}">
+
+<meta name="robots" content="index, follow">
+
+<link rel="canonical" href="{{ request.url_root.rstrip('/') }}{{ request.path }}">
+
+<meta property="og:title" content="{% block og_title %}Uniglobe Lifestyles Pvt Ltd{% endblock %}">
+<meta property="og:description" content="{% block og_description %}Global China sourcing and project procurement specialists.{% endblock %}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ request.url }}">
+<meta property="og:image" content="{{ url_for('static', filename='images/Black.webp', _external=True) }}">
+
+
+
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.webp') }}">
 
   <!-- Stylesheets -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -60,6 +80,19 @@
 }
 
   </style>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Uniglobe Lifestyles Pvt Ltd",
+  "alternateName": "Uniglobe Lifestyles",
+  "url": "https://uniglobelifestyles.com",
+  "logo": "https://uniglobelifestyles.com/static/images/Black.webp",
+  "description": "Uniglobe Lifestyles Pvt Ltd is a global furniture sourcing and China procurement company offering guided factory visits and consolidated international project delivery.",
+  "areaServed": "Worldwide"
+}
+</script>
 </head>
 
 
@@ -69,7 +102,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
   <div class="container d-flex justify-content-between align-items-center">
     <a class="navbar-brand d-flex flex-wrap align-items-center gap-2" href="/">
-      <img src="{{ url_for('static', filename='images/Black.webp') }}" alt="Uniglobe Logo">
+      <img src="{{ url_for('static', filename='images/Black.webp') }}" alt="Uniglobe Lifestyles Pvt Ltd Logo">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
