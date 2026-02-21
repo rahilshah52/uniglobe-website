@@ -1,13 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container py-5" style="max-width: 900px;">
+<div class="container py-5" style="max-width: 1000px;">
 
-  <h2 class="mb-4 text-center fw-semibold">Upload New Product</h2>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+  <h2 class="fw-semibold m-0">
+    {% if edit_product %}
+      Edit Product ({{ edit_product.code }})
+    {% else %}
+      Create New Product
+    {% endif %}
+  </h2>
+
+  <div>
+    <!-- Go back to Create Mode -->
+    <a href="{{ url_for('upload') }}" class="btn btn-sm btn-outline-dark me-2">
+      + New Product
+    </a>
+
+    <!-- Logout -->
+    <a href="{{ url_for('admin_logout') }}"
+       class="btn btn-sm btn-danger"
+       onclick="return confirm('Are you sure you want to logout?')">
+      Logout
+    </a>
+  </div>
+
+</div>
 
   <form method="POST" enctype="multipart/form-data">
 
+    {% if edit_product %}
+      <input type="hidden" name="is_edit" value="1">
+      <input type="hidden" name="edit_code" value="{{ edit_product.code }}">
+      <input type="hidden" name="edit_category" value="{{ edit_category }}">
+    {% endif %}
+
     <!-- CATEGORY -->
+    {% if not edit_product %}
     <div class="mb-4">
       <label class="form-label fw-semibold">Category</label>
       <select name="category_select" class="form-select" id="categorySelect" required>
@@ -19,56 +50,132 @@
       </select>
     </div>
 
-    <!-- NEW CATEGORY FIELD -->
     <div class="mb-4 d-none" id="newCategoryDiv">
       <label class="form-label fw-semibold">New Category Name</label>
-      <input type="text" name="new_category" class="form-control" placeholder="Enter new category name">
+      <input type="text" name="new_category" class="form-control">
     </div>
+    {% else %}
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Category</label>
+        <input type="text" class="form-control" value="{{ edit_category }}" disabled>
+      </div>
+    {% endif %}
 
     <!-- TITLE -->
     <div class="mb-4">
       <label class="form-label fw-semibold">Product Title</label>
-      <input type="text" name="title" class="form-control" required>
+      <input type="text" name="title" class="form-control"
+             value="{{ edit_product.title if edit_product else '' }}" required>
     </div>
 
     <!-- DESCRIPTION -->
     <div class="mb-4">
       <label class="form-label fw-semibold">Description</label>
-      <textarea name="description" class="form-control" rows="4"></textarea>
+      <textarea name="description" class="form-control" rows="4">{{ edit_product.description if edit_product else '' }}</textarea>
     </div>
 
     <!-- SPECIFICATIONS -->
     <div class="mb-4">
       <label class="form-label fw-semibold">Specifications</label>
+
       <div id="specContainer">
-        <div class="row g-2 mb-2">
-          <div class="col">
-            <input type="text" name="spec_key[]" class="form-control" placeholder="Spec Name (e.g. Material)">
+
+        {% if edit_product and edit_product.specs %}
+          {% for key, value in edit_product.specs.items() %}
+          <div class="row g-2 mb-2">
+            <div class="col">
+              <input type="text" name="spec_key[]" class="form-control" value="{{ key }}">
+            </div>
+            <div class="col">
+              <input type="text" name="spec_value[]" class="form-control" value="{{ value }}">
+            </div>
           </div>
-          <div class="col">
-            <input type="text" name="spec_value[]" class="form-control" placeholder="Spec Value (e.g. Teak Wood)">
+          {% endfor %}
+        {% else %}
+          <div class="row g-2 mb-2">
+            <div class="col">
+              <input type="text" name="spec_key[]" class="form-control">
+            </div>
+            <div class="col">
+              <input type="text" name="spec_value[]" class="form-control">
+            </div>
           </div>
-        </div>
+        {% endif %}
+
       </div>
+
       <button type="button" class="btn btn-sm btn-outline-dark mt-2" onclick="addSpec()">+ Add Specification</button>
     </div>
 
-    <!-- MAIN IMAGE -->
-    <div class="mb-4">
-      <label class="form-label fw-semibold">Main Image (Required)</label>
-      <input type="file" name="main_image" class="form-control" accept="image/*" required>
-    </div>
+   <!-- MAIN IMAGE -->
+<div class="mb-4">
+  <label class="form-label fw-semibold">
+    Main Image {% if not edit_product %}(Required){% endif %}
+  </label>
 
+  <input type="file"
+         name="main_image"
+         class="form-control"
+         accept="image/*"
+         onchange="previewMain(event)">
+
+  {% if edit_product and edit_product.images %}
+    <img id="mainPreview"
+         src="{{ url_for('static', filename=edit_product.images[0]) }}"
+         class="mt-3"
+         style="max-width:220px; border-radius:8px;">
+  {% else %}
+    <img id="mainPreview"
+         class="mt-3"
+         style="max-width:220px; display:none; border-radius:8px;">
+  {% endif %}
+</div>
     <!-- ADDITIONAL IMAGES -->
-    <div class="mb-4">
-      <label class="form-label fw-semibold">Additional Images</label>
-      <input type="file" name="other_images" class="form-control" multiple accept="image/*">
+<div class="mb-4">
+  <label class="form-label fw-semibold">Additional Images</label>
+
+  <div id="additionalImagesContainer">
+    <input type="file"
+           name="other_images[]"
+           class="form-control mb-2 additional-input"
+           accept="image/*">
+  </div>
+</div>
+
+{% if edit_product and edit_product.images %}
+<hr>
+<h6 class="fw-semibold mb-3">Existing Images (Drag to Reorder)</h6>
+
+<ul id="sortableImages" class="list-group mb-4">
+  {% for img in edit_product.images %}
+  <li class="list-group-item d-flex justify-content-between align-items-center"
+      data-path="{{ img }}">
+
+    <div>
+      <img src="{{ url_for('static', filename=img) }}"
+           style="height:60px; margin-right:10px; border-radius:6px;">
+      {{ img.split('/')[-1] }}
+      {% if loop.index == 1 %}
+        <span class="badge bg-dark ms-2">Main</span>
+      {% endif %}
     </div>
 
+    <form method="POST"
+          action="{{ url_for('delete_image', category=edit_category, code=edit_product.code) }}">
+      <input type="hidden" name="image_path" value="{{ img }}">
+      <button class="btn btn-sm btn-outline-danger">
+        Delete
+      </button>
+    </form>
+
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
     <!-- KEEP ORIGINAL -->
     <div class="form-check mb-4">
-      <input class="form-check-input" type="checkbox" value="yes" name="keep_original" id="keepOriginal">
-      <label class="form-check-label" for="keepOriginal">
+      <input class="form-check-input" type="checkbox" value="yes" name="keep_original">
+      <label class="form-check-label">
         Keep original image copy
       </label>
     </div>
@@ -76,17 +183,115 @@
     <!-- SUBMIT -->
     <div class="text-center">
       <button type="submit" class="btn btn-dark px-5 py-2 rounded-pill">
-        Upload Product
+        {% if edit_product %}Update Product{% else %}Upload Product{% endif %}
       </button>
     </div>
 
   </form>
+
+  <hr class="my-5">
+
+  <input type="text"
+       id="productSearch"
+       class="form-control mb-4"
+       placeholder="Search products...">
+
+
+  <!-- PRODUCT LIST -->
+  <h4 class="mb-4">Existing Products</h4>
+
+  {% for category, cat_data in products.items() %}
+    <div class="mb-4">
+      <h6 class="fw-semibold">{{ cat_data.display_name }}</h6>
+
+      {% for item in cat_data["items"] %}
+      <div class="d-flex justify-content-between align-items-center border p-2 mb-2 rounded product-row">
+
+        <div>
+          <strong>{{ item.title }}</strong>
+          <small class="text-muted ms-2">{{ item.code }}</small>
+        </div>
+
+        <div>
+          <a href="{{ url_for('upload', edit=item.code, category=category) }}"
+             class="btn btn-sm btn-outline-primary me-2">
+            Edit
+          </a>
+
+          <form method="POST"
+                action="{{ url_for('delete_product', category=category, code=item.code) }}"
+                style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-outline-danger"
+                    onclick="return confirm('Delete this product?')">
+              Delete
+            </button>
+          </form>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
 </div>
 
-<script>
-  const categorySelect = document.getElementById("categorySelect");
-  const newCategoryDiv = document.getElementById("newCategoryDiv");
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
+<script>
+function previewMain(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const img = document.getElementById("mainPreview");
+  img.src = URL.createObjectURL(file);
+  img.style.display = "block";
+}
+
+document.addEventListener("change", function(e) {
+  if (e.target.classList.contains("additional-input")) {
+
+    const container = document.getElementById("additionalImagesContainer");
+    const inputs = container.querySelectorAll(".additional-input");
+    const lastInput = inputs[inputs.length - 1];
+
+    if (lastInput.files.length > 0) {
+
+      const preview = document.createElement("img");
+      preview.src = URL.createObjectURL(lastInput.files[0]);
+      preview.style.maxWidth = "120px";
+      preview.style.marginBottom = "10px";
+      preview.style.display = "block";
+      container.appendChild(preview);
+
+      const newInput = document.createElement("input");
+      newInput.type = "file";
+      newInput.name = "other_images[]";
+      newInput.accept = "image/*";
+      newInput.className = "form-control mb-2 additional-input";
+
+      container.appendChild(newInput);
+    }
+  }
+});
+
+
+document.getElementById("productSearch")?.addEventListener("keyup", function() {
+
+  const value = this.value.toLowerCase();
+
+  document.querySelectorAll(".product-row").forEach(row => {
+    row.style.display =
+      row.textContent.toLowerCase().includes(value)
+        ? "flex"
+        : "none";
+  });
+
+});
+
+const categorySelect = document.getElementById("categorySelect");
+const newCategoryDiv = document.getElementById("newCategoryDiv");
+
+if (categorySelect) {
   categorySelect.addEventListener("change", function() {
     if (this.value === "new") {
       newCategoryDiv.classList.remove("d-none");
@@ -94,21 +299,34 @@
       newCategoryDiv.classList.add("d-none");
     }
   });
-
-  function addSpec() {
-    const container = document.getElementById("specContainer");
-    const row = document.createElement("div");
-    row.className = "row g-2 mb-2";
-    row.innerHTML = `
-      <div class="col">
-        <input type="text" name="spec_key[]" class="form-control" placeholder="Spec Name">
-      </div>
-      <div class="col">
-        <input type="text" name="spec_value[]" class="form-control" placeholder="Spec Value">
-      </div>
-    `;
-    container.appendChild(row);
-  }
+}
 </script>
+{% if edit_product %}
+<script>
+if (document.getElementById("sortableImages")) {
+  new Sortable(document.getElementById("sortableImages"), {
+    animation: 150,
+    onEnd: function () {
+
+      const items = document.querySelectorAll("#sortableImages li");
+      const newOrder = [];
+
+      items.forEach(item => {
+        newOrder.push(item.dataset.path);
+      });
+
+      fetch("{{ url_for('reorder_images', category=edit_category, code=edit_product.code) }}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ images: newOrder })
+      });
+
+    }
+  });
+}
+</script>
+{% endif %}
 
 {% endblock %}

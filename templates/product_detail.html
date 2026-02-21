@@ -3,15 +3,22 @@
 
 <div class="container py-5">
 
+    <div class="mb-4">
+  <a href="{{ url_for('products') }}" class="text-decoration-none text-dark">
+    ← Back to Products
+  </a>
+</div>
   <div class="row g-5">
 
     <!-- IMAGE SECTION -->
     <div class="col-lg-6">
 
       <div class="main-image-wrapper">
+        {% if product.images %}
         <img id="mainImage"
-             src="{{ url_for('static', filename=product.images[0]) }}"
-             class="img-fluid rounded shadow-sm main-image">
+        src="{{ url_for('static', filename=product.images[0]) }}"
+        class="img-fluid rounded shadow-sm main-image">
+        {% endif %}
       </div>
 
       <!-- THUMBNAILS -->
@@ -65,11 +72,26 @@
 
 <style>
 
+.main-image-wrapper {
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 .main-image {
-  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
   object-fit: contain;
   cursor: zoom-in;
   transition: 0.3s ease;
+}
+
+.main-image:hover {
+  transform: scale(1.02);
 }
 
 .main-image:hover {
@@ -123,6 +145,9 @@
     width: 60px;
     height: 60px;
   }
+   .main-image-wrapper {
+    height: 350px;
+  }
 }
 
 </style>
@@ -131,17 +156,32 @@
 
 function changeImage(element) {
   document.getElementById("mainImage").src = element.src;
+
+  document.querySelectorAll(".thumb-img").forEach(img => {
+    img.style.borderColor = "#eee";
+  });
+
+  element.style.borderColor = "black";
 }
 
-document.getElementById("mainImage").onclick = function() {
-  document.getElementById("imageModal").style.display = "block";
-  document.getElementById("modalImage").src = this.src;
-};
+const mainImg = document.getElementById("mainImage");
+
+if (mainImg) {
+  mainImg.onclick = function() {
+    document.getElementById("imageModal").style.display = "block";
+    document.getElementById("modalImage").src = this.src;
+  };
+}
 
 function closeModal() {
   document.getElementById("imageModal").style.display = "none";
 }
 
+document.getElementById("imageModal").onclick = function(e) {
+  if (e.target.id === "imageModal") {
+    closeModal();
+  }
+};
 </script>
 
 {% endblock %}

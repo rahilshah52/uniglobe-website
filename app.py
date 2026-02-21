@@ -1,4 +1,7 @@
-from flask import Flask, render_template, request, redirect, flash, url_for
+import code
+from unicodedata import category
+
+from flask import Flask, render_template, request, redirect, flash, url_for, session
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import os
@@ -76,6 +79,29 @@ def products():
         product_data = json.load(f)
 
     return render_template("products.html", product_data=product_data)
+
+@app.route("/products/<category>/<code>")
+def product_detail(category, code):
+
+    if not os.path.exists(DATA_FILE):
+        return "No products found."
+
+    with open(DATA_FILE, "r") as f:
+        data = json.load(f)
+
+    category = category.lower()
+
+    if category not in data:
+        return "Category not found."
+
+    for product in data[category]["items"]:
+        if product["code"] == code:
+            return render_template(
+                "product_detail.html",
+                product=product
+            )
+
+    return "Product not found."
 
 @app.route('/services')
 def services():
@@ -206,10 +232,33 @@ def process_image(image_file, save_path, keep_original=False):
             f.write(image_file.read())
 
 
+@app.route("/admin-login", methods=["GET", "POST"])
+def admin_login():
+
+    if request.method == "POST":
+        password = request.form.get("password")
+
+        if password == "1234":
+            session["admin_logged_in"] = True
+            return redirect(url_for("upload"))
+        else:
+            flash("Incorrect password", "danger")
+
+    return render_template("admin_login.html")
+
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
 
-    # Load existing data
+    # ---------------------------
+    # AUTH CHECK
+    # ---------------------------
+    if not session.get("admin_logged_in"):
+        flash("Please log in to access the upload page.", "warning")
+        return redirect(url_for("admin_login"))
+
+    # ---------------------------
+    # LOAD DATA
+    # ---------------------------
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, "r") as f:
             data = json.load(f)
@@ -218,32 +267,55 @@ def upload():
 
     existing_categories = list(data.keys())
 
+    # ---------------------------
+    # EDIT MODE CHECK (GET)
+    # ---------------------------
+    edit_code = request.args.get("edit")
+    edit_category = request.args.get("category")
+    edit_product = None
+
+    if edit_code and edit_category:
+        edit_category = edit_category.lower()
+        if edit_category in data:
+            for item in data[edit_category]["items"]:
+                if item["code"] == edit_code:
+                    edit_product = item
+                    break
+
+    # ===========================
+    # POST SUBMISSION
+    # ===========================
     if request.method == "POST":
 
-        # ---------------------------
-        # CATEGORY HANDLING
-        # ---------------------------
-        selected_category = request.form.get("category_select")
-        new_category = request.form.get("new_category")
+        is_edit = request.form.get("is_edit")
+        edit_code = request.form.get("edit_code")
+        edit_category = request.form.get("edit_category")
 
-        if selected_category == "new":
-            if not new_category or new_category.strip() == "":
-                return "Please provide a valid category name."
-            category = new_category.strip().lower()
+        # ---------------------------
+        # CATEGORY + CODE
+        # ---------------------------
+        if is_edit:
+            category = edit_category
+            code = edit_code
         else:
-            category = selected_category
+            selected_category = request.form.get("category_select")
+            new_category = request.form.get("new_category")
 
-        category = category.replace(" ", "_")
+            if selected_category == "new":
+                if not new_category or new_category.strip() == "":
+                    return "Please provide a valid category name."
+                category = new_category.strip().lower()
+            else:
+                category = selected_category
+
+            category = category.replace(" ", "_")
+
+            prefix = ''.join(word[0] for word in category.split('_')).upper()
+            existing_count = len(data.get(category, {}).get("items", []))
+            code = f"{prefix}{existing_count + 1:03d}"
 
         # ---------------------------
-        # AUTO PRODUCT CODE (PER CATEGORY)
-        # ---------------------------
-        prefix = category[:3].upper()   # first 3 letters
-        existing_count = len(data.get(category, {}).get("items", []))
-        code = f"{prefix}{existing_count + 1:03d}"
-
-        # ---------------------------
-        # OTHER FORM DATA
+        # FORM DATA
         # ---------------------------
         title = request.form.get("title")
         description = request.form.get("description")
@@ -258,13 +330,7 @@ def upload():
                 specs[k] = v
 
         main_image = request.files.get("main_image")
-        other_images = request.files.getlist("other_images")
-
-        # ---------------------------
-        # MAIN IMAGE VALIDATION
-        # ---------------------------
-        if not main_image or main_image.filename == "":
-            return "Main image is required."
+        other_images = request.files.getlist("other_images[]")
 
         # ---------------------------
         # CREATE PRODUCT FOLDER
@@ -272,22 +338,42 @@ def upload():
         product_folder = os.path.join(UPLOAD_FOLDER, category, code)
         os.makedirs(product_folder, exist_ok=True)
 
-        image_paths = []
-
         # ---------------------------
-        # PROCESS MAIN IMAGE
+        # IMAGE HANDLING
         # ---------------------------
-        filename = secure_filename(main_image.filename)
-        base_name = os.path.splitext(filename)[0]
-        webp_name = base_name + ".webp"
-        save_path = os.path.join(product_folder, webp_name)
+        if is_edit and edit_product:
+            image_paths = edit_product.get("images", [])
+        else:
+            image_paths = []
 
-        process_image(main_image, save_path, keep_original)
-        image_paths.append(f"uploads/{category}/{code}/{webp_name}")
+        # MAIN IMAGE REQUIRED ONLY FOR NEW PRODUCTS
+        if not is_edit:
+            if not main_image or main_image.filename == "":
+                return "Main image is required."
 
-        # ---------------------------
+        # PROCESS MAIN IMAGE IF PROVIDED
+        if main_image and main_image.filename != "":
+            filename = secure_filename(main_image.filename)
+            base_name = os.path.splitext(filename)[0]
+            webp_name = base_name + ".webp"
+            save_path = os.path.join(product_folder, webp_name)
+
+            process_image(main_image, save_path, keep_original)
+
+            new_main_path = f"uploads/{category}/{code}/{webp_name}"
+
+            if is_edit and image_paths:
+                # Remove old main image
+                old_main = image_paths.pop(0)
+                full_old_path = os.path.join(app.static_folder, old_main)
+                if os.path.exists(full_old_path):
+                    os.remove(full_old_path)
+
+                image_paths.insert(0, new_main_path)
+            else:
+                image_paths.insert(0, new_main_path)
+
         # PROCESS ADDITIONAL IMAGES
-        # ---------------------------
         for file in other_images:
             if file and file.filename != "":
                 filename = secure_filename(file.filename)
@@ -307,20 +393,138 @@ def upload():
                 "items": []
             }
 
-        data[category]["items"].append({
-            "code": code,
-            "title": title,
-            "description": description,
-            "specs": specs,
-            "images": image_paths
-        })
+        if is_edit:
+            for item in data[category]["items"]:
+                if item["code"] == code:
+                    item["title"] = title
+                    item["description"] = description
+                    item["specs"] = specs
+                    item["images"] = image_paths
+                    break
+            flash("Product Updated Successfully", "success")
+        else:
+            data[category]["items"].append({
+                "code": code,
+                "title": title,
+                "description": description,
+                "specs": specs,
+                "images": image_paths
+            })
+            flash(f"Product Uploaded Successfully — Code: {code}", "success")
 
         with open(DATA_FILE, "w") as f:
             json.dump(data, f, indent=4)
 
-        return f"Product Uploaded Successfully — Code: {code}"
+        return redirect(url_for("upload"))
 
-    return render_template("upload.html", categories=existing_categories)
+    # ===========================
+    # GET RENDER
+    # ===========================
+    return render_template(
+        "upload.html",
+        categories=existing_categories,
+        products=data,
+        edit_product=edit_product,
+        edit_category=edit_category
+    )
+
+
+@app.route("/delete-product/<category>/<code>", methods=["POST"])
+def delete_product(category, code):
+
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+
+    if not os.path.exists(DATA_FILE):
+        return redirect(url_for("upload"))
+
+    with open(DATA_FILE, "r") as f:
+        data = json.load(f)
+
+    category = category.lower()
+
+    if category in data:
+        data[category]["items"] = [
+            item for item in data[category]["items"]
+            if item["code"] != code
+        ]
+
+        if not data[category]["items"]:
+            del data[category]
+
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+    # Delete folder
+    product_folder = os.path.join(UPLOAD_FOLDER, category, code)
+    if os.path.exists(product_folder):
+        import shutil
+        shutil.rmtree(product_folder)
+
+    flash("Product Deleted Successfully", "success")
+    return redirect(url_for("upload"))
+
+@app.route("/reorder-images/<category>/<code>", methods=["POST"])
+def reorder_images(category, code):
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+
+    new_order = request.json.get("images")
+
+    with open(DATA_FILE, "r") as f:
+        data = json.load(f)
+
+    if category in data:
+        for item in data[category]["items"]:
+            if item["code"] == code:
+                item["images"] = new_order
+                break
+
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+    return {"status": "success"}
+
+
+@app.route("/delete-image/<category>/<code>", methods=["POST"])
+def delete_image(category, code):
+
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+
+    image_path = request.form.get("image_path")
+
+    if not image_path:
+        return redirect(url_for("upload"))
+
+    with open(DATA_FILE, "r") as f:
+        data = json.load(f)
+
+    if category in data:
+        for item in data[category]["items"]:
+            if item["code"] == code:
+
+                if image_path in item["images"]:
+                    item["images"].remove(image_path)
+
+                    # Delete file from disk
+                    full_path = os.path.join(app.static_folder, image_path)
+                    if os.path.exists(full_path):
+                        os.remove(full_path)
+
+                break
+
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+    flash("Image Deleted Successfully", "success")
+    return redirect(url_for("upload", edit=code, category=category))
+
+@app.route("/admin-logout")
+def admin_logout():
+    session.pop("admin_logged_in", None)
+    return redirect(url_for("admin_login"))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

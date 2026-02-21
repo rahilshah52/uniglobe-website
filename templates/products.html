@@ -6,31 +6,57 @@
   {% if not product_data %}
     <p class="text-center text-muted">No products available.</p>
   {% endif %}
+<div class="text-center mb-5">
+  <h1 class="fw-light display-5">Our Collection</h1>
+  <p class="text-muted">Crafted for refined spaces</p>
+</div>
+
+<div class="category-nav text-center mb-5">
+  <button class="category-btn active" data-category="all">All</button>
+
+  {% for category, cat_data in product_data.items() %}
+    <button class="category-btn" data-category="{{ category }}">
+      {{ cat_data.display_name }}
+    </button>
+  {% endfor %}
+</div>
 
   {% for category, cat_data in product_data.items() %}
 
-    <div class="mb-5">
+    <div class="category-section" data-category="{{ category }}">
 
-      <h3 class="fw-semibold mb-4">
-        {{ cat_data.display_name }}
-      </h3>
+     <div class="category-header mb-4">
+      <h2>{{ cat_data.display_name }}</h2>
+      <div class="category-line"></div>
+    </div>
 
       <div class="row g-4">
 
-        {% for item in cat_data.items %}
+        {% for item in cat_data["items"] %}
 
-        <div class="col-6 col-md-4 col-lg-3">
+        <div class="col-6 col-md-6 col-lg-3">
 
           <a href="{{ url_for('product_detail', category=category, code=item.code) }}"
              class="text-decoration-none text-dark">
 
-            <div class="card border-0 shadow-sm h-100 product-card">
+            <div class="card border-0 h-100 product-card">
 
-              <img src="{{ url_for('static', filename=item.images[0]) }}"
-                   class="card-img-top product-image">
+              {% if item.images %}
+             <img src="{{ url_for('static', filename=item.images[0]) }}"
+              class="product-image"
+              loading="lazy"
+              width="600"
+              height="200"
+              alt="{{ item.title }}">
+              {% else %}
+              <div class="product-image d-flex align-items-center justify-content-center text-muted">
+               No Image
+              </div>
+              {% endif %}
+            
 
-              <div class="card-body text-center">
-                <h6 class="fw-semibold mb-1">{{ item.title }}</h6>
+              <div class="card-body text-center py-3">
+                <h6 class="fw-medium mb-1">{{ item.title }}</h6>
                 <small class="text-muted">{{ item.code }}</small>
               </div>
 
@@ -51,29 +77,109 @@
 </div>
 
 <style>
-
-.product-image {
-  height: 250px;
-  object-fit: contain;
-  background: #f9f9f9;
-  padding: 15px;
-}
-
 .product-card {
-  transition: 0.3s ease;
-  border-radius: 12px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
 }
 
-@media (max-width: 768px) {
-  .product-image {
-    height: 180px;
-  }
+
+.product-image {
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  object-fit: contain;
+  background: #f5f5f5;
+  display: block;
+  transition: transform 0.4s ease;
 }
 
+.hover-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.product-card:hover .hover-img {
+  opacity: 1;
+}
+
+.product-card:hover .primary-img {
+  opacity: 0;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.view-btn {
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .view-btn {
+  opacity: 1;
+}
+
+.category-section {
+  margin-bottom: 100px;
+}
+
+.category-header h2 {
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.category-line {
+  width: 50px;
+  height: 2px;
+  background: #000;
+  margin-top: 8px;
+}
+.card-body {
+  margin-top: auto;
+}
+
+.category-nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.category-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #777;
+  transition: all 0.3s ease;
+}
+
+.category-btn:hover {
+  color: #000;
+}
+
+.category-btn.active {
+  color: #000;
+  border-bottom: 2px solid #000;
+}
 </style>
 
 {% endblock %}

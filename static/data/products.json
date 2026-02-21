@@ -1,1 +1,65 @@
-{}
+{
+    "bedroom": {
+        "display_name": "Bedroom",
+        "items": [
+            {
+                "code": "B001",
+                "title": "dafadfs",
+                "description": "afdas ",
+                "specs": {
+                    "fdfa": "dfsa"
+                },
+                "images": [
+                    "uploads/bedroom/B001/Screenshot_2024-10-04_020934.webp",
+                    "uploads/bedroom/B001/Screenshot_2024-10-04_021230.webp",
+                    "uploads/bedroom/B001/Screenshot_2024-10-04_021356.webp",
+                    "uploads/bedroom/B001/Screenshot_2024-11-14_173042.webp"
+                ]
+            }
+        ]
+    },
+    "tiles": {
+        "display_name": "Tiles",
+        "items": [
+            {
+                "code": "T001",
+                "title": "sa ed e",
+                "description": "w eed ",
+                "specs": {},
+                "images": [
+                    "uploads/tiles/T001/Screenshot_2024-06-24_235725.webp",
+                    "uploads/tiles/T001/Screenshot_2024-07-17_171835.webp",
+                    "uploads/tiles/T001/Screenshot_2024-10-04_021356.webp",
+                    "uploads/tiles/T001/Screenshot_2024-10-09_140833.webp",
+                    "uploads/tiles/T001/Screenshot_2024-10-09_140857.webp"
+                ]
+            },
+            {
+                "code": "T002",
+                "title": "YFKUJKJ",
+                "description": "UFJMTHJN",
+                "specs": {
+                    "FUM": "TRFUMF"
+                },
+                "images": [
+                    "uploads/tiles/T002/BARCELONA_LIGHT_GREY_R7.jpg.webp",
+                    "uploads/tiles/T002/DIMONA_GREY_2_M.jpg.webp",
+                    "uploads/tiles/T002/WhatsApp_Image_2026-02-19_at_9.27.27_AM.webp",
+                    "uploads/tiles/T002/WhatsApp_Image_2026-02-19_at_5.43.25_AM.webp"
+                ]
+            },
+            {
+                "code": "T003",
+                "title": "UFJMHM",
+                "description": "RFUMNFTM",
+                "specs": {},
+                "images": [
+                    "uploads/tiles/T003/WhatsApp_Image_2026-01-18_at_3.03.35_PM.webp",
+                    "uploads/tiles/T003/IMG_6431-_copy.webp",
+                    "uploads/tiles/T003/WhatsApp_Image_2026-01-06_at_4.20.28_PM.webp",
+                    "uploads/tiles/T003/Revenue_Traniee_ID_Job.webp"
+                ]
+            }
+        ]
+    }
+}
