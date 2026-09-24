@@ -1,0 +1,52 @@
+{% extends "tiles_base.html" %}
+{% block title %}{{ category.title }} | Bath &amp; Sanitaryware | Uniglobe Surfaces{% endblock %}
+{% block meta_description %}Explore {{ category.title|lower }} inspiration from Jaquar, KOHLER and Simpolo catalogue imagery, and enquire with Uniglobe about showroom options.{% endblock %}
+{% block content %}
+<section class="bath-detail-hero">
+  <div class="container">
+    <a class="bath-back" href="{{ url_for('tiles_bath') }}">← Bath &amp; sanitaryware</a>
+    <p class="bath-detail-kicker">BATH &amp; SANITARYWARE · {{ category.number }}</p>
+    <h1>{{ category.title }}</h1>
+    <p>{{ category.description }}</p>
+  </div>
+</section>
+<section class="bath-gallery-section">
+  <div class="container">
+    <div class="bath-gallery-heading"><div><p class="bath-detail-kicker">CATALOGUE INSPIRATION</p><h2>Explore the details.</h2></div><p>These images are selected from brand catalogues to help you explore styles and possibilities. Ask our team about product details and availability.</p></div>
+    <div class="bath-gallery">
+      {% for item in category['items'] %}
+      <article class="bath-gallery-card">
+        <div class="bath-gallery-image"><img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.brand }} {{ category.title|lower }} inspiration — {{ item.caption }}" loading="lazy"></div>
+        <div class="bath-gallery-caption"><span>{{ item.brand }} · CATALOGUE</span><h3>{{ item.caption }}</h3></div>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="bath-detail-cta"><div><p class="bath-detail-kicker">PROJECTS · MODELS · AVAILABILITY</p><h2>Let’s find the right fit.</h2></div><a href="{{ url_for('tiles_contact') }}?interest={{ category.title|urlencode }}">Enquire about {{ category.title|lower }} <span aria-hidden="true">↗</span></a></div>
+  </div>
+</section>
+<style>
+  .bath-detail-hero { padding:clamp(48px,7vw,88px) 0 clamp(43px,6vw,68px); background:#f1f1ed; }
+  .bath-back { display:inline-block; margin-bottom:clamp(36px,6vw,66px); color:#636b66; font-size:.72rem; text-decoration:none; }
+  .bath-back:hover { color:#242a27; }
+  .bath-detail-kicker { margin:0 0 10px; color:#8a908b; font-size:.61rem; font-weight:600; letter-spacing:.16em; }
+  .bath-detail-hero h1 { margin:0 0 16px; color:#2d3330; font-size:clamp(3rem,7vw,6rem); font-weight:400; letter-spacing:-.07em; line-height:.98; }
+  .bath-detail-hero .container > p:last-child { max-width:610px; margin:0; color:#6d746f; font-size:.9rem; line-height:1.8; }
+  .bath-gallery-section { padding:clamp(48px,7vw,84px) 0; }
+  .bath-gallery-heading { display:grid; grid-template-columns:1fr minmax(260px,430px); align-items:end; gap:35px; margin-bottom:27px; }
+  .bath-gallery-heading h2,.bath-detail-cta h2 { margin:0; color:#2d3330; font-size:clamp(2rem,4vw,3.3rem); font-weight:400; letter-spacing:-.055em; }
+  .bath-gallery-heading > p { margin:0 0 3px; color:#747b76; font-size:.82rem; line-height:1.8; }
+  .bath-gallery { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+  .bath-gallery-card { min-width:0; background:#f5f5f2; }
+  .bath-gallery-image { aspect-ratio:1.08; overflow:hidden; background:#e8e9e5; }
+  .bath-gallery-image img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
+  .bath-gallery-card:hover img { transform:scale(1.025); }
+  .bath-gallery-caption { padding:14px 15px 17px; }
+  .bath-gallery-caption span { color:#858b86; font-size:.52rem; letter-spacing:.12em; }
+  .bath-gallery-caption h3 { margin:6px 0 0; color:#353b37; font-size:.88rem; font-weight:500; }
+  .bath-detail-cta { display:flex; justify-content:space-between; align-items:center; gap:22px; margin-top:48px; padding:27px 29px; background:#f1f1ed; }
+  .bath-detail-cta .bath-detail-kicker { margin-bottom:6px; }
+  .bath-detail-cta h2 { font-size:clamp(1.5rem,3vw,2.3rem); }
+  .bath-detail-cta a { display:inline-flex; justify-content:space-between; gap:20px; padding:13px 15px; color:#fff; background:#303634; font-size:.7rem; text-decoration:none; }
+  @media(max-width:767.98px) { .bath-gallery-heading { grid-template-columns:1fr; gap:12px; } .bath-gallery-heading > p { font-size:.77rem; } .bath-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-gallery-image { aspect-ratio:.86; } .bath-gallery-caption { padding:11px 10px 13px; } .bath-gallery-caption h3 { font-size:.77rem; line-height:1.4; } .bath-gallery-caption span { font-size:.45rem; } .bath-detail-cta { align-items:flex-start; flex-direction:column; margin-top:30px; padding:20px 17px; } }
+</style>
+{% endblock %}

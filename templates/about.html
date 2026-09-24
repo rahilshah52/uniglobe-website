@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="py-5 bg-light" style="padding-top:100px; padding-bottom:100px;">
+  <div class="container">
+    <div class="row align-items-center mb-5">
+      <div class="col-md-6 mt-4 mt-md-0">
+        <h1 class="mb-4">About Uniglobe Lifestyles Pvt Ltd</h1>
+        <h5 class="mb-4 text-muted" style="font-weight:500; letter-spacing:1px;">
+  Serious projects require more than a catalog.
+</h5>
+        <p>
+
+Uniglobe Lifestyles Pvt Ltd is a global China sourcing and project procurement company connecting developers, architects and project owners worldwide to verified furniture and manufacturing networks across China.
+
+Through curated access to showrooms and factories, we enable clients to experience sourcing firsthand — comparing finishes, refining specifications, and finalizing selections with precision.
+
+Instead of relying solely on catalogs or intermediaries, we enable direct factory engagement supported by structured coordination and on-ground expertise.</p>
+<p>
+With operational coordination in Foshan — widely recognized as the world’s furniture capital — we provide guided sourcing visits, direct manufacturer access and consolidated international delivery for complex projects.
+</p>
+        <p>Our clients include developers, hospitality groups, architects and commercial project owners seeking structured sourcing from China’s manufacturing hubs.</p>
+      </div>
+      <div class="col-md-6">
+        <img src="{{ url_for('static', filename='images/about.webp') }}" alt="Uniglobe Lifestyles China furniture sourcing team" class="img-fluid rounded shadow">
+      </div>
+    </div>
+
+    <div class="row text-center mb-5">
+      <div class="col-md-4">
+        <h5  style="color: #000;">🏭 Direct Factory Access</h5>
+        <p>Verified manufacturers across China’s major production hubs</p>
+      </div>
+      <div class="col-md-4">
+        <h5  style="color: #000;">🌍 Global Project Support</h5>
+        <p>Serving developers and project owners across international markets</p>
+      </div>
+      <div class="col-md-4">
+        <h5  style="color:#000;">🚢 Consolidated Shipping</h5>
+        <p>End-to-end procurement and international logistics coordination</p>
+      </div>
+    </div>
+
+    <div class="bg-white shadow rounded p-4 mb-5">
+      <h3 class="text-center mb-4">Our Mission</h3>
+<p class="text-center">
+At Uniglobe Lifestyles, our mission is to simplify international furniture procurement by providing structured, transparent and efficient sourcing directly from China’s manufacturing ecosystem.
+<br><br>
+We enable clients to visit factories, verify production standards, customize specifications and execute consolidated global shipping with confidence.
+</p>
+    </div>
+
+    <div class="bg-white shadow rounded p-4">
+      <h3 class="text-center mb-4">Our Vision</h3>
+<p class="text-center">
+  Our vision is to be the go-to global sourcing and procurement partner for every premium interior project across continents.
+  <br><br>
+  We strive to revolutionize international procurement through design intelligence, operational excellence, and long-standing relationships — helping our clients craft spaces that inspire, elevate, and endure.
+</p>
+    </div>
+  </div>
+
+      <div class="text-center mt-5">
+  <a href="/services" class="btn btn-dark me-3" title="China Furniture Sourcing Services">
+    Explore Our Services
+  </a>
+  <a href="/contact" class="btn btn-outline-dark" title="Plan Your China Sourcing Visit">
+    Plan Your Visit
+  </a>
+</div>
+</section>
+
+
+
+{% endblock %}

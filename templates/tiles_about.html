@@ -1,0 +1,75 @@
+{% extends "tiles_base.html" %}
+{% block title %}About Uniglobe Lifestyles Ceramics | Uniglobe Surfaces{% endblock %}
+{% block content %}
+<section class="about-hero">
+  <div class="container about-hero-grid">
+    <div class="about-hero-copy">
+      <p class="eyebrow">ABOUT UNIGLOBE LIFESTYLES CERAMICS</p>
+      <h1>Tiles chosen for the way a space should feel.</h1>
+      <p>Based in Borivali, Mumbai, Uniglobe Lifestyles Ceramics brings together considered tile design and practical guidance for residential and commercial projects.</p>
+      <a href="{{ url_for('tiles_contact') }}" class="about-link">Visit or speak with our team <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="about-hero-image"><img src="{{ url_for('static', filename='images/surfaces/catalog/digital-fullbody-living.jpg') }}" alt="Stone-look tile flooring in a contemporary living room"></div>
+  </div>
+</section>
+<section class="about-story">
+  <div class="container about-story-grid">
+    <div><p class="eyebrow">WHAT WE DO</p><h2>A tile-led collection for homes and commercial spaces.</h2></div>
+    <div><p>Our range brings together GVT, PGVT, full-body and double-charge tiles, including selected 5 mm slim full-body designs. From calm stone-inspired surfaces to more expressive textures, each catalogue offers different formats and finishes to explore.</p><p>We value quality, aesthetics and personal service. Our team can help you compare options and narrow the collection to suit your project; exact specifications and current stock are confirmed with each enquiry.</p></div>
+  </div>
+</section>
+<section class="about-values">
+  <div class="container">
+    <p class="eyebrow">OUR VIEW</p>
+    <div class="about-values-grid">
+      <article><span>01</span><h3>Quality</h3><p>Materials selected with close attention to finish, consistency and the needs of the space.</p></article>
+      <article><span>02</span><h3>Design</h3><p>A considered mix of formats, tones and surfaces, from understated to richly textured.</p></article>
+      <article><span>03</span><h3>Guidance</h3><p>Personal consultations to help bring the right tile choices together for your project.</p></article>
+    </div>
+  </div>
+</section>
+<section class="about-mission">
+  <div class="container about-mission-grid">
+    <article><p class="eyebrow">OUR MISSION</p><p>To enrich living and working spaces with quality ceramics that bring timeless appeal and contemporary design together, supported by attentive service.</p></article>
+    <article><p class="eyebrow">OUR VISION</p><p>To keep raising the standard for ceramic design through thoughtful collections, reliable quality and a continuing focus on innovation.</p></article>
+  </div>
+</section>
+<section class="about-showroom">
+  <div class="container about-showroom-inner">
+    <div><p class="eyebrow">OUR SHOWROOM</p><h2>Meet us in Borivali, Mumbai.</h2><p>Shop 13, Soni Tower CHSL,<br>Haridas Nagar, Borivali (West),<br>Mumbai 400092</p></div>
+    <div class="about-showroom-actions"><a href="tel:+918433988032">Call +91 84339 88032</a><a href="{{ url_for('tiles_contact') }}">Plan a conversation <span aria-hidden="true">↗</span></a></div>
+  </div>
+</section>
+<style>
+  .about-hero { padding: 54px 0 62px; background: #f0f0ed; }
+  .about-hero-grid { display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: clamp(32px, 6vw, 88px); }
+  .about-hero h1 { max-width: 620px; color: #292e2d; font-size: clamp(2.8rem, 5.2vw, 5.2rem); font-weight: 400; letter-spacing: -.065em; line-height: 1.04; margin: 0 0 22px; }
+  .about-hero-copy > p:not(.eyebrow) { max-width: 520px; color: #656b68; font-size: 1rem; line-height: 1.8; margin-bottom: 28px; }
+  .about-link { color: #303635; text-decoration: none; border-bottom: 1px solid #aeb3b0; padding-bottom: 7px; }
+  .about-hero-image { height: clamp(350px, 40vw, 540px); overflow: hidden; background: #d9dbd8; }
+  .about-hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .about-story { padding: 88px 0; }
+  .about-story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; }
+  .about-story h2, .about-showroom h2 { max-width: 510px; color: #292e2d; font-size: clamp(2rem, 3.4vw, 3.2rem); font-weight: 400; letter-spacing: -.05em; line-height: 1.12; margin: 0; }
+  .about-story-grid > div:last-child p { color: #6d7370; font-size: .98rem; line-height: 1.85; margin: 0 0 16px; }
+  .about-values { padding: 72px 0 82px; background: #f5f5f2; }
+  .about-values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+  .about-values article { border-top: 1px solid #cdd0cd; padding-top: 18px; }
+  .about-values article span { color: #8b918e; font-size: .75rem; letter-spacing: .12em; }
+  .about-values h3 { color: #2d3231; font-size: 1.35rem; font-weight: 500; margin: 42px 0 10px; }
+  .about-values article p { max-width: 320px; color: #747a77; font-size: .91rem; line-height: 1.75; }
+  .about-mission { padding: 62px 0; }
+  .about-mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 68px; }
+  .about-mission article { border-top: 1px solid #d2d5d2; padding-top: 18px; }
+  .about-mission .eyebrow { margin-bottom: 14px; }
+  .about-mission article > p:last-child { color: #646a67; font-size: 1.02rem; line-height: 1.8; margin: 0; max-width: 530px; }
+  .about-showroom { padding: 74px 0; color: #fff; background: #404645; }
+  .about-showroom .eyebrow { color: #c6cac7; }
+  .about-showroom h2 { color: #fff; margin-bottom: 17px; }
+  .about-showroom p:not(.eyebrow) { color: #e0e2e0; line-height: 1.8; margin: 0; }
+  .about-showroom-inner { display: flex; justify-content: space-between; align-items: end; gap: 32px; }
+  .about-showroom-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
+  .about-showroom-actions a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.45); padding-bottom: 6px; }
+  @media(max-width:767.98px) { .about-hero { padding: 38px 0 0; } .about-hero-grid { grid-template-columns: 1fr; gap: 28px; } .about-hero-image { height: 350px; margin: 0 -12px; } .about-story { padding: 58px 0; } .about-story-grid { grid-template-columns: 1fr; gap: 22px; } .about-values { padding: 54px 0 58px; } .about-values-grid { grid-template-columns: 1fr; gap: 25px; } .about-values h3 { margin-top: 25px; } .about-mission { padding: 48px 0; } .about-mission-grid { grid-template-columns: 1fr; gap: 28px; } .about-showroom { padding: 58px 0; } .about-showroom-inner { align-items: flex-start; flex-direction: column; } }
+</style>
+{% endblock %}

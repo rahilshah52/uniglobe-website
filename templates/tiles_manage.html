@@ -1,0 +1,54 @@
+{% extends "tiles_base.html" %}
+{% block title %}Manage Surfaces Products | Uniglobe Lifestyles{% endblock %}
+{% block content %}
+<section class="manage-page">
+  <div class="container">
+    <p class="eyebrow">PRIVATE PRODUCT MANAGER</p>
+    <h1>{{ 'Edit product' if edit_product else 'Add a product' }}</h1>
+    <p class="manage-intro">Add a product name, description, photos and available stock. Your changes will appear in Collections automatically.</p>
+    <form class="manage-form" method="post" enctype="multipart/form-data">
+      {% if edit_product %}<input type="hidden" name="code" value="{{ edit_product.code }}">{% endif %}
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label" for="product-title">Product name</label><input class="form-control" id="product-title" name="title" required value="{{ edit_product.title if edit_product else '' }}" placeholder="For example, Calacatta porcelain"></div>
+        <div class="col-md-3"><label class="form-label" for="product-category">Type</label><select class="form-select" id="product-category" name="category"><option {% if edit_product and edit_product.category == 'Full Body Tiles' %}selected{% endif %}>Full Body Tiles</option><option {% if edit_product and edit_product.category == 'Double Charge' %}selected{% endif %}>Double Charge</option><option {% if edit_product and edit_product.category == 'Step & Riser' %}selected{% endif %}>Step &amp; Riser</option><option {% if edit_product and edit_product.category == 'Matt / Punch / Carving' %}selected{% endif %}>Matt / Punch / Carving</option><option {% if edit_product and edit_product.category == 'Other Tiles' %}selected{% endif %}>Other Tiles</option></select></div>
+        <div class="col-md-3"><label class="form-label" for="product-stock">Stock quantity</label><input class="form-control" id="product-stock" type="number" name="stock" min="0" value="{{ edit_product.stock if edit_product else 0 }}"></div>
+        <div class="col-12"><label class="form-label" for="product-description">Description</label><textarea class="form-control" id="product-description" name="description" rows="4" placeholder="Describe the finish, size, colour or other details">{{ edit_product.description if edit_product else '' }}</textarea></div>
+        <div class="col-12"><label class="form-label" for="product-images">Product photos</label><input class="form-control" id="product-images" type="file" name="images" accept="image/*" multiple><div class="form-text">Select one or more photos. The first photo is used on the Collections page. Photos are resized and optimized automatically.</div>
+          {% if edit_product %}<div class="form-check mt-2"><input class="form-check-input" type="checkbox" value="yes" id="replace-images" name="replace_images"><label class="form-check-label" for="replace-images">Replace all current photos with the new selection</label></div>{% endif %}
+          {% if edit_product and edit_product.images %}<div class="current-images">{% for image in edit_product.images %}<img src="{{ url_for('static', filename=image) }}" alt="Current photo {{ loop.index }}">{% endfor %}</div>{% endif %}
+        </div>
+      </div>
+      <div class="form-actions"><button class="manage-button" type="submit">{{ 'Save changes' if edit_product else 'Add product' }}</button>{% if edit_product %}<a href="{{ url_for('tiles_manage') }}">Cancel</a>{% endif %}</div>
+    </form>
+    <div class="product-list-heading"><h2>Your Surfaces products</h2><span>{{ products|length }} items</span></div>
+    {% if products %}<div class="table-responsive"><table class="table align-middle manage-table"><thead><tr><th>Product</th><th>Type</th><th>Stock</th><th></th></tr></thead><tbody>
+      {% for product in products %}<tr><td><strong>{{ product.title }}</strong><small>{{ product.code }}</small></td><td>{{ product.category }}</td><td>{{ product.stock }}</td><td class="text-end"><a href="{{ url_for('tiles_manage', edit=product.code) }}">Edit</a><form method="post" action="{{ url_for('tiles_manage_delete', code=product.code) }}" onsubmit="return confirm('Remove this product and its photos?')"><button type="submit">Delete</button></form></td></tr>{% endfor %}
+    </tbody></table></div>{% else %}<p class="empty-products">No products yet. Add your first one above.</p>{% endif %}
+  </div>
+</section>
+<style>
+  .manage-page { padding: 62px 0 90px; background: #f6f6f3; min-height: 75vh; }
+  .manage-page .eyebrow { color: #777b79; font-size: .72rem; letter-spacing: .16em; }
+  .manage-page h1 { color: #292e2d; font-size: clamp(2.2rem, 4vw, 3.5rem); font-weight: 400; letter-spacing: -.05em; }
+  .manage-intro { max-width: 620px; color: #6d7370; margin-bottom: 30px; }
+  .manage-form { background: #fff; padding: clamp(20px, 4vw, 36px); border: 1px solid #e4e6e2; }
+  .manage-form .form-label { font-weight: 600; font-size: .9rem; }
+  .manage-form .form-control, .manage-form .form-select { min-height: 46px; border-color: #d8dcd8; border-radius: 2px; }
+  .manage-form textarea.form-control { min-height: 110px; }
+  .form-actions { display: flex; align-items: center; gap: 18px; margin-top: 24px; }
+  .form-actions a, .manage-table a { color: #424947; }
+  .manage-button { border: 0; padding: 13px 22px; background: #343a38; color: #fff; }
+  .current-images { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .current-images img { width: 88px; height: 72px; object-fit: cover; }
+  .product-list-heading { display: flex; justify-content: space-between; align-items: center; margin: 50px 0 16px; }
+  .product-list-heading h2 { font-size: 1.45rem; font-weight: 500; margin: 0; }
+  .product-list-heading span, .manage-table small { color: #777; font-size: .84rem; }
+  .manage-table { background: #fff; }
+  .manage-table td { padding: 16px; }
+  .manage-table td small { display: block; margin-top: 3px; }
+  .manage-table td form { display: inline; margin-left: 14px; }
+  .manage-table td button { border: 0; background: none; color: #8b4545; text-decoration: underline; padding: 0; }
+  .empty-products { padding: 20px; background: #fff; color: #777; }
+  @media(max-width:575.98px) { .manage-page { padding: 42px 0 65px; } .product-list-heading { align-items: flex-start; gap: 10px; flex-direction: column; } }
+</style>
+{% endblock %}

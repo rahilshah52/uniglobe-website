@@ -1,0 +1,663 @@
+{% extends "base.html" %}
+{% block title %}China Furniture Sourcing & Project Procurement | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}Uniglobe Lifestyles guides architects, developers and project owners through furniture sourcing in Foshan, China, customization, quality coordination and global project delivery.{% endblock %}
+{% block og_title %}China Furniture Sourcing & Project Procurement | Uniglobe Lifestyles{% endblock %}
+{% block og_description %}Guided furniture sourcing in Foshan, China for architects, developers and project owners, from factory visits and customization to international delivery.{% endblock %}
+{% block og_image %}{{ url_for('static', filename='images/hero.webp', _external=True) }}{% endblock %}
+{% block content %}
+
+
+<style>
+  body {
+    color: #333;
+  }
+  .hero {
+  position: relative;
+  padding: 120px 20px;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.hero-kicker {
+  margin: 0 0 18px;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .2em;
+}
+
+.hero-content h1,
+.hero-content p {
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+  color: white;
+}
+.hero-content h1 {
+  max-width: 920px;
+  margin: 0 auto;
+  font-size: clamp(2.5rem, 5.4vw, 4.7rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+.hero-content > p:not(.hero-kicker) {
+  max-width: 740px;
+  margin: 22px auto 0;
+  font-size: clamp(1rem, 1.45vw, 1.18rem);
+  line-height: 1.75;
+}
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+.hero-content .btn {
+  background-color: white;
+  color: #000;
+  border: none;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  transition: all 0.2s ease-in-out;
+}
+.hero-content .hero-secondary {
+  border: 1px solid rgba(255,255,255,.82);
+  background: rgba(20,20,20,.16);
+  color: #fff;
+  box-shadow: none;
+}
+
+.hero-content .btn:hover {
+  transform: scale(1.05);
+}
+
+
+
+  .section {
+    padding: 60px 0;
+  }
+  .section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 22px;
+  }
+  .about-dark {
+    background: #1a1a1a;
+    color: white;
+    padding: 30px 36px;
+    border-radius: 12px;
+  }
+  .product-img {
+  width: 100%;
+  filter: blur(8px);
+  transition: filter 0.4s;
+}
+
+
+  .product-img.loaded {
+    filter: none;
+  }
+  .highlight-section {
+  background: linear-gradient(180deg, #e5e5e5 0%, #f7f7f7 100%);
+  padding: 60px 20px;
+  box-shadow: inset 0 1px 6px rgba(0,0,0,0.08);
+}
+
+.highlight-section h2 {
+  font-size: 2.4rem;
+}
+
+.highlight-section p {
+  font-size: 1.1rem;
+}
+
+.highlight-section strong {
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+  .section-link {
+    margin-top: 15px;
+    display: inline-block;
+    font-weight: 500;
+    color: #0066cc;
+    text-decoration: none;
+  }
+  .section-link:hover {
+    text-decoration: underline;
+  }
+  
+.scroll-wrapper {
+  overflow: hidden;
+  position: relative;
+}
+
+
+.scroll-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.scroll-track {
+  display: flex;
+  gap: 2rem;
+  width: max-content;
+  min-width: 100vw; /* Prevents initial iOS bounce */
+  scroll-snap-align: start;
+  scroll-behavior: smooth;
+  will-change: transform;
+  animation: scroll-left 40s linear infinite;
+  animation-play-state: running;
+}
+
+
+
+.scroll-item {
+  flex: 0 0 auto;
+  width: 220px;
+  transition: transform 0.3s ease;
+  scroll-snap-align: start;
+}
+
+.scroll-item:hover {
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.scroll-item img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+#backToTop {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  width: 44px;
+  height: 44px;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#backToTop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#backToTop:hover {
+  transform: scale(1.08);
+}
+
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  width: 48px;
+  height: 48px;
+  background-color: #25D366;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;   /* FIX underline */
+  line-height: 1;          /* Prevent vertical misalignment */
+}
+.whatsapp-float i {
+  text-decoration: none;
+}
+
+
+.whatsapp-float:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+/* ===============================
+   MOBILE CLEAN VERSION
+   =============================== */
+
+@media (max-width: 768px) {
+
+  /* Reset scroll behavior safely */
+  html, body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Section spacing */
+  .section {
+  padding: 40px 15px;
+}
+
+  /* Hero adjustments */
+  .hero {
+    padding: 80px 15px;
+  }
+
+  .hero-kicker { margin-bottom: 14px; font-size: .64rem; letter-spacing: .15em; }
+  .hero-content h1 { font-size: clamp(2.15rem, 10vw, 3.25rem); }
+  .hero-content > p:not(.hero-kicker) { margin-top: 16px; font-size: 1rem; line-height: 1.65; }
+  .hero-actions { gap: 10px; margin-top: 24px; }
+  .hero-actions .btn { font-size: .9rem; }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  p, .lead {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* About Section */
+  .about-dark {
+    padding: 16px;
+  }
+.img-ratio-box img {
+  max-height: 260px;
+  object-fit: cover;
+}
+
+  /* Product Carousel */
+
+  .scroll-item {
+    width: 160px;
+  }
+
+  .scroll-item img {
+    height: 120px;
+  }
+
+  
+  /* Services Cards - 2 per row on mobile */
+  .section.bg-light .row.g-4 > div {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 10px;
+  }
+  .card img {
+    height: 100px;
+    object-fit: contain;
+  }
+  /* Service card title refinement */
+.section.bg-light .card p {
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 6px;
+}
+
+
+  /* Buttons */
+  .btn {
+    font-size: 0.95rem;
+  }
+
+  .btn-lg {
+    padding: 10px 20px;
+  }
+  /* WHY CHOOSE SECTION - Compact Mobile Version */
+.highlight-section {
+  padding: 30px 15px;
+}
+
+.highlight-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 18px;
+}
+
+.highlight-section .row {
+  row-gap: 12px;
+}
+
+.highlight-section strong {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.highlight-section p {
+  font-size: 0.88rem;
+  margin-bottom: 6px;
+}
+.highlight-section .col-6 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+}
+
+@media (min-width: 768px) {
+
+  .img-ratio-box {
+    max-height: 420px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .img-ratio-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .about-dark {
+    max-height: 480px;
+  }
+
+  .container.section {
+    max-width: 1140px;
+  }
+
+}
+
+
+
+
+
+</style>
+
+<!-- Hero -->
+<div class="hero">
+  <img class="hero-image" src="{{ url_for('static', filename='images/hero.webp') }}" alt="Statement sofa and cabinetry in a refined interior with a world map feature wall" fetchpriority="high" loading="eager" decoding="async">
+  <div class="hero-content">
+    <p class="hero-kicker">UNIGLOBE LIFESTYLES · FURNITURE SOURCING</p>
+    <h1>Global furniture sourcing, guided from factory to finish.</h1>
+    <p>Explore curated furniture and interior collections, with factory visits, customization, quality coordination and delivery guided by our team.</p>
+    <div class="hero-actions">
+      <a href="/products" class="btn btn-light btn-lg">Explore furniture <span aria-hidden="true">→</span></a>
+      <a href="/contact" class="btn btn-lg hero-secondary">Talk to our team <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+</div>
+
+
+<!-- About Section -->
+<div class="container section">
+  <div class="row align-items-stretch">
+    <div class="col-md-6">
+      <div class="about-dark">
+        <h2 class="section-title text-white">Who We Are</h2>
+        <p>
+        Uniglobe Lifestyles Pvt Ltd is a global China furniture sourcing and procurement company helping developers, architects and project owners directly access verified factories and curated showrooms in Foshan, China — the world’s furniture capital.</p>
+        <p>
+        We organize guided factory visits, manage supplier negotiations, oversee customization, and coordinate consolidated international shipping — ensuring seamless end-to-end project execution.
+        </p>
+        <a href="/about" title="About Uniglobe Lifestyles China Sourcing Company" class="btn btn-outline-light mt-3">Discover More →</a>
+      </div>
+    </div>
+    <div class="col-md-6 mt-3 mt-md-0">
+      <div class="img-ratio-box">
+        <img 
+          src="{{ url_for('static', filename='images/about.webp') }}"
+          srcset="
+            {{ url_for('static', filename='images/about.webp') }} 400w,
+            {{ url_for('static', filename='images/about.webp') }} 800w
+          "
+          sizes="(max-width: 600px) 400px, 800px"
+          class="img-fluid product-img"
+          alt="Uniglobe Lifestyles China furniture sourcing and factory procurement services">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Showroom CTA - Updated -->
+ <div class="highlight-section text-center">
+  <div class="container">
+  <h2 class="section-title text-dark">
+    Guided Furniture Sourcing Trips to Foshan, China
+  </h2>
+  <p class="mb-3">Serious projects deserve more than just a catalog. Experience sourcing the right way — in person.
+    Walk through curated showrooms, compare finishes firsthand, and finalize selections with clarity and confidence.</p>
+  <a href="/contact" class="btn btn-outline-dark fw-semibold px-4 py-2 rounded-pill">
+    Plan Your China Visit →
+  </a>
+</div>
+</div>
+
+  
+<!-- Our Products - Auto-Scrolling Infinite Carousel -->
+<div class="section text-center" style="padding: 60px 0; background-color: #f9f9f9;">
+  <h2 class="section-title">Our Products</h2>
+
+  <div class="scroll-wrapper">
+    <div class="scroll-track" id="scrollTrack">
+    {% for cat, img in homepage_display.items() %}
+      <div class="scroll-item">
+        <a href="/products?category={{ cat }}" style="text-decoration: none; color: black;">
+          <img 
+            src="{{ url_for('static', filename=img) }}"
+            srcset="
+              {{ url_for('static', filename=img) }} 400w,
+              {{ url_for('static', filename=img) }} 800w
+            "
+            sizes="(max-width: 600px) 400px, 800px"
+            alt="Wholesale {{ homepage_display_names[cat] }} sourcing from China factories"
+            loading="lazy">
+          <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+        </a>
+      </div>
+    {% endfor %}
+    <!-- Repeat for seamless scroll -->
+    {% for cat, img in homepage_display.items() %}
+      <div class="scroll-item">
+        <a href="/products?category={{ cat }}" style="text-decoration: none; color: black;">
+          <img 
+            src="{{ url_for('static', filename=img) }}"
+            srcset="
+              {{ url_for('static', filename=img) }} 400w,
+              {{ url_for('static', filename=img) }} 800w
+            "
+            sizes="(max-width: 600px) 400px, 800px"
+            alt="Wholesale {{ homepage_display_names[cat] }} sourcing from China factories"
+            loading="lazy">
+          <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/products" style="text-decoration: none; color: black; font-weight: 500;">
+      Browse Our Full Product Line →
+    </a>
+  </div>
+</div>
+  
+<!-- Our Services Section - Updated for Better Mobile UX -->
+<div class="section text-center bg-light">
+  <div class="container">
+    <h2 class="section-title">Our Services</h2>
+    <div class="row g-4 justify-content-center">
+      {% set services = [
+        ("custom.webp", "Factory Access & Selection"),
+        ("global.webp", "Custom Specification Support"),
+        ("logistics.webp", "Consolidated Project Sourcing"),
+        ("support.webp", "Procurement Coordination")
+      ] %}
+      {% for img, label in services %}
+      <div class="col-6 col-md-3">
+        <a href="/services" style="text-decoration: none; color: inherit;">
+          <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
+            <img src="{{ url_for('static', filename='images/services/' + img) }}"
+            srcset="
+              {{ url_for('static', filename='images/services/' + img) }} 100w,
+              {{ url_for('static', filename='images/services/' + img) }} 200w
+            "
+            sizes="(max-width: 600px) 100px, 200px"
+            class="img-fluid rounded-3 mb-2"
+            alt="{{ label }} - China furniture sourcing service by Uniglobe Lifestyles">
+            <p class="fw-semibold mb-0">{{ label }}</p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-4">
+      <a href="/services" title="China Furniture Sourcing & Procurement Services" class="btn btn-dark px-4 py-2 rounded-pill fw-semibold">
+        End-to-End Service →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Highlighted Why Choose Us -->
+<div class="highlight-section text-center">
+  <h2 class="section-title text-dark">Why Partner With Uniglobe Lifestyles</h2>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-3 col-6"><strong>🏭 Curated Factory Network</strong><p>Trusted Chinese manufacturers at your fingertips.</p></div>
+      <div class="col-md-3 col-6"><strong>🧰 Customization as Standard</strong><p>Your design, your specs — always possible.</p></div>
+      <div class="col-md-3 col-6"><strong>🚚 Structured Procurement Oversight</strong><p>We coordinate sourcing, quality alignment, and organized consolidation for seamless execution.</p></div>
+      <div class="col-md-3 col-6"><strong>📦 Everything Under One Roof</strong><p>Furniture, lighting, decor & a lot more in just one shipment.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="container section">
+  <h2 class="section-title text-center">
+    Global Furniture Sourcing & China Procurement Specialists
+  </h2>
+  <p class="text-center">
+  Uniglobe Lifestyles Pvt Ltd is a global China sourcing company specializing in project-based furniture procurement, direct factory access in Foshan, supplier negotiations, customization management, and consolidated international shipping. 
+  With an operational presence in China, we guide international developers, architects and project owners through a structured sourcing experience designed for efficiency, transparency and cost optimization.
+</p>
+</div>
+
+<!-- Contact Section - Refined -->
+<div class="section text-center bg-white">
+  <div class="container">
+    <h2 class="section-title">Ready to Plan Your China Sourcing Visit?</h2>
+    <p class="mb-3">Connect with our team to discuss your upcoming project and explore your sourcing journey.</p>
+    <a href="/contact" class="btn btn-outline-dark fw-semibold px-4 py-2 rounded-pill mb-3">
+      Contact Us →</a>
+
+    <p class="mb-3">
+      Email us at<br>
+      <a href="mailto:uniglobelifestyles@gmail.com" class="fw-semibold">
+        uniglobelifestyles@gmail.com
+      </a>
+      <br>
+      Or message us on WhatsApp anytime.
+    </p>
+    <a href="https://wa.me/919821524678" target="_blank" class="btn btn-success rounded-pill px-4 py-2">
+      Chat on WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- Back to Top Button -->
+<button id="backToTop" title="Back to Top" class="btn btn-dark rounded-circle shadow">
+  ↑
+</button>
+
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/919821524678"
+   target="_blank"
+   class="whatsapp-float"
+   aria-label="Chat on WhatsApp">
+   <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const track = document.getElementById("scrollTrack");
+    // Ensure scroll is animated on load
+    track.style.animationPlayState = "running";
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("backToTop");
+
+  window.addEventListener("scroll", function () {
+    if (window.scrollY > 150) {
+      btn.classList.add("show");
+    } else {
+      btn.classList.remove("show");
+    }
+  });
+
+  btn.onclick = function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll('.product-img').forEach(img => {
+    img.addEventListener('load', function() {
+      img.classList.add('loaded');
+    });
+    // If already loaded (from cache)
+    if (img.complete) img.classList.add('loaded');
+  });
+});
+</script>
+<script>
+  // Always scroll to top on reload (for index1.html only)
+  window.onbeforeunload = function () {
+    window.scrollTo(0, 0);
+    const wrapper = document.querySelector('.scroll-wrapper');
+    if (wrapper) wrapper.scrollLeft = 0;
+  };
+</script>
+
+{% endblock %}

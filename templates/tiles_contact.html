@@ -1,0 +1,47 @@
+{% extends "tiles_base.html" %}
+{% block title %}Contact | Uniglobe Surfaces Tiles{% endblock %}
+{% block content %}
+
+<section class="surface-contact-page">
+  <div class="container surface-contact-grid">
+    <div class="surface-contact-copy">
+      <p class="eyebrow">TALK WITH OUR TILE TEAM</p>
+      <h1>Let’s find the right tile for your project.</h1>
+      <p>Share the collection, format or finish you’re considering. We can help with product details and confirm current availability.</p>
+      <div class="contact-detail"><span>EMAIL</span><a href="mailto:uniglobelifestyles@gmail.com">uniglobelifestyles@gmail.com</a></div>
+    </div>
+    <form class="surface-contact-form" method="POST" action="{{ url_for('tiles_contact') }}">
+      <div class="row g-3">
+        <div class="col-sm-6"><label for="surfaceName">Your name *</label><input id="surfaceName" name="name" type="text" autocomplete="name" required></div>
+        <div class="col-sm-6"><label for="surfaceEmail">Email address *</label><input id="surfaceEmail" name="email" type="email" autocomplete="email" required></div>
+        <div class="col-sm-6"><label for="surfacePhone">Phone (optional)</label><input id="surfacePhone" name="phone" type="tel" autocomplete="tel"></div>
+        <div class="col-sm-6"><label for="surfaceInterest">I’m interested in</label><select id="surfaceInterest" name="interest"><option value="">Choose a tile collection</option>{% for collection in surface_collections %}<option value="{{ collection.name }}" {{ 'selected' if selected_interest == collection.name else '' }}>{{ collection.name }}</option>{% endfor %}<option value="Other tile collection" {{ 'selected' if selected_interest == 'Other tile collection' else '' }}>Other tile collection</option><option value="Tile project guidance" {{ 'selected' if selected_interest == 'Tile project guidance' else '' }}>Tile project guidance</option></select></div>
+        <div class="col-12"><label for="surfaceMessage">Tell us about your project</label><textarea id="surfaceMessage" name="message" rows="5" placeholder="Project type, location, timeline or anything else that would help us understand what you need."></textarea></div>
+        <div class="col-12"><button type="submit">Send inquiry <span aria-hidden="true">↗</span></button><p class="form-note">Fields marked * are required.</p></div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .surface-contact-page { padding: 80px 0 94px; background: #f0f0ed; }
+  .surface-contact-grid { display: grid; grid-template-columns: minmax(0,.82fr) minmax(0,1.18fr); gap: clamp(40px,8vw,120px); align-items: start; }
+  .eyebrow { color: #777b79; font-size: .72rem; font-weight: 600; letter-spacing: .16em; margin: 0 0 18px; }
+  .surface-contact-copy h1 { color: #292e2d; font-size: clamp(2.6rem,4.5vw,4.3rem); font-weight: 400; letter-spacing: -.06em; line-height: 1.04; margin: 0 0 20px; }
+  .surface-contact-copy > p:not(.eyebrow) { color: #666d69; font-size: .97rem; line-height: 1.8; max-width: 440px; }
+  .contact-detail { display: flex; flex-direction: column; gap: 7px; margin-top: 45px; }
+  .contact-detail span { color: #888e8b; font-size: .68rem; letter-spacing: .15em; }
+  .contact-detail a { width: fit-content; color: #303534; text-decoration: none; border-bottom: 1px solid #b9bfbb; padding-bottom: 4px; }
+  .surface-contact-form { padding: 30px; background: #fff; }
+  .surface-contact-form label { display: block; color: #4a504d; font-size: .78rem; margin-bottom: 8px; }
+  .surface-contact-form input, .surface-contact-form select, .surface-contact-form textarea { width: 100%; border: 1px solid #daddda; border-radius: 0; background: #fff; color: #343a37; padding: 12px 13px; outline: none; font: inherit; font-size: .88rem; }
+  .surface-contact-form input:focus, .surface-contact-form select:focus, .surface-contact-form textarea:focus { border-color: #707875; box-shadow: 0 0 0 2px rgba(80,88,84,.1); }
+  .surface-contact-form textarea { resize: vertical; }
+  .surface-contact-form textarea::placeholder { color: #9a9f9c; font-size: .82rem; }
+  .surface-contact-form button { min-height: 48px; padding: 0 19px; display: inline-flex; align-items: center; gap: 24px; border: 0; background: #343938; color: #fff; font: inherit; font-size: .88rem; cursor: pointer; }
+  .surface-contact-form button:hover { background: #202423; }
+  .form-note { display: inline-block; margin: 0 0 0 12px; color: #848a86; font-size: .76rem; }
+  @media (max-width: 767.98px) { .surface-contact-page { padding: 54px 0 66px; } .surface-contact-grid { grid-template-columns: 1fr; gap: 34px; } .surface-contact-form { padding: 22px 18px; } }
+</style>
+
+{% endblock %}

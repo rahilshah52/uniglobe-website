@@ -1,0 +1,41 @@
+{% extends "tiles_base.html" %}
+{% block title %}Tile Project Guidance | Uniglobe Surfaces{% endblock %}
+{% block content %}
+
+<section class="approach-hero">
+  <div class="container approach-hero-inner">
+    <p class="eyebrow">TILE PROJECT GUIDANCE</p>
+    <h1>Start with the space.<br><span>Then find your tile.</span></h1>
+    <p>Every project has its own palette, practical needs and point of view. We help you explore tile formats, finishes and coordinated step designs for the spaces you’re planning.</p>
+  </div>
+</section>
+<section class="approach-steps">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4"><article class="approach-step"><span>01</span><h2>Share the brief</h2><p>Tell us about the space, the look you’re drawn to and the stage your project is at.</p></article></div>
+      <div class="col-md-4"><article class="approach-step"><span>02</span><h2>Compare formats</h2><p>Explore full-body, double-charge and 5 mm slim tiles, with sizes and finishes depending on the design.</p></article></div>
+      <div class="col-md-4"><article class="approach-step"><span>03</span><h2>Confirm the details</h2><p>Check product specifications and current availability with our team before finalizing your selection.</p></article></div>
+    </div>
+  </div>
+</section>
+<section class="approach-cta"><div class="container"><p class="eyebrow">READY WHEN YOU ARE</p><h2>Let’s talk about what you’re building.</h2><a href="{{ url_for('tiles_contact') }}">Start a conversation <span aria-hidden="true">→</span></a></div></section>
+
+<style>
+  .approach-hero { padding: 84px 0 76px; background: #f0f0ed; }
+  .eyebrow { color: #777b79; font-size: .72rem; font-weight: 600; letter-spacing: .16em; margin: 0 0 18px; }
+  .approach-hero h1 { color: #292e2d; font-size: clamp(3rem, 6.5vw, 6rem); font-weight: 400; letter-spacing: -.07em; line-height: 1.01; margin: 0 0 26px; }
+  .approach-hero h1 span { color: #858b87; }
+  .approach-hero-inner > p:last-child { max-width: 640px; color: #666d69; font-size: 1rem; line-height: 1.8; margin: 0; }
+  .approach-steps { padding: 82px 0 96px; }
+  .approach-step { height: 100%; border-top: 1px solid #cdd0cd; padding: 19px 8px 0 0; }
+  .approach-step span { color: #8b918e; font-size: .75rem; letter-spacing: .12em; }
+  .approach-step h2 { color: #2d3231; font-size: 1.35rem; font-weight: 500; margin: 48px 0 12px; }
+  .approach-step p { max-width: 310px; color: #747a77; font-size: .91rem; line-height: 1.75; }
+  .approach-cta { padding: 74px 0 80px; color: #fff; background: #404645; text-align: center; }
+  .approach-cta .eyebrow { color: #c6cac7; }
+  .approach-cta h2 { max-width: 760px; margin: 0 auto 24px; font-size: clamp(2.1rem, 4.2vw, 3.8rem); font-weight: 400; letter-spacing: -.05em; }
+  .approach-cta a { display: inline-flex; gap: 20px; color: #303534; background: #fff; padding: 14px 20px; text-decoration: none; }
+  @media (max-width: 767.98px) { .approach-hero { padding: 58px 0; } .approach-steps { padding: 54px 0 62px; } .approach-step h2 { margin-top: 28px; } .approach-cta { padding: 60px 0; } }
+</style>
+
+{% endblock %}

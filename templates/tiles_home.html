@@ -1,0 +1,178 @@
+{% extends "tiles_base.html" %}
+{% block title %}Full-Body & Double-Charge Tiles in Mumbai | Uniglobe Surfaces{% endblock %}
+{% block meta_description %}Explore full-body, double-charge, GVT and PGVT tiles from Uniglobe Lifestyles Ceramics in Mumbai. Browse formats and finishes, and discuss your project with our team.{% endblock %}
+{% block og_title %}Full-Body & Double-Charge Tiles in Mumbai | Uniglobe Surfaces{% endblock %}
+{% block og_description %}Explore tile formats and finishes for residential and commercial projects. Uniglobe Lifestyles Ceramics helps architects compare collections and discuss availability.{% endblock %}
+{% block content %}
+
+<section class="surface-hero">
+  <div class="container surface-hero-grid">
+    <div class="surface-hero-copy">
+      <p class="eyebrow">UNIGLOBE LIFESTYLES CERAMICS · MUMBAI</p>
+      <h1>Tile collections for spaces with character.</h1>
+      <p class="surface-hero-lead">Explore full-body, double-charge, GVT and PGVT tiles selected for residential and commercial projects. Our team can help architects compare formats, finishes and availability.</p>
+      <div class="surface-hero-actions">
+        <a href="{{ url_for('tiles_collections') }}" class="surface-button surface-button-dark">Explore collections <span aria-hidden="true">↗</span></a>
+        <a href="{{ url_for('tiles_contact') }}" class="surface-text-link">Discuss your project <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="surface-hero-note"><span></span> GVT · PGVT · FULL BODY · DOUBLE CHARGE</div>
+    </div>
+    <div class="surface-hero-image-wrap">
+      <img src="{{ url_for('static', filename='images/surfaces/catalog/double-charge-800-room.jpg') }}" alt="800 × 800 mm double-charge floor tiles in a contemporary dining room" class="surface-hero-image" fetchpriority="high" loading="eager" decoding="async">
+      <div class="surface-image-caption"><span>DOUBLE CHARGE · 2026</span><span>800 × 800 mm</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="surface-collections section-pad" id="collections">
+  <div class="container">
+    <div class="section-heading-row">
+      <div>
+        <p class="eyebrow">TILE COLLECTIONS</p>
+        <h2>Explore by format and finish.</h2>
+      </div>
+      <a href="{{ url_for('tiles_collections') }}" class="surface-text-link">View all collections <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="row g-4">
+      {% for collection in surface_collections %}
+      <div class="col-md-4">
+        <a href="{{ url_for('tiles_collections') }}" class="surface-collection-card">
+          <div class="surface-collection-image-wrap">
+            <img src="{{ url_for('static', filename=collection.image) }}" alt="{{ collection.alt }}" loading="lazy">
+            <span class="surface-card-arrow" aria-hidden="true">↗</span>
+          </div>
+          <div class="surface-collection-copy">
+            <h3>{{ collection.name }}</h3>
+            <p>{{ collection.description }}</p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="surface-statement">
+  <div class="container surface-statement-inner">
+    <p class="eyebrow">A TILE-LED COLLECTION</p>
+    <h2>From full-body tiles to carefully finished steps.</h2>
+    <p>Browse GVT, PGVT, full-body, double-charge and 5 mm slim full-body ranges, with finishes and formats that vary by collection.</p>
+    <a href="{{ url_for('tiles_services') }}" class="surface-button surface-button-light">Plan your tile selection <span aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<section class="bath-preview" id="bath-sanitaryware">
+  <div class="container">
+    <div class="bath-preview-heading">
+      <div><p class="eyebrow">COMING INTO VIEW</p><h2>Bath &amp; sanitaryware.</h2></div>
+      <p>Explore bath and sanitaryware by product category, then browse catalogue imagery from the brands featured in our showroom.</p>
+    </div>
+    <div class="row g-3 g-lg-4">
+      <div class="col-md-6">
+        <a class="bath-brand-card" href="{{ url_for('tiles_bath') }}#jaquar">
+          <img src="{{ url_for('static', filename='images/sanitaryware/brands/jaquar-bath-inspiration.jpg') }}" alt="Jaquar bathroom inspiration with contemporary bath fittings" loading="lazy">
+          <span class="bath-brand-caption"><span><small>AVAILABLE THROUGH UNIGLOBE</small><strong>Jaquar</strong></span><span aria-hidden="true">↗</span></span>
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a class="bath-brand-card" href="{{ url_for('tiles_bath') }}#kohler">
+          <img src="{{ url_for('static', filename='images/sanitaryware/brands/kohler-bath-inspiration.jpg') }}" alt="KOHLER bathroom collection inspiration" loading="lazy">
+          <span class="bath-brand-caption"><span><small>AVAILABLE THROUGH UNIGLOBE</small><strong>KOHLER</strong></span><span aria-hidden="true">↗</span></span>
+        </a>
+      </div>
+    </div>
+    <p class="bath-image-note"><a href="{{ url_for('tiles_bath') }}">Explore bath &amp; sanitaryware <span aria-hidden="true">↗</span></a></p>
+  </div>
+</section>
+
+<section class="surface-contact-band">
+  <div class="container surface-contact-inner">
+    <div>
+      <p class="eyebrow">PROJECT GUIDANCE · CURRENT AVAILABILITY</p>
+      <h2>Have a tile design or format in mind?</h2>
+    </div>
+    <a href="{{ url_for('tiles_contact') }}" class="surface-button surface-button-dark">Get in touch <span aria-hidden="true">↗</span></a>
+  </div>
+</section>
+
+<style>
+  .surface-hero { background: #f0f0ed; padding: 54px 0 58px; }
+  .surface-hero-grid { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); align-items: center; gap: clamp(32px, 6vw, 88px); }
+  .surface-hero-copy { padding: 20px 0 26px; }
+  .eyebrow { color: #777b79; font-size: .72rem; font-weight: 600; letter-spacing: .16em; margin: 0 0 18px; }
+  .surface-hero h1 { color: #252827; font-size: clamp(2.8rem, 5vw, 5.1rem); font-weight: 400; letter-spacing: -.065em; line-height: 1.02; max-width: 650px; margin: 0 0 24px; }
+  .surface-hero-lead { color: #626765; font-size: 1.04rem; line-height: 1.8; max-width: 480px; }
+  .surface-hero-actions { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; margin-top: 30px; }
+  .surface-button { display: inline-flex; align-items: center; justify-content: center; gap: 18px; min-height: 48px; padding: 0 21px; border-radius: 2px; font-size: .88rem; text-decoration: none; transition: transform .2s ease, background-color .2s ease; }
+  .surface-button:hover { transform: translateY(-2px); }
+  .surface-button-dark { background: #343938; color: #fff; }
+  .surface-button-dark:hover { background: #202423; color: #fff; }
+  .surface-button-light { border: 1px solid rgba(255,255,255,.62); color: #fff; }
+  .surface-button-light:hover { background: #fff; color: #292e2d; }
+  .surface-text-link { color: #343938; font-size: .88rem; text-decoration: none; border-bottom: 1px solid #aeb2af; padding-bottom: 5px; }
+  .surface-text-link span { margin-left: 8px; }
+  .surface-text-link:hover { color: #737978; }
+  .surface-hero-note { display: flex; align-items: center; gap: 10px; color: #828784; font-size: .64rem; letter-spacing: .15em; margin-top: 65px; }
+  .surface-hero-note span { width: 28px; height: 1px; background: #858a87; }
+  .surface-hero-image-wrap { position: relative; height: clamp(400px, 43vw, 570px); overflow: hidden; background: #d9dbd8; }
+  .surface-hero-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .surface-image-caption { position: absolute; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; padding: 16px 18px; background: linear-gradient(transparent, rgba(0,0,0,.48)); color: #fff; font-size: .72rem; letter-spacing: .04em; }
+  .section-pad { padding: 96px 0 102px; }
+  .section-heading-row { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 34px; }
+  .section-heading-row .eyebrow { margin-bottom: 11px; }
+  .section-heading-row h2, .surface-contact-inner h2 { color: #292e2d; font-size: clamp(2rem, 3.3vw, 3.1rem); font-weight: 400; letter-spacing: -.045em; margin: 0; }
+  .surface-collection-card { display: block; color: inherit; text-decoration: none; height: 100%; }
+  .surface-collection-image-wrap { position: relative; overflow: hidden; height: 310px; background: #eee; }
+  .surface-collection-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .45s ease; }
+  .surface-collection-card:hover .surface-collection-image-wrap img { transform: scale(1.035); }
+  .surface-card-arrow { position: absolute; right: 14px; bottom: 14px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: #303534; background: #fff; }
+  .surface-collection-copy { padding: 18px 0 6px; }
+  .surface-collection-copy h3 { color: #2b302f; font-size: 1.08rem; font-weight: 500; margin: 0 0 8px; }
+  .surface-collection-copy p { color: #777c79; font-size: .87rem; line-height: 1.65; margin: 0; max-width: 330px; }
+  .surface-statement { background: #404645; color: #fff; padding: 82px 0 88px; }
+  .surface-statement-inner { max-width: 920px; text-align: center; }
+  .surface-statement .eyebrow { color: #c6cac7; }
+  .surface-statement h2 { font-size: clamp(2.1rem, 4.3vw, 4rem); font-weight: 400; letter-spacing: -.05em; line-height: 1.13; margin: 0 auto 18px; max-width: 830px; }
+  .surface-statement p:not(.eyebrow) { color: #e0e2e0; line-height: 1.7; max-width: 590px; margin: 0 auto 28px; }
+  .bath-preview { padding: 84px 0 78px; background: #f5f5f2; }
+  .bath-preview-heading { display: flex; align-items: end; justify-content: space-between; gap: 36px; margin-bottom: 28px; }
+  .bath-preview-heading .eyebrow { margin-bottom: 9px; }
+  .bath-preview-heading h2 { color: #292e2d; font-size: clamp(2rem,3.3vw,3.1rem); font-weight: 400; letter-spacing: -.045em; margin: 0; }
+  .bath-preview-heading > p { max-width: 430px; color: #737875; font-size: .9rem; line-height: 1.75; margin: 0; }
+  .bath-brand-card { position: relative; display: block; height: 340px; overflow: hidden; color: #fff; background: #ddd; }
+  .bath-brand-card::after { position: absolute; content: ''; inset: 35% 0 0; background: linear-gradient(transparent,rgba(20,23,22,.65)); }
+  .bath-brand-card img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+  .bath-brand-card:hover img { transform: scale(1.025); }
+  .bath-brand-caption { position: absolute; z-index: 1; left: 20px; right: 20px; bottom: 17px; display: flex; align-items: end; justify-content: space-between; }
+  .bath-brand-caption small { display: block; margin-bottom: 5px; font-size: .61rem; letter-spacing: .14em; opacity: .8; }
+  .bath-brand-caption strong { font-size: 1.25rem; font-weight: 500; letter-spacing: .01em; }
+  .bath-image-note { margin: 14px 0 0; color: #858a87; font-size: .72rem; }
+  .surface-contact-band { padding: 64px 0; background: #f4f4f1; }
+  .surface-contact-inner { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+  .surface-contact-inner .eyebrow { margin-bottom: 10px; }
+  @media (max-width: 767.98px) {
+    .surface-hero { padding: 34px 0 0; }
+    .surface-hero-grid { display: flex; flex-direction: column; align-items: stretch; gap: 28px; }
+    .surface-hero-copy { padding: 8px 0 0; }
+    .surface-hero h1 { font-size: clamp(2.7rem, 12vw, 4rem); }
+    .surface-hero-lead { font-size: .98rem; }
+    .surface-hero-note { margin-top: 36px; }
+    .surface-hero-image-wrap { height: 360px; margin: 0 -12px; }
+    .section-pad { padding: 66px 0 72px; }
+    .section-heading-row { align-items: start; flex-direction: column; margin-bottom: 26px; }
+    .surface-collection-image-wrap { height: 280px; }
+    .surface-statement { padding: 64px 0; }
+    .bath-preview { padding: 64px 0 58px; }
+    .bath-preview-heading { display: block; margin-bottom: 22px; }
+    .bath-preview-heading > p { margin-top: 13px; }
+    .bath-brand-card { height: 270px; }
+    .surface-contact-inner { align-items: flex-start; flex-direction: column; }
+  }
+  @media (max-width: 420px) {
+    .surface-hero-image-wrap { height: 300px; }
+    .surface-hero-actions { gap: 18px; }
+    .surface-button { min-height: 46px; padding: 0 16px; }
+  }
+</style>
+
+{% endblock %}

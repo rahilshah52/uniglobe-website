@@ -1,0 +1,69 @@
+{% extends "tiles_base.html" %}
+{% block title %}{{ product.name }} | Uniglobe Surfaces{% endblock %}
+{% block content %}
+<section class="tile-detail-page">
+  <div class="container">
+    <a href="{{ url_for('tiles_collections') }}#tile-lookbook" class="detail-back">← Back to the tile edit</a>
+    <div class="tile-detail-grid">
+      <section class="tile-gallery" aria-label="{{ product.name }} image gallery">
+        <div class="tile-gallery-main"><img id="tileGalleryMain" src="{{ url_for('static', filename=gallery[0].src) }}" alt="{{ product.name }} — {{ gallery[0].label }}"></div>
+        <div class="tile-gallery-thumbs" role="group" aria-label="More views of {{ product.name }}">
+          {% for view in gallery %}
+          <button class="tile-gallery-thumb {{ 'active' if loop.first else '' }}" type="button" data-image="{{ url_for('static', filename=view.src) }}" data-label="{{ view.label }}" aria-label="Show {{ view.label }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">
+            <img src="{{ url_for('static', filename=view.src) }}" alt="" loading="lazy"><span>{{ view.label }}</span>
+          </button>
+          {% endfor %}
+        </div>
+      </section>
+      <section class="tile-detail-copy">
+        <p class="eyebrow">{{ product.group }} · CATALOGUE DESIGN</p>
+        <h1>{{ product.name }}</h1>
+        <p class="tile-detail-description">{{ product.description }}</p>
+        <div class="tile-spec"><span>FORMAT &amp; FINISH</span><p>{{ product.details }}</p></div>
+        <p class="tile-detail-note">Catalog images show the surface and collection inspiration. Please contact us to confirm current stock, finish and the best match for your project.</p>
+        <a class="tile-enquiry-button" href="{{ url_for('tiles_contact') }}?interest={{ product.name|urlencode }}">Ask about this tile <span aria-hidden="true">↗</span></a>
+        <a class="tile-detail-contact" href="{{ url_for('tiles_contact') }}">Discuss a project with us</a>
+      </section>
+    </div>
+  </div>
+</section>
+<style>
+  .tile-detail-page { padding: 34px 0 88px; }
+  .detail-back { display: inline-block; margin-bottom: 26px; color: #666d69; font-size: .82rem; text-decoration: none; }
+  .detail-back:hover { color: #252a28; }
+  .tile-detail-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(300px,.8fr); align-items: start; gap: clamp(36px,7vw,96px); }
+  .tile-gallery-main { display: grid; place-items: center; height: min(66vw,680px); min-height: 390px; overflow: hidden; background: #f1f1ee; }
+  .tile-gallery-main img { width: 100%; height: 100%; object-fit: contain; }
+  .tile-gallery-thumbs { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-top: 11px; }
+  .tile-gallery-thumb { display: flex; flex-direction: column; padding: 0; overflow: hidden; border: 1px solid #e2e4e1; background: #f7f7f5; color: #5f6662; text-align: left; cursor: pointer; }
+  .tile-gallery-thumb.active { border-color: #8d806d; }
+  .tile-gallery-thumb img { width: 100%; height: 96px; object-fit: cover; }
+  .tile-gallery-thumb span { padding: 8px; font-size: .68rem; line-height: 1.3; }
+  .tile-detail-copy { position: sticky; top: 32px; padding: 32px 0; }
+  .tile-detail-copy .eyebrow { margin-bottom: 15px; }
+  .tile-detail-copy h1 { margin: 0 0 16px; color: #292e2d; font-size: clamp(2.3rem,4vw,4rem); font-weight: 400; letter-spacing: -.06em; line-height: 1.02; }
+  .tile-detail-description { color: #656b68; font-size: 1rem; line-height: 1.8; }
+  .tile-spec { margin: 33px 0 20px; padding: 18px 0; border-top: 1px solid #e2e4e1; border-bottom: 1px solid #e2e4e1; }
+  .tile-spec span { color: #858a87; font-size: .67rem; font-weight: 600; letter-spacing: .13em; }
+  .tile-spec p { margin: 8px 0 0; color: #343a37; font-size: .9rem; line-height: 1.65; }
+  .tile-detail-note { color: #7a807d; font-size: .8rem; line-height: 1.7; }
+  .tile-enquiry-button { display: inline-flex; align-items: center; gap: 20px; margin-top: 16px; padding: 14px 18px; color: #fff; background: #343938; text-decoration: none; font-size: .86rem; }
+  .tile-detail-contact { display: block; width: fit-content; margin-top: 17px; color: #4e5551; font-size: .8rem; text-decoration: underline; text-underline-offset: 4px; }
+  @media(max-width: 767.98px) { .tile-detail-page { padding: 24px 0 60px; } .tile-detail-grid { grid-template-columns: 1fr; gap: 25px; } .tile-gallery-main { height: 105vw; min-height: 310px; max-height: 540px; } .tile-gallery-thumbs { gap: 7px; } .tile-gallery-thumb img { height: clamp(70px,21vw,120px); } .tile-gallery-thumb span { padding: 6px; font-size: .62rem; } .tile-detail-copy { position: static; padding: 8px 0 0; } .tile-detail-copy h1 { font-size: clamp(2.3rem,11vw,3.6rem); } }
+</style>
+<script>
+document.querySelectorAll('.tile-gallery-thumb').forEach(function (button) {
+  button.addEventListener('click', function () {
+    const main = document.getElementById('tileGalleryMain');
+    main.src = this.dataset.image;
+    main.alt = '{{ product.name|e }} — ' + this.dataset.label;
+    document.querySelectorAll('.tile-gallery-thumb').forEach(function (thumb) {
+      thumb.classList.remove('active');
+      thumb.setAttribute('aria-pressed', 'false');
+    });
+    this.classList.add('active');
+    this.setAttribute('aria-pressed', 'true');
+  });
+});
+</script>
+{% endblock %}

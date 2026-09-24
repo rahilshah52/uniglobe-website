@@ -1,0 +1,97 @@
+{% extends "tiles_base.html" %}
+{% block title %}Bath &amp; Sanitaryware | Uniglobe Surfaces{% endblock %}
+{% block meta_description %}Explore bath and sanitaryware categories, with selected product and room imagery from Jaquar, KOHLER and Simpolo catalogues.{% endblock %}
+{% block content %}
+<section class="bath-hero">
+  <div class="bath-hero-image" role="img" aria-label="Refined contemporary bathroom with sculptural bath and vanity"></div>
+  <div class="bath-hero-shade"></div>
+  <div class="container bath-hero-content">
+    <p class="bath-eyebrow">UNIGLOBE SURFACES · BATH &amp; SANITARYWARE</p>
+    <h1>Considered details<br>for everyday rituals.</h1>
+    <p>Find the pieces that bring a bathroom together — from showers and fittings to basins, baths and sanitaryware.</p>
+    <a href="#bath-categories" class="bath-hero-link">Explore by category <span aria-hidden="true">↓</span></a>
+  </div>
+</section>
+
+<section class="bath-categories" id="bath-categories">
+  <div class="container">
+    <div class="bath-section-heading">
+      <div><p class="bath-kicker">01 · BROWSE BY CATEGORY</p><h2>Start with what<br>your space needs.</h2></div>
+      <p>Choose a category to view a curated set of catalogue images. Ask us about brand options, product details and current availability.</p>
+    </div>
+    <div class="bath-category-grid">
+      {% for category in bath_categories %}
+      <a class="bath-category-card" href="{{ url_for('tiles_bath_category', slug=category.slug) }}">
+        <img src="{{ url_for('static', filename=category.image) }}" alt="{{ category.alt }}" loading="lazy">
+        <span class="bath-category-count">{{ category.number }} · BATHROOM</span>
+        <span class="bath-category-copy"><strong>{{ category.title }}</strong><span>View category <b aria-hidden="true">↗</b></span></span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="bath-brands" id="bath-brands">
+  <div class="container">
+    <div class="bath-section-heading bath-brand-heading">
+      <div><p class="bath-kicker">02 · SHOWROOM BRANDS</p><h2>Find the right<br>brand for your plan.</h2></div>
+      <p>Jaquar and KOHLER are available through our showroom. Enquire with our team about the ranges that suit your project.</p>
+    </div>
+    <div class="bath-brand-grid">
+      <article class="bath-brand-card" id="jaquar">
+        <img src="{{ url_for('static', filename='images/sanitaryware/brands/jaquar-bath-inspiration.jpg') }}" alt="Jaquar bathroom inspiration" loading="lazy">
+        <div><span>SHOWROOM BRAND</span><h3>Jaquar</h3><p>Bath fittings, showers and sanitaryware for considered bathroom spaces.</p><a href="{{ url_for('tiles_contact') }}?interest=Jaquar">Enquire about Jaquar <b aria-hidden="true">↗</b></a></div>
+      </article>
+      <article class="bath-brand-card" id="kohler">
+        <img src="{{ url_for('static', filename='images/sanitaryware/brands/kohler-bath-inspiration.jpg') }}" alt="KOHLER bathroom inspiration" loading="lazy">
+        <div><span>SHOWROOM BRAND</span><h3>KOHLER</h3><p>Distinctive bath, basin and sanitaryware options for your project.</p><a href="{{ url_for('tiles_contact') }}?interest=KOHLER">Enquire about KOHLER <b aria-hidden="true">↗</b></a></div>
+      </article>
+    </div>
+    <p class="bath-disclaimer">Catalogue imagery is shown for product inspiration. Please contact our team to confirm brand, model and availability.</p>
+  </div>
+</section>
+
+<style>
+  .bath-hero { position: relative; min-height: clamp(440px, 52vw, 660px); display: flex; align-items: end; overflow: hidden; color: #fff; background: #333936; }
+  .bath-hero-image,.bath-hero-shade { position:absolute; inset:0; }
+  .bath-hero-image { background: url("{{ url_for('static', filename='images/sanitaryware/catalog/kohler-bathroom-suite.jpg') }}") center 53%/cover no-repeat; transform: scale(1.01); }
+  .bath-hero-shade { background: linear-gradient(90deg,rgba(24,29,27,.74),rgba(24,29,27,.3) 57%,rgba(24,29,27,.08)),linear-gradient(0deg,rgba(20,24,23,.27),transparent 56%); }
+  .bath-hero-content { position:relative; z-index:1; padding-top:90px; padding-bottom:clamp(52px,7vw,82px); }
+  .bath-eyebrow,.bath-kicker { color:#8d918c; font-size:.65rem; font-weight:600; letter-spacing:.17em; }
+  .bath-eyebrow { color:rgba(255,255,255,.78); margin:0 0 17px; }
+  .bath-hero h1 { max-width:780px; margin:0 0 18px; font-size:clamp(3rem,7vw,6.3rem); font-weight:400; letter-spacing:-.065em; line-height:.98; }
+  .bath-hero-content > p:not(.bath-eyebrow) { max-width:530px; margin:0; color:rgba(255,255,255,.82); font-size:.95rem; line-height:1.8; }
+  .bath-hero-link { display:inline-flex; gap:30px; margin-top:27px; padding:12px 15px; border:1px solid rgba(255,255,255,.55); color:#fff; text-decoration:none; font-size:.75rem; }
+  .bath-categories,.bath-brands { padding:clamp(58px,8vw,100px) 0; }
+  .bath-categories { background:#f4f4f1; }
+  .bath-section-heading { display:grid; grid-template-columns:1fr minmax(260px,430px); align-items:end; gap:36px; margin-bottom:32px; }
+  .bath-kicker { margin:0 0 10px; }
+  .bath-section-heading h2 { margin:0; color:#2d3330; font-size:clamp(2.3rem,4.8vw,4.1rem); font-weight:400; letter-spacing:-.06em; line-height:1.02; }
+  .bath-section-heading > p { margin:0 0 4px; color:#737a75; font-size:.86rem; line-height:1.8; }
+  .bath-category-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:15px; }
+  .bath-category-card { position:relative; display:block; aspect-ratio:.78; overflow:hidden; color:#fff; background:#303432; text-decoration:none; }
+  .bath-category-card::after { position:absolute; inset:35% 0 0; content:""; background:linear-gradient(transparent,rgba(12,16,15,.78)); }
+  .bath-category-card img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .55s ease; }
+  .bath-category-card:hover img { transform:scale(1.045); }
+  .bath-category-count { position:absolute; z-index:1; top:14px; left:14px; padding:7px 9px; color:#3c423e; background:rgba(255,255,255,.88); font-size:.53rem; letter-spacing:.11em; }
+  .bath-category-copy { position:absolute; z-index:1; right:17px; bottom:16px; left:17px; display:grid; gap:10px; }
+  .bath-category-copy strong { font-size:clamp(1rem,1.7vw,1.35rem); font-weight:500; }
+  .bath-category-copy > span { display:flex; justify-content:space-between; padding-top:10px; border-top:1px solid rgba(255,255,255,.45); color:rgba(255,255,255,.82); font-size:.68rem; }
+  .bath-category-copy b { font-weight:400; }
+  .bath-brands { background:#fff; }
+  .bath-brand-heading { margin-bottom:29px; }
+  .bath-brand-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+  .bath-brand-card { display:grid; grid-template-columns:1.05fr .95fr; min-height:300px; background:#f4f4f1; scroll-margin-top:100px; }
+  .bath-brand-card > img { display:block; width:100%; height:100%; min-height:300px; object-fit:cover; }
+  .bath-brand-card > div { align-self:center; padding:clamp(19px,2.4vw,33px); }
+  .bath-brand-card > div > span { color:#858b86; font-size:.52rem; letter-spacing:.13em; }
+  .bath-brand-card h3 { margin:12px 0 9px; color:#2d3330; font-size:clamp(1.75rem,3vw,2.5rem); font-weight:400; letter-spacing:-.05em; }
+  .bath-brand-card p { min-height:64px; margin:0 0 16px; color:#707772; font-size:.74rem; line-height:1.7; }
+  .bath-brand-card a { display:inline-flex; justify-content:space-between; gap:15px; padding-bottom:5px; border-bottom:1px solid #bdc2bd; color:#303634; font-size:.68rem; text-decoration:none; }
+  .bath-brand-card a b { font-weight:400; }
+  .bath-disclaimer { margin:19px 0 0; color:#858b87; font-size:.7rem; line-height:1.7; }
+  @media(max-width:991.98px) { .bath-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .bath-brand-grid { grid-template-columns:1fr; } .bath-brand-card { grid-template-columns:1fr 1fr; } }
+  @media(max-width:767.98px) { .bath-hero { min-height:490px; } .bath-hero-image { background-position:58% center; } .bath-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.13)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .bath-hero-content { padding-top:70px; padding-bottom:47px; } .bath-hero h1 { font-size:clamp(2.9rem,12vw,4.5rem); } .bath-hero-content > p:not(.bath-eyebrow) { max-width:410px; font-size:.85rem; } .bath-section-heading { grid-template-columns:1fr; gap:14px; margin-bottom:22px; } .bath-section-heading > p { max-width:520px; font-size:.8rem; } .bath-category-grid { gap:10px; } .bath-category-card { aspect-ratio:.76; } .bath-category-count { top:9px; left:9px; padding:6px 7px; font-size:.45rem; } .bath-category-copy { right:11px; bottom:12px; left:11px; gap:8px; } .bath-category-copy strong { font-size:.93rem; } .bath-category-copy > span { padding-top:7px; font-size:.6rem; } .bath-brand-card { min-height:215px; } .bath-brand-card > img { min-height:215px; } .bath-brand-card > div { padding:15px 12px; } .bath-brand-card h3 { margin:8px 0; font-size:1.55rem; } .bath-brand-card p { min-height:0; margin-bottom:12px; font-size:.67rem; line-height:1.55; } .bath-brand-card a { gap:7px; font-size:.59rem; } }
+  @media(max-width:370px) { .bath-brand-card { grid-template-columns:1fr; } .bath-brand-card > img { height:190px; min-height:190px; } }
+</style>
+{% endblock %}
