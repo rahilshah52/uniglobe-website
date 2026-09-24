@@ -17,7 +17,7 @@
         <div class="col-sm-6"><label for="surfacePhone">Phone (optional)</label><input id="surfacePhone" name="phone" type="tel" autocomplete="tel"></div>
         <div class="col-sm-6"><label for="surfaceInterest">I’m interested in</label><select id="surfaceInterest" name="interest"><option value="">Choose a tile collection</option>{% for collection in surface_collections %}<option value="{{ collection.name }}" {{ 'selected' if selected_interest == collection.name else '' }}>{{ collection.name }}</option>{% endfor %}<option value="Other tile collection" {{ 'selected' if selected_interest == 'Other tile collection' else '' }}>Other tile collection</option><option value="Tile project guidance" {{ 'selected' if selected_interest == 'Tile project guidance' else '' }}>Tile project guidance</option></select></div>
         <div class="col-12"><label for="surfaceMessage">Tell us about your project</label><textarea id="surfaceMessage" name="message" rows="5" placeholder="Project type, location, timeline or anything else that would help us understand what you need."></textarea></div>
-        <div class="col-12"><button type="submit">Send inquiry <span aria-hidden="true">↗</span></button><p class="form-note">Fields marked * are required.</p></div>
+        <div class="col-12"><button type="submit">Send inquiry <span aria-hidden="true"></span></button><p class="form-note">Fields marked * are required.</p></div>
       </div>
     </form>
   </div>

@@ -9,7 +9,7 @@
     <p>Explore tile designs from our catalogues, with details to help you find a material that suits your space.</p>
     <div class="collection-entry-links" aria-label="Explore collection categories">
       <a href="#tiles">Explore tiles <span aria-hidden="true">↓</span></a>
-      <a href="{{ url_for('tiles_bath') }}">Bath &amp; sanitaryware <span aria-hidden="true">↗</span></a>
+      <a href="{{ url_for('tiles_bath') }}">Bath &amp; sanitaryware <span aria-hidden="true"></span></a>
     </div>
   </div>
 </section>
@@ -66,7 +66,7 @@
             {% for product in surface_products %}
             <article class="tile-card">
               <div class="tile-card-image">{% if product.images %}<img src="{{ url_for('static', filename=product.images[0]) }}" alt="{{ product.title }} tile surface" loading="lazy">{% endif %}</div>
-              <div class="tile-card-copy"><p class="tile-card-family">{{ product.category }}{% if product.code %} · {{ product.code }}{% endif %}</p><h3>{{ product.title }}</h3><p>{{ product.description }}</p><a class="tile-card-spec" href="{{ url_for('tiles_contact') }}?interest={{ product.title|urlencode }}">Ask about this design ↗</a></div>
+              <div class="tile-card-copy"><p class="tile-card-family">{{ product.category }}{% if product.code %} · {{ product.code }}{% endif %}</p><h3>{{ product.title }}</h3><p>{{ product.description }}</p><a class="tile-card-spec" href="{{ url_for('tiles_contact') }}?interest={{ product.title|urlencode }}">Ask about this design </a></div>
             </article>
             {% endfor %}
           </div>
@@ -87,7 +87,7 @@
       <a class="tile-highlight" href="{{ url_for('tiles_contact') }}?interest={{ collection.name|urlencode }}">
         <img src="{{ url_for('static', filename=collection.image) }}" alt="{{ collection.alt }}" loading="lazy">
         <span class="tile-highlight-overlay"><span class="eyebrow">EXPLORE THE RANGE</span><strong>{{ collection.name }}</strong><span>{{ collection.description }}</span></span>
-        <span class="tile-highlight-arrow" aria-hidden="true">↗</span>
+        <span class="tile-highlight-arrow" aria-hidden="true"></span>
       </a>
       {% endif %}
       {% endfor %}
@@ -98,7 +98,7 @@
   </div>
 </section>
 
-<section class="collection-contact"><div class="container"><p class="eyebrow">PROJECTS · SPECIFICATIONS · AVAILABILITY</p><h2>Have a collection in mind?</h2><a href="{{ url_for('tiles_contact') }}">Talk to our team <span aria-hidden="true">↗</span></a></div></section>
+<section class="collection-contact"><div class="container"><p class="eyebrow">PROJECTS · SPECIFICATIONS · AVAILABILITY</p><h2>Have a collection in mind?</h2><a href="{{ url_for('tiles_contact') }}">Talk to our team <span aria-hidden="true"></span></a></div></section>
 
 <style>
   .eyebrow { margin: 0 0 12px; color: #8a8d88; font-size: .68rem; font-weight: 600; letter-spacing: .16em; }
