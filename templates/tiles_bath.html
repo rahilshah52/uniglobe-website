@@ -24,7 +24,7 @@
       <a class="bath-category-card" href="{{ url_for('tiles_bath_category', slug=category.slug) }}">
         <img src="{{ url_for('static', filename=category.image) }}" alt="{{ category.alt }}" loading="lazy">
         <span class="bath-category-count">{{ category.number }} · BATHROOM</span>
-        <span class="bath-category-copy"><strong>{{ category.title }}</strong><span>View category <b aria-hidden="true">↗</b></span></span>
+        <span class="bath-category-copy"><strong>{{ category.title }}</strong><span>View category</span></span>
       </a>
       {% endfor %}
     </div>
@@ -40,11 +40,11 @@
     <div class="bath-brand-grid">
       <article class="bath-brand-card" id="jaquar">
         <img src="{{ url_for('static', filename='images/sanitaryware/brands/jaquar-bath-inspiration.jpg') }}" alt="Jaquar bathroom inspiration" loading="lazy">
-        <div><span>SHOWROOM BRAND</span><h3>Jaquar</h3><p>Bath fittings, showers and sanitaryware for considered bathroom spaces.</p><a href="{{ url_for('tiles_contact') }}?interest=Jaquar">Enquire about Jaquar <b aria-hidden="true">↗</b></a></div>
+        <div><span>SHOWROOM BRAND</span><h3>Jaquar</h3><p>Bath fittings, showers and sanitaryware for considered bathroom spaces.</p><a href="{{ url_for('tiles_contact') }}?interest=Jaquar">Enquire about Jaquar</a></div>
       </article>
       <article class="bath-brand-card" id="kohler">
         <img src="{{ url_for('static', filename='images/sanitaryware/brands/kohler-bath-inspiration.jpg') }}" alt="KOHLER bathroom inspiration" loading="lazy">
-        <div><span>SHOWROOM BRAND</span><h3>KOHLER</h3><p>Distinctive bath, basin and sanitaryware options for your project.</p><a href="{{ url_for('tiles_contact') }}?interest=KOHLER">Enquire about KOHLER <b aria-hidden="true">↗</b></a></div>
+        <div><span>SHOWROOM BRAND</span><h3>KOHLER</h3><p>Distinctive bath, basin and sanitaryware options for your project.</p><a href="{{ url_for('tiles_contact') }}?interest=KOHLER">Enquire about KOHLER </a></div>
       </article>
     </div>
     <p class="bath-disclaimer">Catalogue imagery is shown for product inspiration. Please contact our team to confirm brand, model and availability.</p>

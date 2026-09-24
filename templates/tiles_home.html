@@ -12,7 +12,7 @@
       <h1>Tile collections for spaces with character.</h1>
       <p class="surface-hero-lead">Explore full-body, double-charge, GVT and PGVT tiles selected for residential and commercial projects. Our team can help architects compare formats, finishes and availability.</p>
       <div class="surface-hero-actions">
-        <a href="{{ url_for('tiles_collections') }}" class="surface-button surface-button-dark">Explore collections <span aria-hidden="true">↗</span></a>
+        <a href="{{ url_for('tiles_collections') }}" class="surface-button surface-button-dark">Explore collections</a>
         <a href="{{ url_for('tiles_contact') }}" class="surface-text-link">Discuss your project <span aria-hidden="true">→</span></a>
       </div>
       <div class="surface-hero-note"><span></span> GVT · PGVT · FULL BODY · DOUBLE CHARGE</div>
@@ -39,7 +39,7 @@
         <a href="{{ url_for('tiles_collections') }}" class="surface-collection-card">
           <div class="surface-collection-image-wrap">
             <img src="{{ url_for('static', filename=collection.image) }}" alt="{{ collection.alt }}" loading="lazy">
-            <span class="surface-card-arrow" aria-hidden="true">↗</span>
+            
           </div>
           <div class="surface-collection-copy">
             <h3>{{ collection.name }}</h3>
@@ -71,13 +71,13 @@
       <div class="col-md-6">
         <a class="bath-brand-card" href="{{ url_for('tiles_bath') }}#jaquar">
           <img src="{{ url_for('static', filename='images/sanitaryware/brands/jaquar-bath-inspiration.jpg') }}" alt="Jaquar bathroom inspiration with contemporary bath fittings" loading="lazy">
-          <span class="bath-brand-caption"><span><small>AVAILABLE THROUGH UNIGLOBE</small><strong>Jaquar</strong></span><span aria-hidden="true">↗</span></span>
+          <span class="bath-brand-caption"><span><small>AVAILABLE THROUGH UNIGLOBE</small><strong>Jaquar</strong></span></span>
         </a>
       </div>
       <div class="col-md-6">
         <a class="bath-brand-card" href="{{ url_for('tiles_bath') }}#kohler">
           <img src="{{ url_for('static', filename='images/sanitaryware/brands/kohler-bath-inspiration.jpg') }}" alt="KOHLER bathroom collection inspiration" loading="lazy">
-          <span class="bath-brand-caption"><span><small>AVAILABLE THROUGH UNIGLOBE</small><strong>KOHLER</strong></span><span aria-hidden="true">↗</span></span>
+          <span class="bath-brand-caption"><span><small>AVAILABLE THROUGH UNIGLOBE</small><strong>KOHLER</strong></span></span>
         </a>
       </div>
   </div>
@@ -89,7 +89,7 @@
       <p class="eyebrow">PROJECT GUIDANCE · CURRENT AVAILABILITY</p>
       <h2>Have a tile design or format in mind?</h2>
     </div>
-    <a href="{{ url_for('tiles_contact') }}" class="surface-button surface-button-dark">Get in touch <span aria-hidden="true">↗</span></a>
+    <a href="{{ url_for('tiles_contact') }}" class="surface-button surface-button-dark">Get in touch</a>
   </div>
 </section>
 

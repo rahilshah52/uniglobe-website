@@ -39,7 +39,7 @@
             <a class="tile-card" href="{{ url_for('tiles_product_detail', slug=item.slug) }}">
               <div class="tile-card-image">
                 <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }} tile surface" loading="lazy">
-                <span class="tile-card-open" aria-hidden="true">↗</span>
+                
               </div>
               <div class="tile-card-copy">
                 <p class="tile-card-family">{{ item.group }}</p>

@@ -21,7 +21,7 @@
         <p class="tile-detail-description">{{ product.description }}</p>
         <div class="tile-spec"><span>FORMAT &amp; FINISH</span><p>{{ product.details }}</p></div>
         <p class="tile-detail-note">Catalog images show the surface and collection inspiration. Please contact us to confirm current stock, finish and the best match for your project.</p>
-        <a class="tile-enquiry-button" href="{{ url_for('tiles_contact') }}?interest={{ product.name|urlencode }}">Ask about this tile <span aria-hidden="true">↗</span></a>
+        <a class="tile-enquiry-button" href="{{ url_for('tiles_contact') }}?interest={{ product.name|urlencode }}">Ask about this tile</a>
         <a class="tile-detail-contact" href="{{ url_for('tiles_contact') }}">Discuss a project with us</a>
       </section>
     </div>
