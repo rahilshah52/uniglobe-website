@@ -5,7 +5,7 @@
 <section class="tile-page-hero">
   <div class="tile-page-hero-image"></div><div class="tile-page-hero-shade"></div>
   <div class="container tile-page-hero-copy">
-    {% if brand %}<a class="tile-page-hero-back" href="{{ url_for('tiles_collections') }}#tile-brands">← All tile brands</a>{% endif %}
+    {% if brand %}<div class="tile-brand-selection"><span>✓ BRAND SELECTED</span><strong>{{ brand }}</strong><a href="{{ url_for('tiles_collections') }}#tile-brands">Change brand</a></div>{% endif %}
     <p class="tile-page-eyebrow">{{ brand|upper ~ ' · TILE COLLECTIONS' if brand else 'UNIGLOBE SURFACES · TILE COLLECTIONS' }}</p>
     <h1>{% if brand %}Explore {{ brand }} tiles<br>by what matters.{% else %}Materials that shape<br>the feeling of a space.{% endif %}</h1>
     <p>{% if brand %}Browse the {{ brand }} collection by room, look and feel, colour, or collection. Select a category to see its designs.{% else %}Explore tile ideas by room, finish and colour, then open the full catalogue to browse every current design.{% endif %}</p>
@@ -22,6 +22,7 @@
         {% for group in tile_category_groups %}
         <button class="tile-category-tab{% if loop.first %} is-active{% endif %}" id="tile-tab-{{ group.slug }}" type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="tile-panel-{{ group.slug }}" tabindex="{{ '0' if loop.first else '-1' }}"><span class="tile-category-tab-index">{{ '%02d'|format(loop.index) }}</span>{{ group.name }}<span class="tile-category-tab-arrow" aria-hidden="true">↗</span></button>
         {% endfor %}
+        <button class="tile-category-tab" id="tile-tab-brands" type="button" role="tab" aria-selected="false" aria-controls="tile-brands" tabindex="-1"><span class="tile-category-tab-index">05</span>Brands<span class="tile-category-tab-arrow" aria-hidden="true">↗</span></button>
       </div>
       <div class="tile-category-panels">
         {% for group in tile_category_groups %}
@@ -36,29 +37,21 @@
           </div>
         </section>
         {% endfor %}
+        <section class="tile-category-panel tile-brands-panel" id="tile-brands" role="tabpanel" aria-labelledby="tile-tab-brands" hidden>
+          <div class="tile-category-panel-heading"><div><p class="tile-page-kicker">SHOWROOM BRANDS</p><h3>Browse by brand</h3></div><span>{{ '%02d'|format(tile_brands|length) }} brands</span></div>
+          {% if tile_brands %}<div class="tile-brand-grid">
+            {% for tile_brand in tile_brands %}
+            <article class="tile-brand-card{% if brand and tile_brand.slug == brand_slug %} is-selected{% endif %}" id="{{ tile_brand.slug }}">
+              <a class="tile-brand-picture" href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}" aria-label="Explore {{ tile_brand.name }} tile collection"><img src="{{ url_for('static', filename=tile_brand.image) }}" alt="{{ tile_brand.name }} tile collection" loading="lazy"></a>
+              <div><span>{% if brand and tile_brand.slug == brand_slug %}CURRENTLY SELECTED{% else %}SHOWROOM BRAND{% endif %}</span><h3><a href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}">{{ tile_brand.name }}</a></h3><p>{{ tile_brand.description }}</p><a class="tile-brand-enquiry" href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}">{% if brand and tile_brand.slug == brand_slug %}Selected collection{% else %}Explore {{ tile_brand.name }}{% endif %} <b aria-hidden="true">↗</b></a></div>
+            </article>
+            {% endfor %}
+          </div>{% else %}<p class="tile-brands-empty">Tile brand cards added in the Upload manager will appear here.</p>{% endif %}
+        </section>
       </div>
     </div>
   </div>
 </section>
-
-{% if not brand %}
-<section class="tile-brand-section" id="tile-brands" aria-labelledby="tile-brand-heading">
-  <div class="container">
-    <div class="tile-brand-section-heading">
-      <div><p class="tile-page-kicker">SHOWROOM BRANDS</p><h2 id="tile-brand-heading">Explore tile brands.</h2></div>
-      <p>Choose a brand to browse its designs across location, look and feel, colour, and collection.</p>
-    </div>
-    <div class="tile-brand-grid">
-      {% for tile_brand in tile_brands %}
-      <article class="tile-brand-card" id="{{ tile_brand.slug }}">
-        <a class="tile-brand-picture" href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}" aria-label="Explore {{ tile_brand.name }} tile collection"><img src="{{ url_for('static', filename=tile_brand.image) }}" alt="{{ tile_brand.name }} tile collection" loading="lazy"></a>
-        <div><span>SHOWROOM BRAND</span><h3><a href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}">{{ tile_brand.name }}</a></h3><p>{{ tile_brand.description }}</p><a class="tile-brand-enquiry" href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}">Explore {{ tile_brand.name }} <b aria-hidden="true">↗</b></a></div>
-      </article>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
 
 <section class="tile-page-footer-cta"><div class="container"><p class="tile-page-kicker">NEED A LITTLE MORE DETAIL?</p><h2>{% if brand %}Explore every {{ brand }} category.{% else %}Browse every available design.{% endif %}</h2><a href="{% if brand %}{{ url_for('tiles_category_products', group_slug='collection', category_slug='all-collections', brand=brand_slug) }}{% else %}{{ url_for('tiles_catalogues') }}{% endif %}">{% if brand %}View all {{ brand }} examples{% else %}Open the full tile catalogue{% endif %} <span aria-hidden="true">↗</span></a></div></section>
 
@@ -70,6 +63,11 @@
   .tile-page-hero-copy { position:relative; z-index:1; padding-top:80px; padding-bottom:clamp(52px,7vw,85px); }
   .tile-page-hero-back { display:inline-block; margin-bottom:22px; color:rgba(255,255,255,.76); font-size:.75rem; text-decoration:none; }
   .tile-page-hero-back:hover { color:#fff; }
+  .tile-brand-selection { display:inline-flex; align-items:center; gap:11px; margin-bottom:22px; padding:8px 11px; border:1px solid rgba(255,255,255,.4); background:rgba(20,24,22,.28); backdrop-filter:blur(8px); }
+  .tile-brand-selection span { color:rgba(255,255,255,.7); font-size:.53rem; font-weight:600; letter-spacing:.12em; }
+  .tile-brand-selection strong { color:#fff; font-size:.77rem; font-weight:500; }
+  .tile-brand-selection a { padding-left:10px; border-left:1px solid rgba(255,255,255,.35); color:#fff; font-size:.63rem; text-decoration:none; }
+  .tile-brand-selection a:hover { text-decoration:underline; text-underline-offset:3px; }
   .tile-page-eyebrow,.tile-page-kicker { margin:0 0 12px; color:#90958f; font-size:.64rem; font-weight:600; letter-spacing:.17em; }
   .tile-page-eyebrow { color:rgba(255,255,255,.8); }
   .tile-page-hero h1 { margin:0 0 18px; font-size:clamp(3rem,7vw,6.2rem); font-weight:400; letter-spacing:-.068em; line-height:.98; }
@@ -107,12 +105,19 @@
   .tile-category-card:hover .tile-category-name b { opacity:1; transform:translate(2px,-2px); }
   .tile-category-tab:focus-visible,.tile-category-card:focus-visible { outline:2px solid #d8d0bd; outline-offset:3px; }
   .tile-brand-section { padding:clamp(54px,7vw,84px) 0; background:#fff; }
+  .tile-brands-panel { background:#fff; color:#303634; }
+  .tile-brands-panel .tile-category-panel-heading { margin-bottom:20px; }
+  .tile-brands-panel .tile-category-panel-heading .tile-page-kicker { color:#818983; }
+  .tile-brands-panel .tile-category-panel-heading h3 { color:#2d3330; }
+  .tile-brands-panel .tile-category-panel-heading > span { color:#747b76; }
+  .tile-brands-empty { margin:0; padding:22px; background:#f4f4f1; color:#737a75; font-size:.82rem; }
   .tile-brand-section-heading { display:grid; grid-template-columns:1fr minmax(260px,430px); align-items:end; gap:36px; margin-bottom:28px; }
   .tile-brand-section-heading .tile-page-kicker { margin-bottom:10px; }
   .tile-brand-section-heading h2 { margin:0; color:#2d3330; font-size:clamp(2.1rem,4.2vw,3.6rem); font-weight:400; letter-spacing:-.055em; line-height:1.02; }
   .tile-brand-section-heading > p { margin:0 0 4px; color:#737a75; font-size:.86rem; line-height:1.8; }
   .tile-brand-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
   .tile-brand-card { display:grid; grid-template-columns:1.05fr .95fr; min-height:300px; background:#f4f4f1; }
+  .tile-brand-card.is-selected { outline:2px solid #898b80; outline-offset:-2px; background:#eeeee9; }
   .tile-brand-picture { display:block; min-height:300px; overflow:hidden; }
   .tile-brand-picture img { display:block; width:100%; height:100%; min-height:300px; object-fit:cover; transition:transform .5s ease; }
   .tile-brand-picture:hover img { transform:scale(1.03); }
@@ -164,6 +169,13 @@
         activate(tabs[next], true);
       });
     });
+    if (window.location.hash === '#tile-brands') {
+      const brandsTab = tabs.find((tab) => tab.id === 'tile-tab-brands');
+      if (brandsTab) {
+        activate(brandsTab);
+        requestAnimationFrame(() => document.getElementById('tile-brands').scrollIntoView());
+      }
+    }
   })();
 </script>
 {% endblock %}

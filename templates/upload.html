@@ -83,6 +83,14 @@
              value="{{ edit_product.title if edit_product else '' }}" required>
     </div>
 
+    <div class="mb-4">
+      <label class="form-label fw-semibold" for="furniture-brand">Brand <span class="text-muted fw-normal">(optional)</span></label>
+      <input type="text" name="brand" id="furniture-brand" class="form-control"
+             value="{{ edit_product.get('brand', '') if edit_product else '' }}"
+             placeholder="For example, a brand or maker">
+      <div class="form-text">Brand names are used by the Furniture collection filters and appear as customers add them here.</div>
+    </div>
+
     <!-- DESCRIPTION -->
     <div class="mb-4">
       <label class="form-label fw-semibold">Description</label>

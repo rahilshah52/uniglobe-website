@@ -9,11 +9,25 @@
     <p>{{ brand|upper ~ ' · ' if brand }}{{ group.name|upper }} · TILE IDEAS</p>
     <h1>{{ category }}</h1>
     <span>{% if brand %}Browse the {{ brand }} tile examples placed in this category.{% else %}Products can appear in more than one category, so you can explore the same tile from different starting points.{% endif %}</span>
+    {% if brand %}<div class="tile-brand-active"><span>SHOWING BRAND</span><strong>✓ {{ brand }}</strong><a href="{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges">Change brand</a></div>{% endif %}
   </div>
 </section>
 <section class="tile-filter-results">
   <div class="container">
     <div class="tile-filter-heading"><div><p>{% if brand %}{{ brand|upper }} · {% endif %}CURATED FOR THIS CATEGORY</p><h2>{{ products|length }} {{ 'example' if products|length == 1 else 'examples' }} to explore</h2></div><a href="{% if brand %}{{ url_for('tiles_category_products', group_slug='collection', category_slug='all-collections', brand=brand_slug) }}{% else %}{{ url_for('tiles_catalogues') }}{% endif %}">{% if brand %}View all {{ brand }} tiles{% else %}View all catalogue designs{% endif %}<span aria-hidden="true">↗</span></a></div>
+    <form class="tile-refine" method="get" action="{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}" aria-label="Refine tile designs">
+      {% if brand_slug %}<input type="hidden" name="brand" value="{{ brand_slug }}">{% endif %}
+      <div class="tile-refine-top"><span><i aria-hidden="true">✳</i> Refine this selection</span><a href="{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug) if brand_slug else url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}">Clear choices</a></div>
+      <div class="tile-refine-fields">
+        <details class="tile-facet"><summary><span>Brand</span><b>{{ selected_filters.filter_brand|length if selected_filters.filter_brand else 'Every brand' }}</b></summary><div class="tile-facet-options">{% for name in available_brands %}<label><input type="checkbox" name="filter_brand" value="{{ name }}" {% if name in selected_filters.filter_brand %}checked{% endif %}><span>{{ name }}</span></label>{% else %}<p>Brands appear here when products are added.</p>{% endfor %}</div></details>
+        {% for facet in filter_groups %}
+        <details class="tile-facet"><summary><span>{{ facet.name }}</span><b>{{ selected_filters[facet.slug]|length if selected_filters[facet.slug] else 'Any' }}</b></summary><div class="tile-facet-options">{% for option in facet['items'] %}<label><input type="checkbox" name="{{ facet.slug }}" value="{{ option.slug }}" {% if option.slug in selected_filters[facet.slug] %}checked{% endif %}><span>{{ option.name }}</span></label>{% endfor %}</div></details>
+        {% endfor %}
+        <button type="submit">Show designs <span aria-hidden="true">↗</span></button>
+      </div>
+      {% if selected_filters.filter_brand or selected_filters.location or selected_filters['look-feel'] or selected_filters.color or selected_filters.collection %}<div class="tile-active-filters" aria-live="polite"><span>ACTIVE SELECTION</span>{% for name in selected_filters.filter_brand %}<b>Brand · {{ name }}</b>{% endfor %}{% for facet in filter_groups %}{% for option in facet['items'] if option.slug in selected_filters[facet.slug] %}<b>{{ facet.name }} · {{ option.name }}</b>{% endfor %}{% endfor %}</div>{% endif %}
+      <p>Combine a brand, room, finish, colour or collection. A design can appear in several relevant categories.</p>
+    </form>
     {% if products %}
     <div class="tile-filter-grid">
       {% for product in products %}
@@ -28,7 +42,7 @@
       {% endfor %}
     </div>
     {% else %}
-    <div class="tile-filter-empty"><h3>More tile designs are on their way.</h3><p>This category is ready. Add a tile from the upload page and select this category to have it appear here.</p><a href="{{ url_for('tiles_contact') }}">Ask our team about tiles</a></div>
+    <div class="tile-filter-empty">{% if selected_filters.filter_brand or selected_filters.location or selected_filters['look-feel'] or selected_filters.color or selected_filters.collection %}<h3>No designs match this combination yet.</h3><p>Try removing one or more choices, or clear the filters to see all designs in this category.</p><a href="{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug) if brand_slug else url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}">Clear filters</a>{% else %}<h3>More tile designs are on their way.</h3><p>This category is ready. Add a tile from the upload page and select this category to have it appear here.</p><a href="{{ url_for('tiles_contact') }}">Ask our team about tiles</a>{% endif %}</div>
     {% endif %}
   </div>
 </section>
@@ -43,10 +57,35 @@
   .tile-filter-hero p,.tile-filter-heading > div > p { margin:0 0 10px; color:#b3b5ae; font-size:.65rem; font-weight:600; letter-spacing:.16em; }
   .tile-filter-hero h1 { margin:0 0 14px; font-size:clamp(2.8rem,7vw,5.5rem); font-weight:400; letter-spacing:-.06em; line-height:1; }
   .tile-filter-hero-copy > span { display:block; max-width:650px; color:rgba(255,255,255,.82); font-size:.9rem; line-height:1.8; }
+  .tile-brand-active { display:flex; align-items:center; flex-wrap:wrap; gap:10px; width:max-content; max-width:100%; margin-top:18px; padding:9px 12px; border:1px solid rgba(255,255,255,.43); background:rgba(20,24,22,.3); backdrop-filter:blur(7px); }
+  .tile-brand-active span { color:rgba(255,255,255,.7); font-size:.52rem; font-weight:600; letter-spacing:.12em; }
+  .tile-brand-active strong { color:#fff; font-size:.75rem; font-weight:500; }
+  .tile-brand-active a { margin:0; padding-left:9px; border-left:1px solid rgba(255,255,255,.4); color:#fff; font-size:.63rem; }
   .tile-filter-results { min-height:50vh; padding:clamp(40px,6vw,72px) 0 90px; background:#f4f4f0; }
   .tile-filter-heading { display:flex; justify-content:space-between; align-items:end; gap:20px; margin-bottom:27px; }
   .tile-filter-heading h2 { margin:0; color:#303633; font-size:clamp(1.7rem,3vw,2.5rem); font-weight:400; letter-spacing:-.045em; }
   .tile-filter-heading > a { display:inline-flex; gap:18px; padding:11px 13px; border:1px solid #d7dad5; color:#424945; font-size:.73rem; text-decoration:none; }
+  .tile-refine { margin:0 0 27px; padding:18px 20px 15px; border:1px solid #e2e3dd; background:#fff; }
+  .tile-refine-top { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:15px; padding-bottom:12px; border-bottom:1px solid #ecece8; color:#3b423e; font-size:.77rem; font-weight:600; letter-spacing:.02em; }
+  .tile-refine-top i { margin-right:6px; color:#8b8879; font-style:normal; }
+  .tile-refine-top a { color:#747b76; font-size:.68rem; font-weight:400; text-decoration:underline; text-underline-offset:3px; }
+  .tile-refine-fields { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)) auto; gap:10px; align-items:end; }
+  .tile-facet { position:relative; min-width:0; }
+  .tile-facet > summary { display:flex; justify-content:space-between; align-items:center; gap:7px; min-height:43px; padding:8px 10px; border:1px solid #e0e2dc; color:#3d4540; background:#fafaf8; font-size:.72rem; list-style:none; cursor:pointer; }
+  .tile-facet > summary::-webkit-details-marker { display:none; }
+  .tile-facet > summary::after { content:'⌄'; margin-left:auto; color:#858b86; }
+  .tile-facet > summary b { max-width:64px; overflow:hidden; color:#828981; font-size:.62rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
+  .tile-facet[open] > summary { border-color:#999f96; background:#fff; }
+  .tile-facet-options { position:absolute; z-index:5; top:calc(100% + 5px); left:0; width:max(100%,220px); max-height:265px; overflow:auto; padding:7px; border:1px solid #dedfd9; background:#fff; box-shadow:0 12px 30px rgba(37,43,39,.14); }
+  .tile-facet-options label { display:flex; align-items:center; gap:9px; min-height:38px; padding:7px 9px; color:#505852; font-size:.73rem; cursor:pointer; }
+  .tile-facet-options label:hover { background:#f4f4f0; }
+  .tile-facet-options input { width:15px; height:15px; flex:0 0 auto; accent-color:#454d48; }
+  .tile-facet-options p { margin:0; padding:8px; color:#858b86; font-size:.7rem; }
+  .tile-refine-fields button { min-height:43px; padding:0 15px; border:1px solid #333a36; color:#fff; background:#333a36; font:inherit; font-size:.7rem; white-space:nowrap; }
+  .tile-refine > p { margin:10px 0 0; color:#8a908b; font-size:.65rem; line-height:1.5; }
+  .tile-active-filters { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin-top:12px; padding-top:11px; border-top:1px solid #ecece8; }
+  .tile-active-filters > span { margin-right:3px; color:#8a908b; font-size:.59rem; letter-spacing:.1em; }
+  .tile-active-filters b { padding:5px 8px; border:1px solid #e3e4de; color:#4a514c; background:#f8f8f5; font-size:.63rem; font-weight:500; }
   .tile-filter-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
   .tile-filter-card { min-width:0; color:inherit; background:#fff; text-decoration:none; }
   .tile-filter-photo { position:relative; aspect-ratio:1.25; overflow:hidden; background:#e8e9e5; }
@@ -62,7 +101,9 @@
   .tile-filter-empty h3 { color:#303633; font-weight:400; }
   .tile-filter-empty p { max-width:550px; color:#747a76; line-height:1.7; }
   .tile-filter-empty a { color:#303633; font-size:.85rem; }
-  @media(max-width:767.98px) { .tile-filter-hero { min-height:490px; } .tile-filter-hero-image { background-position:58% center; } .tile-filter-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.17)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .tile-filter-hero-copy { padding-top:68px; padding-bottom:47px; } .tile-filter-hero a { margin-bottom:25px; } .tile-filter-hero-copy > span { font-size:.82rem; } .tile-filter-results { padding:38px 0 60px; } .tile-filter-heading { align-items:flex-start; flex-direction:column; margin-bottom:20px; } .tile-filter-heading > a { width:100%; justify-content:space-between; } .tile-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; } .tile-filter-photo { aspect-ratio:.95; } .tile-filter-copy { padding:12px 11px 14px; } .tile-filter-copy h3 { font-size:.91rem; } .tile-filter-copy > span { font-size:.68rem; } .tile-filter-photo > span { top:7px; left:7px; padding:5px 6px; font-size:.57rem; } }
+  @media(max-width:991.98px) { .tile-refine-fields { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media(max-width:767.98px) { .tile-brand-active { gap:7px; margin-top:14px; padding:8px 9px; } .tile-filter-hero .tile-brand-active a { margin-bottom:0; } }
+  @media(max-width:767.98px) { .tile-filter-hero { min-height:490px; } .tile-filter-hero-image { background-position:58% center; } .tile-filter-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.17)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .tile-filter-hero-copy { padding-top:68px; padding-bottom:47px; } .tile-filter-hero a { margin-bottom:25px; } .tile-filter-hero-copy > span { font-size:.82rem; } .tile-filter-results { padding:38px 0 60px; } .tile-filter-heading { align-items:flex-start; flex-direction:column; margin-bottom:20px; } .tile-filter-heading > a { width:100%; justify-content:space-between; } .tile-refine { padding:14px 12px 12px; margin-bottom:20px; } .tile-refine-fields { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .tile-facet > summary { min-height:42px; padding:7px 8px; font-size:.68rem; } .tile-facet-options { width:max(100%,190px); } .tile-facet:nth-child(even) .tile-facet-options { right:0; left:auto; } .tile-refine-fields button { grid-column:1/-1; width:100%; } .tile-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; } .tile-filter-photo { aspect-ratio:.95; } .tile-filter-copy { padding:12px 11px 14px; } .tile-filter-copy h3 { font-size:.91rem; } .tile-filter-copy > span { font-size:.68rem; } .tile-filter-photo > span { top:7px; left:7px; padding:5px 6px; font-size:.57rem; } }
   @media(max-width:390px) { .tile-filter-grid { grid-template-columns:1fr; } .tile-filter-photo { aspect-ratio:1.25; } }
 </style>
 {% endblock %}

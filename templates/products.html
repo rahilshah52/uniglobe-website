@@ -4,22 +4,24 @@
 <div class="container py-5">
 
   {% if not product_data %}
-    <p class="text-center text-muted">No products available.</p>
+    <p class="text-center text-muted">{% if selected_categories or selected_brands %}No pieces match this combination yet. <a href="{{ url_for('products') }}">Clear your filters</a>{% else %}No products available.{% endif %}</p>
   {% endif %}
 <div class="text-center mb-5">
   <h1 class="fw-light display-5">Our Collection</h1>
-  <p class="text-muted">Crafted for refined spaces</p>
+  <p class="text-muted">{% if selected_categories or selected_brands %}A considered selection, shaped around your choices.{% else %}Crafted for refined spaces{% endif %}</p>
 </div>
 
-<div class="category-nav text-center mb-5">
-  <button class="category-btn active" data-category="all">All</button>
-
-  {% for category, cat_data in product_data.items() %}
-    <button class="category-btn" data-category="{{ category }}">
-      {{ cat_data.display_name }}
-    </button>
-  {% endfor %}
-</div>
+<form class="furniture-refine mb-5" method="get" action="{{ url_for('products') }}" aria-label="Refine furniture collection">
+  <div class="furniture-refine-head"><div><span>THE COLLECTION</span><strong>Find your fit</strong></div><a href="{{ url_for('products') }}">Clear choices</a></div>
+  <div class="furniture-refine-fields">
+    <details class="furniture-facet"><summary><span>Room / category</span><b>{{ selected_categories|length if selected_categories else 'All categories' }}</b></summary><div class="furniture-facet-options">{% for category, cat_data in product_categories.items() %}<label><input type="checkbox" name="category" value="{{ category }}" {% if category in selected_categories %}checked{% endif %}><span>{{ cat_data.display_name }}</span></label>{% endfor %}</div></details>
+    <details class="furniture-facet"><summary><span>Brand</span><b>{{ selected_brands|length if selected_brands else 'Every brand' }}</b></summary><div class="furniture-facet-options">{% for brand_name in product_brands %}<label><input type="checkbox" name="brand" value="{{ brand_name }}" {% if brand_name in selected_brands %}checked{% endif %}><span>{{ brand_name }}</span></label>{% else %}<p>Add product brands in /upload to see them here.</p>{% endfor %}</div></details>
+    <button type="submit">Show pieces <span aria-hidden="true">↗</span></button>
+  </div>
+  {% if selected_categories or selected_brands %}
+  <div class="furniture-active-filters"><span>Showing your selection</span>{% for category in selected_categories %}{% for key, cat_data in product_categories.items() if key == category %}<b>{{ cat_data.display_name }}</b>{% endfor %}{% endfor %}{% for brand_name in selected_brands %}<b>{{ brand_name }}</b>{% endfor %}</div>
+  {% endif %}
+</form>
 
   {% for category, cat_data in product_data.items() %}
 
@@ -57,7 +59,7 @@
 
               <div class="card-body text-center py-3">
                 <h6 class="fw-medium mb-1">{{ item.title }}</h6>
-                <small class="text-muted">{{ item.code }}</small>
+                <small class="text-muted">{{ item.brand ~ ' · ' if item.get('brand') }}{{ item.code }}</small>
               </div>
 
             </div>
@@ -180,6 +182,28 @@
   color: #000;
   border-bottom: 2px solid #000;
 }
+.furniture-refine { max-width:1000px; margin-right:auto; margin-left:auto; padding:19px 20px 16px; border:1px solid #e9e7e3; background:#fff; text-align:left; }
+.furniture-refine-head { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:13px; padding-bottom:12px; border-bottom:1px solid #efeeeb; }
+.furniture-refine-head > div { display:grid; gap:3px; }
+.furniture-refine-head span { color:#96918b; font-size:.58rem; letter-spacing:.15em; }
+.furniture-refine-head strong { color:#34312e; font-size:1.03rem; font-weight:500; }
+.furniture-refine-head > a { color:#78736d; font-size:.69rem; text-underline-offset:3px; }
+.furniture-refine-fields { display:grid; grid-template-columns:1fr 1fr auto; gap:11px; align-items:end; }
+.furniture-facet { position:relative; min-width:0; }
+.furniture-facet > summary { display:flex; justify-content:space-between; align-items:center; gap:9px; min-height:44px; padding:9px 12px; border:1px solid #e4e1dc; color:#45403b; background:#fbfaf8; font-size:.74rem; list-style:none; cursor:pointer; }
+.furniture-facet > summary::-webkit-details-marker { display:none; }
+.furniture-facet > summary::after { content:'⌄'; color:#8b847c; }
+.furniture-facet > summary b { max-width:140px; overflow:hidden; color:#89837c; font-size:.65rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
+.furniture-facet-options { position:absolute; z-index:5; top:calc(100% + 5px); left:0; width:max(100%,230px); max-height:260px; overflow:auto; padding:7px; border:1px solid #e4e1dc; background:#fff; box-shadow:0 12px 28px rgba(38,33,28,.13); }
+.furniture-facet-options label { display:flex; align-items:center; gap:9px; min-height:38px; padding:7px 9px; color:#514c46; font-size:.74rem; cursor:pointer; }
+.furniture-facet-options label:hover { background:#f6f4f1; }
+.furniture-facet-options input { width:15px; height:15px; accent-color:#776857; }
+.furniture-facet-options p { margin:0; padding:8px; color:#89837c; font-size:.7rem; }
+.furniture-refine-fields > button { min-height:44px; padding:0 17px; border:1px solid #37322d; color:#fff; background:#37322d; font-size:.72rem; white-space:nowrap; }
+.furniture-active-filters { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin-top:12px; padding-top:11px; border-top:1px solid #efeeeb; }
+.furniture-active-filters > span { margin-right:3px; color:#8c867f; font-size:.65rem; }
+.furniture-active-filters b { padding:5px 9px; border:1px solid #e6e2dc; color:#514b44; background:#f8f7f4; font-size:.65rem; font-weight:500; }
+@media(max-width:575.98px) { .furniture-refine { padding:15px 13px 13px; } .furniture-refine-fields { grid-template-columns:1fr 1fr; gap:8px; } .furniture-refine-fields > button { grid-column:1/-1; width:100%; } .furniture-facet-options { width:max(100%,205px); } .furniture-facet:nth-child(even) .furniture-facet-options { right:0; left:auto; } }
 </style>
 
 {% endblock %}

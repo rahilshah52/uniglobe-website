@@ -294,7 +294,11 @@ def tiles_bath_category(slug):
     category = next((item for item in get_all_bath_categories() if item['slug'] == slug), None)
     if category is None:
         return redirect(url_for('tiles_bath'))
-    return render_template('tiles_bath_category.html', category=category)
+    brands = sorted({item['brand'] for item in category['items']}, key=str.lower)
+    selected_brands = [value.strip() for value in request.args.getlist('brand') if value.strip()]
+    selected_brand_names = {brand.lower() for brand in selected_brands}
+    items = [item for item in category['items'] if not selected_brands or item['brand'].lower() in selected_brand_names]
+    return render_template('tiles_bath_category.html', category=category, brands=brands, selected_brands=selected_brands, items=items)
 
 @app.route('/tiles/bath/brand/<brand_slug>')
 def tiles_bath_brand(brand_slug):
@@ -303,12 +307,17 @@ def tiles_bath_brand(brand_slug):
         return redirect(url_for('tiles_bath'))
     brand = brand_record['name']
     products = []
-    for category in get_all_bath_categories():
+    selected_categories = [value.strip() for value in request.args.getlist('category') if value.strip()]
+    bath_categories = get_all_bath_categories()
+    categories = sorted({(category['title'], category['slug']) for category in bath_categories
+                        if any(item['brand'].lower() == brand.lower() for item in category['items'])}, key=lambda value: value[0].lower())
+    selected_category_names = [title for title, slug in categories if slug in selected_categories]
+    for category in bath_categories:
         for item in category['items']:
-            if item['brand'].lower() == brand.lower():
-                products.append({**item, 'category': category['title']})
+            if item['brand'].lower() == brand.lower() and (not selected_categories or category['slug'] in selected_categories):
+                products.append({**item, 'category': category['title'], 'category_slug': category['slug']})
     brand_image = brand_record.get('image') or f'images/sanitaryware/brands/{brand_slug}-bath-inspiration.jpg'
-    return render_template('tiles_bath_brand.html', brand=brand, brand_slug=brand_slug, brand_image=brand_image, products=products)
+    return render_template('tiles_bath_brand.html', brand=brand, brand_slug=brand_slug, brand_image=brand_image, products=products, categories=categories, selected_categories=selected_categories, selected_category_names=selected_category_names)
 
 def get_tile_category_groups():
     groups = [
@@ -393,9 +402,39 @@ def tiles_category_products(group_slug, category_slug):
         return redirect(url_for('tiles_catalogues'))
     if brand_slug and not brand_record:
         return redirect(url_for('tiles_collections'))
-    products = [item for item in load_surface_products() if item.get('department', 'tiles') == 'tiles' and is_public_surface_product(item, 'tiles') and (all_brand_products or category_slug in item.get('tags', [])) and (not brand_name or str(item.get('brand', '')).lower() == brand_name.lower())]
+    selected = {
+        'filter_brand': [value.strip() for value in request.args.getlist('filter_brand') if value.strip()],
+        'location': [value.strip() for value in request.args.getlist('location') if value.strip()],
+        'look-feel': [value.strip() for value in request.args.getlist('look-feel') if value.strip()],
+        'color': [value.strip() for value in request.args.getlist('color') if value.strip()],
+        'collection': [value.strip() for value in request.args.getlist('collection') if value.strip()],
+    }
+    if brand_name:
+        selected['filter_brand'] = [brand_name]
+    active_tile_brands = {str(item.get('name', '')).strip().lower() for item in load_surface_brands()
+                          if item.get('active', True) and item.get('department') in {'tiles', 'both'}}
+    base_products = []
+    for item in load_surface_products():
+        item_brand = str(item.get('brand', '')).strip()
+        publicly_listed = not item.get('brand_removed') and (not item_brand or item_brand.lower() == 'other / not specified' or item_brand.lower() in active_tile_brands)
+        if item.get('department', 'tiles') == 'tiles' and publicly_listed and (all_brand_products or category_slug in item.get('tags', [])):
+            base_products.append(item)
+    available_brands = sorted({str(item.get('brand', '')).strip() for item in base_products if str(item.get('brand', '')).strip()}, key=str.lower)
+    products = base_products
+    if selected['filter_brand']:
+        selected_brand_names = {name.lower() for name in selected['filter_brand']}
+        products = [item for item in products if str(item.get('brand', '')).lower() in selected_brand_names]
+    for facet, value in selected.items():
+        if facet != 'filter_brand' and value:
+            products = [item for item in products if any(tag in item.get('tags', []) for tag in value)]
+    filter_groups = []
+    for facet_group in get_tile_category_groups():
+        if facet_group['slug'] != group_slug or all_brand_products:
+            filter_groups.append({**facet_group, 'items': [card for card in facet_group['cards'] if card['slug'] != 'all-collections']})
+    if brand_name:
+        available_brands = [brand_name]
     category = f'{brand_name} · All tile collections' if all_brand_products else category_item['name']
-    return render_template('tiles_category_products.html', group=group, category=category, category_image=category_item['image'], products=products, brand=brand_name, brand_slug=brand_slug)
+    return render_template('tiles_category_products.html', group=group, category=category, category_image=category_item['image'], products=products, brand=brand_name, brand_slug=brand_slug, filter_groups=filter_groups, available_brands=available_brands, selected_filters=selected)
 
 @app.route('/tiles/collections/brand/<slug>')
 def tiles_collection_brand(slug):
@@ -753,14 +792,29 @@ import os
 
 @app.route('/products')
 def products():
-
     if not os.path.exists(DATA_FILE):
-        return render_template("products.html", product_data={})
+        return render_template("products.html", product_data={}, product_categories={}, product_brands=[], selected_categories=[], selected_brands=[])
 
     with open(DATA_FILE, "r") as f:
-        product_data = json.load(f)
+        all_product_data = json.load(f)
 
-    return render_template("products.html", product_data=product_data)
+    selected_categories = [value for value in request.args.getlist('category') if value in all_product_data]
+    selected_brands = list(dict.fromkeys(value.strip() for value in request.args.getlist('brand') if value.strip()))
+    product_brands = sorted({str(item.get('brand', '')).strip() for section in all_product_data.values()
+                              for item in section.get('items', []) if str(item.get('brand', '')).strip()}, key=str.lower)
+    product_data = {}
+    selected_brand_names = {value.lower() for value in selected_brands}
+    for category, section in all_product_data.items():
+        if selected_categories and category not in selected_categories:
+            continue
+        matching_items = [item for item in section.get('items', [])
+                          if not selected_brands or str(item.get('brand', '')).strip().lower() in selected_brand_names]
+        if matching_items:
+            product_data[category] = {**section, 'items': matching_items}
+
+    return render_template("products.html", product_data=product_data, product_categories=all_product_data,
+                           product_brands=product_brands, selected_categories=selected_categories,
+                           selected_brands=selected_brands)
 
 @app.route("/products/<category>/<code>")
 def product_detail(category, code):
@@ -1003,6 +1057,7 @@ def upload():
         # ---------------------------
         title = request.form.get("title")
         description = request.form.get("description")
+        brand = request.form.get("brand", "").strip()
         keep_original = request.form.get("keep_original") == "yes"
 
         specs_keys = request.form.getlist("spec_key[]")
@@ -1082,6 +1137,7 @@ def upload():
                 if item["code"] == code:
                     item["title"] = title
                     item["description"] = description
+                    item["brand"] = brand
                     item["specs"] = specs
                     item["images"] = image_paths
                     break
@@ -1091,6 +1147,7 @@ def upload():
                 "code": code,
                 "title": title,
                 "description": description,
+                "brand": brand,
                 "specs": specs,
                 "images": image_paths
             })

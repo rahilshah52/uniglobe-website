@@ -19,13 +19,5 @@
     "department": "bathware",
     "description": "Distinctive bath, basin and sanitaryware options for your project.",
     "image": "images/sanitaryware/brands/kohler-bath-inspiration.jpg"
-  },
-  {
-    "slug": "rahil-s-brand",
-    "name": "Rahil's Brand",
-    "department": "tiles",
-    "description": "Testing",
-    "image": "uploads/surface-brands/rahil-s-brand.webp",
-    "active": true
   }
 ]

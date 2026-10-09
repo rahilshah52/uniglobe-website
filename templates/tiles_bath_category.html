@@ -13,8 +13,14 @@
 <section class="bath-gallery-section">
   <div class="container">
     <div class="bath-gallery-heading"><div><p class="bath-detail-kicker">CATALOGUE INSPIRATION</p><h2>Explore the details.</h2></div><p>These images are selected from brand catalogues to help you explore styles and possibilities. Ask our team about product details and availability.</p></div>
+    <form class="bath-refine" method="get" action="{{ url_for('tiles_bath_category', slug=category.slug) }}" aria-label="Refine bathware by brand">
+      <div><span>Refine this category</span><small>Choose one or more showroom brands.</small></div>
+      <details class="bath-facet"><summary><span>Brand</span><b>{{ selected_brands|length if selected_brands else 'All brands' }}</b></summary><div class="bath-facet-options">{% for brand_name in brands %}<label><input type="checkbox" name="brand" value="{{ brand_name }}" {% if brand_name in selected_brands %}checked{% endif %}><span>{{ brand_name }}</span></label>{% endfor %}</div></details>
+      <button type="submit">Show {{ 'selection' if selected_brands else 'all' }} <span aria-hidden="true">↗</span></button>{% if selected_brands %}<a href="{{ url_for('tiles_bath_category', slug=category.slug) }}">Clear</a>{% endif %}
+    </form>
+    <p class="bath-result-count">{{ items|length }} catalogue {{ 'image' if items|length == 1 else 'images' }}{% if selected_brands %} · {{ selected_brands|join(' + ') }}{% endif %}</p>
     <div class="bath-gallery">
-      {% for item in category['items'] %}
+      {% for item in items %}
       <article class="bath-gallery-card">
         <div class="bath-gallery-image"><img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.brand }} {{ category.title|lower }} inspiration — {{ item.caption }}" loading="lazy"></div>
         <div class="bath-gallery-caption"><span>{{ item.brand }} · CATALOGUE</span><h3>{{ item.caption }}</h3></div>
@@ -36,6 +42,22 @@
   .bath-gallery-heading h2,.bath-detail-cta h2 { margin:0; color:#2d3330; font-size:clamp(2rem,4vw,3.3rem); font-weight:400; letter-spacing:-.055em; }
   .bath-gallery-heading > p { margin:0 0 3px; color:#747b76; font-size:.82rem; line-height:1.8; }
   .bath-gallery { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+  .bath-refine { display:grid; grid-template-columns:1fr minmax(180px,.52fr) auto auto; align-items:center; gap:12px; margin:0 0 10px; padding:15px 17px; border:1px solid #e5e6e1; background:#fafaf8; }
+  .bath-refine > div { display:grid; gap:4px; }
+  .bath-refine > div span { color:#454d48; font-size:.75rem; font-weight:600; }
+  .bath-refine small,.bath-refine label { color:#858b86; font-size:.62rem; }
+  .bath-facet { position:relative; min-width:0; }
+  .bath-facet > summary { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:41px; padding:8px 11px; border:1px solid #e0e2dc; color:#3d4540; background:#fff; font-size:.74rem; list-style:none; cursor:pointer; }
+  .bath-facet > summary::-webkit-details-marker { display:none; }
+  .bath-facet > summary::after { content:'⌄'; color:#858b86; }
+  .bath-facet > summary b { max-width:150px; overflow:hidden; color:#828981; font-size:.65rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
+  .bath-facet-options { position:absolute; z-index:5; top:calc(100% + 5px); left:0; width:max(100%,220px); max-height:230px; overflow:auto; padding:7px; border:1px solid #dedfd9; background:#fff; box-shadow:0 12px 30px rgba(37,43,39,.14); }
+  .bath-facet-options label { display:flex; align-items:center; gap:9px; min-height:38px; padding:7px 9px; color:#505852; font-size:.73rem; cursor:pointer; }
+  .bath-facet-options label:hover { background:#f4f4f0; }
+  .bath-facet-options input { width:15px; height:15px; accent-color:#454d48; }
+  .bath-refine button { min-height:41px; padding:0 14px; border:1px solid #343b37; color:#fff; background:#343b37; font:inherit; font-size:.69rem; white-space:nowrap; }
+  .bath-refine > a { color:#727a74; font-size:.68rem; }
+  .bath-result-count { margin:0 0 13px; color:#8a908b; font-size:.65rem; }
   .bath-gallery-card { min-width:0; background:#f5f5f2; }
   .bath-gallery-image { aspect-ratio:1.08; overflow:hidden; background:#e8e9e5; }
   .bath-gallery-image img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
@@ -47,6 +69,6 @@
   .bath-detail-cta .bath-detail-kicker { margin-bottom:6px; }
   .bath-detail-cta h2 { font-size:clamp(1.5rem,3vw,2.3rem); }
   .bath-detail-cta a { display:inline-flex; justify-content:space-between; gap:20px; padding:13px 15px; color:#fff; background:#303634; font-size:.7rem; text-decoration:none; }
-  @media(max-width:767.98px) { .bath-gallery-heading { grid-template-columns:1fr; gap:12px; } .bath-gallery-heading > p { font-size:.77rem; } .bath-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-gallery-image { aspect-ratio:.86; } .bath-gallery-caption { padding:11px 10px 13px; } .bath-gallery-caption h3 { font-size:.77rem; line-height:1.4; } .bath-gallery-caption span { font-size:.45rem; } .bath-detail-cta { align-items:flex-start; flex-direction:column; margin-top:30px; padding:20px 17px; } }
+  @media(max-width:767.98px) { .bath-gallery-heading { grid-template-columns:1fr; gap:12px; } .bath-gallery-heading > p { font-size:.77rem; } .bath-refine { grid-template-columns:1fr auto; gap:8px; padding:13px 12px; } .bath-refine > div { grid-column:1/-1; } .bath-facet { grid-column:1/-1; } .bath-facet-options { width:100%; } .bath-refine button { grid-column:1/-1; width:100%; } .bath-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-gallery-image { aspect-ratio:.86; } .bath-gallery-caption { padding:11px 10px 13px; } .bath-gallery-caption h3 { font-size:.77rem; line-height:1.4; } .bath-gallery-caption span { font-size:.45rem; } .bath-detail-cta { align-items:flex-start; flex-direction:column; margin-top:30px; padding:20px 17px; } }
 </style>
 {% endblock %}

@@ -5,6 +5,12 @@
 <section class="bath-brand-hero"><div class="container bath-brand-hero-inner"><div class="bath-brand-hero-copy"><a href="{{ url_for('tiles_bath') }}">← Bath &amp; sanitaryware</a><p>SHOWROOM BRAND · BATH &amp; SANITARYWARE</p><h1>{{ brand }}</h1><span>Browse catalogue selections across our bathware categories.</span></div><div class="bath-brand-hero-image"><img src="{{ url_for('static', filename=brand_image) }}" alt="{{ brand }} bathroom collection inspiration"></div></div></section>
 <section class="bath-brand-results"><div class="container">
   <div class="bath-brand-results-heading"><div><p>THE COLLECTION</p><h2>{{ brand }} catalogue selections.</h2></div><p>Images shown here are grouped across the Bath &amp; Sanitaryware section. Contact us to confirm the specific product, range and availability.</p></div>
+  <form class="bath-brand-refine" method="get" action="{{ url_for('tiles_bath_brand', brand_slug=brand_slug) }}" aria-label="Refine {{ brand }} bathware by category">
+    <div><span>Browse {{ brand }} by product type</span><small>Select any combination of categories.</small></div>
+    <details class="bath-brand-facet"><summary><span>Product type</span><b>{{ selected_categories|length if selected_categories else 'All bathware' }}</b></summary><div class="bath-brand-facet-options">{% for title, slug in categories %}<label><input type="checkbox" name="category" value="{{ slug }}" {% if slug in selected_categories %}checked{% endif %}><span>{{ title }}</span></label>{% endfor %}</div></details>
+    <button type="submit">Show selection <span aria-hidden="true">↗</span></button>{% if selected_categories %}<a href="{{ url_for('tiles_bath_brand', brand_slug=brand_slug) }}">Clear</a>{% endif %}
+  </form>
+  <p class="bath-brand-count">{{ products|length }} catalogue {{ 'image' if products|length == 1 else 'images' }}{% if selected_category_names %} · {{ selected_category_names|join(' + ') }}{% endif %}</p>
   <div class="bath-brand-products">
     {% for product in products %}
     <article class="bath-brand-product"><div class="bath-brand-product-image"><img src="{{ url_for('static', filename=product.image) }}" alt="{{ brand }} {{ product.category|lower }} — {{ product.caption }}" loading="lazy"></div><div class="bath-brand-product-copy"><small>{{ product.category }}</small><h3>{{ product.caption }}</h3></div></article>
@@ -25,6 +31,22 @@
   .bath-brand-results-heading { display:grid; grid-template-columns:1fr minmax(270px,450px); align-items:end; gap:35px; margin-bottom:27px; }
   .bath-brand-results-heading h2 { margin:0; color:#303634; font-size:clamp(1.8rem,4vw,3rem); font-weight:400; letter-spacing:-.055em; }
   .bath-brand-results-heading > p { margin:0 0 3px; color:#747b76; font-size:.8rem; line-height:1.8; }
+  .bath-brand-refine { display:grid; grid-template-columns:1fr minmax(220px,.5fr) auto auto; align-items:center; gap:12px; margin:0 0 10px; padding:15px 17px; border:1px solid #e5e6e1; background:#fafaf8; }
+  .bath-brand-refine > div { display:grid; gap:4px; }
+  .bath-brand-refine > div span { color:#454d48; font-size:.75rem; font-weight:600; }
+  .bath-brand-refine small,.bath-brand-refine label { color:#858b86; font-size:.62rem; }
+  .bath-brand-facet { position:relative; min-width:0; }
+  .bath-brand-facet > summary { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:41px; padding:8px 11px; border:1px solid #e0e2dc; color:#3d4540; background:#fff; font-size:.74rem; list-style:none; cursor:pointer; }
+  .bath-brand-facet > summary::-webkit-details-marker { display:none; }
+  .bath-brand-facet > summary::after { content:'⌄'; color:#858b86; }
+  .bath-brand-facet > summary b { max-width:150px; overflow:hidden; color:#828981; font-size:.65rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
+  .bath-brand-facet-options { position:absolute; z-index:5; top:calc(100% + 5px); left:0; width:max(100%,240px); max-height:230px; overflow:auto; padding:7px; border:1px solid #dedfd9; background:#fff; box-shadow:0 12px 30px rgba(37,43,39,.14); }
+  .bath-brand-facet-options label { display:flex; align-items:center; gap:9px; min-height:38px; padding:7px 9px; color:#505852; font-size:.73rem; cursor:pointer; }
+  .bath-brand-facet-options label:hover { background:#f4f4f0; }
+  .bath-brand-facet-options input { width:15px; height:15px; accent-color:#454d48; }
+  .bath-brand-refine button { min-height:41px; padding:0 14px; border:1px solid #343b37; color:#fff; background:#343b37; font:inherit; font-size:.69rem; white-space:nowrap; }
+  .bath-brand-refine > a { color:#727a74; font-size:.68rem; }
+  .bath-brand-count { margin:0 0 13px; color:#8a908b; font-size:.65rem; }
   .bath-brand-products { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px; }
   .bath-brand-product { min-width:0; background:#f4f4f1; }
   .bath-brand-product-image { aspect-ratio:1.05; overflow:hidden; background:#e7e8e4; }
@@ -37,6 +59,6 @@
   .bath-brand-contact h2 { margin:0 0 18px; color:#303634; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:400; letter-spacing:-.05em; }
   .bath-brand-contact a { display:inline-flex; justify-content:space-between; gap:24px; padding:13px 16px; color:#fff; background:#303634; font-size:.7rem; text-decoration:none; }
   @media(max-width:991.98px) { .bath-brand-hero-inner { grid-template-columns:1fr .85fr; gap:25px; } .bath-brand-hero-image { aspect-ratio:1.05; } }
-  @media(max-width:767.98px) { .bath-brand-hero-inner { grid-template-columns:1fr; gap:23px; } .bath-brand-hero-image { aspect-ratio:1.5; } .bath-brand-hero .container > a { margin-bottom:26px; } .bath-brand-results-heading { grid-template-columns:1fr; gap:11px; } .bath-brand-results-heading > p { font-size:.75rem; } .bath-brand-products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-brand-product-image { aspect-ratio:.86; } .bath-brand-product-copy { padding:10px 10px 12px; } .bath-brand-product-copy h3 { font-size:.74rem; line-height:1.4; } .bath-brand-product-copy small { font-size:.43rem; } .bath-brand-contact { margin-top:30px; padding:21px 14px; } }
+  @media(max-width:767.98px) { .bath-brand-hero-inner { grid-template-columns:1fr; gap:23px; } .bath-brand-hero-image { aspect-ratio:1.5; } .bath-brand-hero .container > a { margin-bottom:26px; } .bath-brand-results-heading { grid-template-columns:1fr; gap:11px; } .bath-brand-results-heading > p { font-size:.75rem; } .bath-brand-refine { grid-template-columns:1fr auto; gap:8px; padding:13px 12px; } .bath-brand-refine > div,.bath-brand-facet,.bath-brand-refine button { grid-column:1/-1; } .bath-brand-facet-options { width:100%; } .bath-brand-refine button { width:100%; } .bath-brand-products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-brand-product-image { aspect-ratio:.86; } .bath-brand-product-copy { padding:10px 10px 12px; } .bath-brand-product-copy h3 { font-size:.74rem; line-height:1.4; } .bath-brand-product-copy small { font-size:.43rem; } .bath-brand-contact { margin-top:30px; padding:21px 14px; } }
 </style>
 {% endblock %}
