@@ -19,7 +19,7 @@ homepage_display = {
     'dining': 'images/dining/tables_catalog_18_1.webp',
     'modular': 'images/modular/plywood_cabinet 17.webp',
     'lighting': 'images/lighting/lighting 1.webp',
-    'sanitaryware': 'images/sanitaryware/washbasin_faucets 78.webp',
+    'sanitaryware': 'images/optimized/sanitaryware-feature.webp',
     'premium': 'images/premium/baxter_2_128_5.webp'
 }
 homepage_display_names = {
