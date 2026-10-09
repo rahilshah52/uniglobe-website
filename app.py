@@ -58,8 +58,14 @@ surface_collections = [
         'alt': 'Modern dining interior featuring full-body floor tiles',
     },
     {
-        'name': 'Punch Matt & Carving Matt',
-        'description': 'Textured 5 mm surfaces with distinctive matt and carved finishes.',
+        'name': 'Punch Matt',
+        'description': 'Textured 5 mm surfaces with a crisp, tactile matt finish.',
+        'image': 'images/surfaces/catalog/punch-matt-exterior.jpg',
+        'alt': 'Contemporary exterior finished with matt tiles',
+    },
+    {
+        'name': 'Carving Matt',
+        'description': 'Textured 5 mm surfaces with expressive carved detail.',
         'image': 'images/surfaces/catalog/carving-matt-bedroom.jpg',
         'alt': 'Contemporary bedroom with textured dark matt wall tiles',
     },
@@ -188,6 +194,7 @@ app.secret_key = 'your_secret_key_here'
 UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
 DATA_FILE = os.path.join(app.static_folder, "data", "products.json")
 SURFACE_DATA_FILE = os.path.join(app.static_folder, "data", "surface_products.json")
+SURFACE_BRANDS_FILE = os.path.join(app.static_folder, "data", "surface_brands.json")
 
 # Ensure folders exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -212,7 +219,8 @@ def home():
 
 @app.route('/tiles')
 def tiles_home():
-    return render_template('tiles_home.html', surface_collections=surface_collections[:3])
+    brands = [item for item in load_surface_brands() if item.get('active', True) and item.get('department') in {'bathware', 'both'}]
+    return render_template('tiles_home.html', surface_collections=surface_collections[:3], brands=brands)
 
 def get_bath_categories():
     bath_categories = [
@@ -235,14 +243,14 @@ def get_bath_categories():
             'description': 'Clean-lined sanitaryware ideas shown in finished spaces and catalogue selections.',
             'image': 'images/sanitaryware/catalog/kohler-sanitaryware-setting.jpg',
             'alt': 'KOHLER sanitaryware in a finished bathroom',
-            'items': [('Jaquar', 'jaquar-basin-lifestyle.jpg', 'Sanitaryware and basin setting'), ('KOHLER', 'kohler-sanitaryware-setting.jpg', 'Sanitaryware in a contemporary interior'), ('KOHLER', 'kohler-toilet-feature.jpg', 'Sanitaryware detail'), ('Simpolo', 'simpolo-sanitaryware-feature.jpg', 'Sanitaryware catalogue inspiration'), ('Simpolo', 'simpolo-bathroom-suite.jpg', 'Bathroom suite inspiration')],
+            'items': [('KOHLER', 'kohler-sanitaryware-setting.jpg', 'Sanitaryware in a contemporary interior'), ('KOHLER', 'kohler-toilet-feature.jpg', 'Sanitaryware detail'), ('Simpolo', 'simpolo-sanitaryware-feature.jpg', 'Sanitaryware catalogue inspiration'), ('Simpolo', 'simpolo-bathroom-suite.jpg', 'Bathroom suite inspiration')],
         },
         {
             'slug': 'baths-wellness', 'number': '04', 'title': 'Baths & wellness',
             'description': 'A softer, more restorative direction for bathing spaces, with sculptural forms and warm materials.',
             'image': 'images/sanitaryware/catalog/kohler-bathing-space.jpg',
             'alt': 'KOHLER bathing space with freestanding tub',
-            'items': [('Jaquar', 'jaquar-shower-setting.jpg', 'Bathing space inspiration'), ('KOHLER', 'kohler-bathing-space.jpg', 'Bathing space with freestanding tub'), ('KOHLER', 'kohler-bathroom-suite.jpg', 'Complete bathroom suite'), ('Simpolo', 'simpolo-bathroom-suite.jpg', 'Bathroom suite inspiration')],
+            'items': [('KOHLER', 'kohler-bathing-space.jpg', 'Bathing space with freestanding tub'), ('KOHLER', 'kohler-bathroom-suite.jpg', 'Complete bathroom suite'), ('Simpolo', 'simpolo-bathroom-suite.jpg', 'Bathroom suite inspiration')],
         },
     ]
     for category in bath_categories:
@@ -254,18 +262,150 @@ def get_bath_categories():
 
 @app.route('/tiles/bath')
 def tiles_bath():
+    bath_categories = get_all_bath_categories()
+    brands = [item for item in load_surface_brands() if item.get('active', True) and item.get('department') in {'bathware', 'both'}]
+    return render_template('tiles_bath.html', bath_categories=bath_categories, brands=brands)
+
+def get_all_bath_categories():
     bath_categories = get_bath_categories()
-    return render_template('tiles_bath.html', bath_categories=bath_categories)
+    active_bath_brands = {item['name'].lower() for item in load_surface_brands() if item.get('active', True) and item.get('department') in {'bathware', 'both'}}
+    for category in bath_categories:
+        category['items'] = [item for item in category['items'] if item['brand'].lower() in active_bath_brands]
+    bath_products = [item for item in load_surface_products() if item.get('department') == 'bathware' and is_public_surface_product(item, 'bathware')]
+    categories_by_name = {item['title'].lower(): item for item in bath_categories}
+    for product in bath_products:
+        title = product.get('category') or 'Other bathware'
+        key = title.lower()
+        category = categories_by_name.get(key)
+        if category is None:
+            category = {'slug': tile_product_slug(title), 'number': f'{len(bath_categories) + 1:02d}', 'title': title,
+                        'description': f'Explore {title.lower()} from the brands available in our showroom.',
+                        'image': (product.get('images') or ['images/sanitaryware/catalog/kohler-bathroom-suite.jpg'])[0],
+                        'alt': f'{title} from our bathware collection', 'items': []}
+            bath_categories.append(category)
+            categories_by_name[key] = category
+        for image in product.get('images', []):
+            category['items'].append({'brand': product.get('brand', 'Other'), 'image': image,
+                                      'caption': product.get('title', title), 'product_code': product.get('code')})
+    return bath_categories
 
 @app.route('/tiles/bath/<slug>')
 def tiles_bath_category(slug):
-    category = next((item for item in get_bath_categories() if item['slug'] == slug), None)
+    category = next((item for item in get_all_bath_categories() if item['slug'] == slug), None)
     if category is None:
         return redirect(url_for('tiles_bath'))
     return render_template('tiles_bath_category.html', category=category)
 
+@app.route('/tiles/bath/brand/<brand_slug>')
+def tiles_bath_brand(brand_slug):
+    brand_record = next((item for item in load_surface_brands() if item.get('slug') == brand_slug.lower() and item.get('active', True) and item.get('department') in {'bathware', 'both'}), None)
+    if brand_record is None:
+        return redirect(url_for('tiles_bath'))
+    brand = brand_record['name']
+    products = []
+    for category in get_all_bath_categories():
+        for item in category['items']:
+            if item['brand'].lower() == brand.lower():
+                products.append({**item, 'category': category['title']})
+    brand_image = brand_record.get('image') or f'images/sanitaryware/brands/{brand_slug}-bath-inspiration.jpg'
+    return render_template('tiles_bath_brand.html', brand=brand, brand_slug=brand_slug, brand_image=brand_image, products=products)
+
+def get_tile_category_groups():
+    groups = [
+        {
+            'name': 'Location', 'slug': 'location',
+            'items': [
+                ('Living room tiles', 'images/surfaces/catalog/digital-fullbody-living.jpg'),
+                ('Bathroom tiles', 'images/surfaces/catalog/products/traver-grey-white-room.jpg'),
+                ('Bedroom tiles', 'images/surfaces/catalog/carving-matt-bedroom.jpg'),
+                ('Kitchen tiles', 'images/surfaces/catalog/regular-fullbody-interior.jpg'),
+                ('Outdoor tiles', 'images/surfaces/catalog/punch-matt-exterior.jpg'),
+                ('Balcony tiles', 'images/surfaces/catalog/digital-fullbody-living.jpg'),
+                ('Staircase tiles', 'images/surfaces/catalog/fullbody-step-riser.jpg'),
+                ('Elevation tiles', 'images/surfaces/catalog/punch-matt-exterior.jpg'),
+                ('Commercial tiles', 'images/surfaces/catalog/products/aspire-sand-room.jpg'),
+                ('Countertop tiles', 'images/surfaces/catalog/regular-fullbody-interior.jpg'),
+            ],
+        },
+        {
+            'name': 'Look & Feel', 'slug': 'look-feel',
+            'items': [
+                ('Concrete', 'images/surfaces/catalog/products/urban-xl-grey-room.jpg'),
+                ('Decor', 'images/surfaces/catalog/radiant-shade-interior.jpg'),
+                ('Marble', 'images/surfaces/catalog/products/traver-grey-white-room.jpg'),
+                ('Metallic', 'images/surfaces/catalog/products/elite-black-room.jpg'),
+                ('Glossy', 'images/surfaces/catalog/products/bruno-black-room.jpg'),
+                ('Rustic', 'images/surfaces/catalog/punch-matt-exterior.jpg'),
+                ('Stone', 'images/surfaces/catalog/products/bali-stone-black-room.jpg'),
+                ('Wood', 'images/surfaces/catalog/products/urban-latte-room.jpg'),
+            ],
+        },
+        {
+            'name': 'Color', 'slug': 'color',
+            'items': [
+                ('Black', 'images/surfaces/catalog/products/bruno-black-room.jpg'),
+                ('Grey', 'images/surfaces/catalog/products/elite-ash-grey-room.jpg'),
+                ('Special', 'images/surfaces/catalog/carving-matt-bedroom.jpg'),
+                ('White', 'images/surfaces/catalog/products/crystal-white.jpg'),
+                ('Brown', 'images/surfaces/catalog/products/bali-stone-brown-room.jpg'),
+                ('Cream', 'images/surfaces/catalog/products/travertino-ivory.jpg'),
+            ],
+        },
+        {
+            'name': 'Collection', 'slug': 'collection',
+            'items': [
+                ('Alchimia', 'images/surfaces/catalog/radiant-shade-interior.jpg'),
+                ('Basaltino', 'images/surfaces/catalog/products/bali-stone-black-room.jpg'),
+                ('Glyphstone', 'images/surfaces/catalog/products/bali-stone-brown-room.jpg'),
+                ('Sparko', 'images/surfaces/catalog/products/elite-ash-grey-room.jpg'),
+                ('Venitto', 'images/surfaces/catalog/regular-fullbody-interior.jpg'),
+                ('Marmorica', 'images/surfaces/catalog/products/traver-grey-white-room.jpg'),
+                ('Spectra', 'images/surfaces/catalog/carving-matt-bedroom.jpg'),
+                ('Ricco 2.0', 'images/surfaces/catalog/products/aspire-sand-room.jpg'),
+                ('Kitchdeck', 'images/surfaces/catalog/regular-fullbody-interior.jpg'),
+                ('All collections', 'images/surfaces/catalog/double-charge-800-room.jpg'),
+            ],
+        },
+    ]
+    for group in groups:
+        group['cards'] = [
+            {'name': name, 'image': image, 'slug': tile_product_slug(name)}
+            for name, image in group['items']
+        ]
+    return groups
+
 @app.route('/tiles/collections')
 def tiles_collections():
+    brands = [item for item in load_surface_brands() if item.get('active', True) and item.get('department') in {'tiles', 'both'}]
+    return render_template('tiles_collection_home.html', tile_category_groups=get_tile_category_groups(), tile_brands=brands)
+
+@app.route('/tiles/category/<group_slug>/<category_slug>')
+def tiles_category_products(group_slug, category_slug):
+    group = next((group for group in get_tile_category_groups() if group['slug'] == group_slug), None)
+    category_item = next((item for item in group['cards'] if item['slug'] == category_slug), None) if group else None
+    if not group or not category_item:
+        return redirect(url_for('tiles_collections'))
+    brand_slug = request.args.get('brand', '').lower()
+    brand_record = next((item for item in load_surface_brands() if item.get('slug') == brand_slug and item.get('active', True)), None) if brand_slug else None
+    brand_name = brand_record.get('name') if brand_record else None
+    all_brand_products = group_slug == 'collection' and category_slug == 'all-collections' and bool(brand_name)
+    if group_slug == 'collection' and category_slug == 'all-collections' and not all_brand_products:
+        return redirect(url_for('tiles_catalogues'))
+    if brand_slug and not brand_record:
+        return redirect(url_for('tiles_collections'))
+    products = [item for item in load_surface_products() if item.get('department', 'tiles') == 'tiles' and is_public_surface_product(item, 'tiles') and (all_brand_products or category_slug in item.get('tags', [])) and (not brand_name or str(item.get('brand', '')).lower() == brand_name.lower())]
+    category = f'{brand_name} · All tile collections' if all_brand_products else category_item['name']
+    return render_template('tiles_category_products.html', group=group, category=category, category_image=category_item['image'], products=products, brand=brand_name, brand_slug=brand_slug)
+
+@app.route('/tiles/collections/brand/<slug>')
+def tiles_collection_brand(slug):
+    brand_record = next((item for item in load_surface_brands() if item.get('slug') == slug.lower() and item.get('active', True) and item.get('department') in {'tiles', 'both'}), None)
+    if brand_record:
+        return render_template('tiles_collection_home.html', tile_category_groups=get_tile_category_groups(), tile_brands=[brand_record], brand=brand_record['name'], brand_slug=brand_record['slug'])
+    return redirect(url_for('tiles_collections'))
+
+@app.route('/tiles/catalogues')
+def tiles_catalogues():
     catalog_groups = []
     for item in tile_lookbook_products:
         catalog = item.get('catalog') or {
@@ -285,7 +425,8 @@ def tiles_collections():
         catalog_item = dict(item)
         catalog_item['slug'] = tile_product_slug(item['name'])
         section['items'].append(catalog_item)
-    return render_template('tiles_collections.html', surface_collections=surface_collections, surface_products=load_surface_products(), tile_catalog_groups=catalog_groups)
+    surface_products = [item for item in load_surface_products() if item.get('department', 'tiles') == 'tiles' and is_public_surface_product(item, 'tiles')]
+    return render_template('tiles_collections.html', surface_collections=surface_collections, surface_products=surface_products, tile_catalog_groups=catalog_groups, brand=None)
 
 def tile_product_slug(name):
     return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
@@ -294,7 +435,7 @@ def tile_product_slug(name):
 def tiles_product_detail(slug):
     product = next((item for item in tile_lookbook_products if tile_product_slug(item['name']) == slug), None)
     if product is None:
-        return redirect(url_for('tiles_collections'))
+        return redirect(url_for('tiles_catalogues'))
 
     gallery = [{'src': product['image'], 'label': 'Tile surface'}]
     slug_to_page = {
@@ -336,6 +477,23 @@ def tiles_product_detail(slug):
             gallery.append({'src': inspiration, 'label': 'Collection inspiration'})
     return render_template('tiles_product_detail.html', product=product, gallery=gallery)
 
+@app.route('/tiles/product-uploaded/<code>')
+def tiles_uploaded_product_detail(code):
+    item = next((product for product in load_surface_products() if product.get('code') == code), None)
+    if item is None or item.get('department', 'tiles') != 'tiles' or not is_public_surface_product(item, 'tiles') or not item.get('images'):
+        return redirect(url_for('tiles_collections'))
+    product = {
+        'name': item.get('title', 'Tile design'),
+        'group': item.get('category', 'Tile collection'),
+        'description': item.get('description', ''),
+        'details': item.get('details') or 'Product details and formats confirmed on enquiry.',
+    }
+    gallery = [{'src': image, 'label': f'Product view {index + 1}'} for index, image in enumerate(item.get('images', []))]
+    requested_brand = request.args.get('brand', '').lower()
+    brand_record = next((brand for brand in load_surface_brands() if brand.get('slug') == requested_brand and brand.get('active', True)), None)
+    brand_slug = requested_brand if brand_record and str(item.get('brand', '')).lower() == brand_record.get('name', '').lower() else None
+    return render_template('tiles_product_detail.html', product=product, gallery=gallery, demo=item.get('demo', False), brand_slug=brand_slug)
+
 @app.route('/tiles/about')
 def tiles_about():
     return render_template('tiles_about.html')
@@ -349,6 +507,30 @@ def load_surface_products():
     except (OSError, json.JSONDecodeError):
         return []
 
+def is_public_surface_product(product, department):
+    if product.get('brand_removed'):
+        return False
+    brand_name = str(product.get('brand', '')).strip()
+    if not brand_name or brand_name == 'Other / not specified':
+        return True
+    brand = next((item for item in load_surface_brands() if item.get('name', '').lower() == brand_name.lower()), None)
+    return bool(brand and brand.get('active', True) and brand.get('department') in {department, 'both'})
+
+def load_surface_brands():
+    defaults = [
+        {'slug': 'simpolo', 'name': 'Simpolo', 'department': 'tiles', 'description': 'Explore tiles by location, look and feel, colour, or collection.', 'image': 'images/surfaces/catalog/double-charge-800-room.jpg'},
+        {'slug': 'jaquar', 'name': 'Jaquar', 'department': 'bathware', 'description': 'Bath fittings, showers and sanitaryware for considered bathroom spaces.', 'image': 'images/sanitaryware/brands/jaquar-bath-inspiration.jpg'},
+        {'slug': 'kohler', 'name': 'KOHLER', 'department': 'bathware', 'description': 'Distinctive bath, basin and sanitaryware options for your project.', 'image': 'images/sanitaryware/brands/kohler-bath-inspiration.jpg'},
+    ]
+    try:
+        with open(SURFACE_BRANDS_FILE, 'r', encoding='utf-8') as file:
+            brands = json.load(file)
+        return brands if isinstance(brands, list) else defaults
+    except (OSError, json.JSONDecodeError):
+        os.makedirs(os.path.dirname(SURFACE_BRANDS_FILE), exist_ok=True)
+        with open(SURFACE_BRANDS_FILE, 'w', encoding='utf-8') as file:
+            json.dump(defaults, file, indent=2, ensure_ascii=False)
+        return defaults
 @app.route('/tiles/manage', methods=['GET', 'POST'])
 def tiles_manage():
     if not session.get("admin_logged"):
@@ -356,20 +538,42 @@ def tiles_manage():
         return redirect(url_for("admin_login", next="tiles_manage"))
 
     products = load_surface_products()
+    all_brands = load_surface_brands()
+    brands = [item for item in all_brands if item.get('active', True)]
+    edit_brand = next((item for item in all_brands if item.get('slug') == request.args.get('edit_brand')), None)
     edit_code = request.args.get("edit")
     edit_product = next((item for item in products if item.get("code") == edit_code), None)
 
     if request.method == "POST":
         code = request.form.get("code", "").strip()
+        department = request.form.get('department', 'tiles').strip().lower()
+        if department not in {'tiles', 'bathware'}:
+            department = 'tiles'
+        brand = request.form.get("brand", "Other / not specified").strip()
+        available_brands = {item['name'] for item in brands if item.get('department') in {department, 'both'}}
+        if brand not in available_brands:
+            brand = 'Other / not specified'
         category = request.form.get("category", "Tiles").strip()
         title = request.form.get("title", "").strip()
         description = request.form.get("description", "").strip()
+        details = request.form.get("details", "").strip()
+        tags = list(dict.fromkeys(request.form.getlist("tags")))
+        allowed_tags = {
+            tile['slug']
+            for group in get_tile_category_groups()
+            for tile in group['cards']
+            if not (group['slug'] == 'collection' and tile['slug'] == 'all-collections')
+        }
+        tags = [tag for tag in tags if tag in allowed_tags] if department == 'tiles' else []
+        if department == 'tiles' and not tags:
+            flash("Choose at least one tile category. You can select several categories for the same product.", "danger")
+            return redirect(url_for("tiles_manage", edit=code or None))
         try:
             stock = max(0, int(request.form.get("stock", "0")))
         except ValueError:
             stock = 0
-        if not title:
-            flash("Please enter a product name.", "danger")
+        if not title or not category:
+            flash("Please enter a product name and product type.", "danger")
             return redirect(url_for("tiles_manage", edit=code or None))
 
         product = next((item for item in products if item.get("code") == code), None) if code else None
@@ -387,7 +591,12 @@ def tiles_manage():
             flash("Please choose at least one product photo.", "danger")
             return redirect(url_for("tiles_manage"))
         if request.form.get("replace_images") == "yes":
+            if not any(uploaded and uploaded.filename for uploaded in files):
+                flash("Choose replacement photos before removing the current images.", "danger")
+                return redirect(url_for("tiles_manage", edit=code))
             for old_image in product.get("images", []):
+                if not old_image.startswith(f"uploads/surfaces/{code}/"):
+                    continue
                 old_path = os.path.join(app.static_folder, old_image)
                 if os.path.isfile(old_path):
                     os.remove(old_path)
@@ -399,14 +608,85 @@ def tiles_manage():
                 image_path = f"uploads/surfaces/{code}/{filename}"
                 if image_path not in product["images"]:
                     product["images"].append(image_path)
-        product.update({"category": category, "title": title, "description": description, "stock": stock})
+        product.update({"department": department, "brand": brand, "brand_removed": False, "category": category, "title": title, "description": description, "details": details, "stock": stock, "tags": tags, "demo": request.form.get("demo") == "yes"})
         os.makedirs(os.path.dirname(SURFACE_DATA_FILE), exist_ok=True)
         with open(SURFACE_DATA_FILE, "w", encoding="utf-8") as file:
             json.dump(products, file, indent=2, ensure_ascii=False)
         flash(f"{title} saved. Product code: {code}", "success")
         return redirect(url_for("tiles_manage"))
 
-    return render_template("tiles_manage.html", products=products, edit_product=edit_product)
+    return render_template("tiles_manage.html", products=products, edit_product=edit_product, tile_category_groups=get_tile_category_groups(), brands=brands, all_brands=all_brands, edit_brand=edit_brand)
+
+@app.route('/tiles/manage/brand', methods=['POST'])
+def tiles_manage_brand():
+    if not session.get('admin_logged'):
+        return redirect(url_for('admin_login', next='tiles_manage'))
+    old_slug = request.form.get('slug', '').strip()
+    name = request.form.get('name', '').strip()
+    department = request.form.get('department', 'tiles').strip().lower()
+    description = request.form.get('description', '').strip()
+    image_file = request.files.get('image')
+    if not name or department not in {'tiles', 'bathware', 'both'}:
+        flash('Enter a brand name and choose where it belongs.', 'danger')
+        return redirect(url_for('tiles_manage'))
+    brands = load_surface_brands()
+    slug = tile_product_slug(name)
+    existing = next((item for item in brands if item.get('slug') == old_slug), None) if old_slug else None
+    if any(item.get('slug') == slug and item.get('slug') != old_slug for item in brands):
+        flash('That brand already exists. Choose a unique brand name.', 'danger')
+        return redirect(url_for('tiles_manage'))
+    image = existing.get('image') if existing else ('images/surfaces/catalog/double-charge-800-room.jpg' if department == 'tiles' else 'images/sanitaryware/catalog/kohler-bathroom-suite.jpg')
+    if image_file and image_file.filename:
+        brand_folder = os.path.join(UPLOAD_FOLDER, 'surface-brands')
+        os.makedirs(brand_folder, exist_ok=True)
+        filename = f'{slug}.webp'
+        process_image(image_file, os.path.join(brand_folder, filename))
+        image = f'uploads/surface-brands/{filename}'
+    if existing:
+        previous_name = existing.get('name')
+        if previous_name != name:
+            products = load_surface_products()
+            for product in products:
+                if product.get('brand') == previous_name:
+                    product['brand'] = name
+            with open(SURFACE_DATA_FILE, 'w', encoding='utf-8') as file:
+                json.dump(products, file, indent=2, ensure_ascii=False)
+        existing.update({'slug': slug, 'name': name, 'department': department, 'description': description or f'Explore {name} products available through our showroom.', 'image': image, 'active': True})
+    else:
+        brands.append({'slug': slug, 'name': name, 'department': department, 'description': description or f'Explore {name} products available through our showroom.', 'image': image, 'active': True})
+    with open(SURFACE_BRANDS_FILE, 'w', encoding='utf-8') as file:
+        json.dump(brands, file, indent=2, ensure_ascii=False)
+    flash(f'{name} has been {"updated" if existing else "added"}.', 'success')
+    return redirect(url_for('tiles_manage'))
+
+@app.route('/tiles/manage/brand/<slug>/remove', methods=['POST'])
+def tiles_manage_brand_remove(slug):
+    if not session.get('admin_logged'):
+        return redirect(url_for('admin_login', next='tiles_manage'))
+    brands = load_surface_brands()
+    brand = next((item for item in brands if item.get('slug') == slug), None)
+    if not brand:
+        flash('That brand was not found.', 'warning')
+        return redirect(url_for('tiles_manage'))
+    remaining_brands = [item for item in brands if item.get('slug') != slug]
+    with open(SURFACE_BRANDS_FILE, 'w', encoding='utf-8') as file:
+        json.dump(remaining_brands, file, indent=2, ensure_ascii=False)
+    products = load_surface_products()
+    affected = 0
+    for product in products:
+        if str(product.get('brand', '')).lower() == brand['name'].lower():
+            product['brand_removed'] = True
+            affected += 1
+    if affected:
+        with open(SURFACE_DATA_FILE, 'w', encoding='utf-8') as file:
+            json.dump(products, file, indent=2, ensure_ascii=False)
+    image = brand.get('image', '')
+    if image.startswith('uploads/surface-brands/'):
+        image_path = os.path.join(app.static_folder, image)
+        if os.path.isfile(image_path):
+            os.remove(image_path)
+    flash(f'{brand["name"]} was removed. {affected} associated products are kept in the manager and removed from public listings until reassigned.', 'success')
+    return redirect(url_for('tiles_manage'))
 
 @app.route('/tiles/manage/delete/<code>', methods=['POST'])
 def tiles_manage_delete(code):
@@ -836,7 +1116,7 @@ def upload():
 @app.route("/delete-product/<category>/<code>", methods=["POST"])
 def delete_product(category, code):
 
-    if not session.get("admin_logged_in"):
+    if not session.get("admin_logged"):
         return redirect(url_for("admin_login"))
 
     if not os.path.exists(DATA_FILE):

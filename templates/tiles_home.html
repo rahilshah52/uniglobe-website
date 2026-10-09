@@ -68,18 +68,12 @@
       <p>Explore bath and sanitaryware by product category, then browse catalogue imagery from the brands featured in our showroom.</p>
     </div>
     <div class="row g-3 g-lg-4">
-      <div class="col-md-6">
-        <a class="bath-brand-card" href="{{ url_for('tiles_bath') }}#jaquar">
-          <img src="{{ url_for('static', filename='images/sanitaryware/brands/jaquar-bath-inspiration.jpg') }}" alt="Jaquar bathroom inspiration with contemporary bath fittings" loading="lazy">
-          <span class="bath-brand-caption"><span><small>AVAILABLE THROUGH UNIGLOBE</small><strong>Jaquar</strong></span></span>
+      {% for brand in brands %}<div class="col-md-6">
+        <a class="bath-brand-card" href="{{ url_for('tiles_bath_brand', brand_slug=brand.slug) }}">
+          <img src="{{ url_for('static', filename=brand.image) }}" alt="{{ brand.name }} bathware inspiration" loading="lazy">
+          <span class="bath-brand-caption"><span><small>SHOWROOM BRAND</small><strong>{{ brand.name }}</strong></span></span>
         </a>
-      </div>
-      <div class="col-md-6">
-        <a class="bath-brand-card" href="{{ url_for('tiles_bath') }}#kohler">
-          <img src="{{ url_for('static', filename='images/sanitaryware/brands/kohler-bath-inspiration.jpg') }}" alt="KOHLER bathroom collection inspiration" loading="lazy">
-          <span class="bath-brand-caption"><span><small>AVAILABLE THROUGH UNIGLOBE</small><strong>KOHLER</strong></span></span>
-        </a>
-      </div>
+      </div>{% endfor %}
   </div>
 </section>
 

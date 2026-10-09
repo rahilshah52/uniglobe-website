@@ -85,7 +85,7 @@
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path == '/tiles' else '' }}" href="{{ url_for('tiles_home') }}">Home</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/about') else '' }}" href="{{ url_for('tiles_about') }}">About us</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/services') else '' }}" href="{{ url_for('tiles_services') }}">Our approach</a></li>
-        <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/collections') else '' }}" href="{{ url_for('tiles_collections') }}">Tiles</a></li>
+        <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/collections') or request.path.startswith('/tiles/catalogues') else '' }}" href="{{ url_for('tiles_collections') }}">Tiles</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/bath') else '' }}" href="{{ url_for('tiles_bath') }}">Bathware</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/contact') else '' }}" href="{{ url_for('tiles_contact') }}">Contact us</a></li>
       </ul>

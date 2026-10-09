@@ -3,7 +3,7 @@
 {% block content %}
 <section class="tile-detail-page">
   <div class="container">
-    <a href="{{ url_for('tiles_collections') }}#tile-lookbook" class="detail-back">← Back to the tile edit</a>
+    <a href="{% if brand_slug %}{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges{% else %}{{ url_for('tiles_catalogues') }}#tiles{% endif %}" class="detail-back">← Back to tile collections</a>
     <div class="tile-detail-grid">
       <section class="tile-gallery" aria-label="{{ product.name }} image gallery">
         <div class="tile-gallery-main"><img id="tileGalleryMain" src="{{ url_for('static', filename=gallery[0].src) }}" alt="{{ product.name }} — {{ gallery[0].label }}"></div>
@@ -16,11 +16,11 @@
         </div>
       </section>
       <section class="tile-detail-copy">
-        <p class="eyebrow">{{ product.group }} · CATALOGUE DESIGN</p>
+        <p class="eyebrow">{{ 'PREVIEW EXAMPLE' if demo else product.group ~ ' · CATALOGUE DESIGN' }}</p>
         <h1>{{ product.name }}</h1>
         <p class="tile-detail-description">{{ product.description }}</p>
         <div class="tile-spec"><span>FORMAT &amp; FINISH</span><p>{{ product.details }}</p></div>
-        <p class="tile-detail-note">Catalog images show the surface and collection inspiration. Please contact us to confirm current stock, finish and the best match for your project.</p>
+        <p class="tile-detail-note">{% if demo %}This is a preview example to show how a product listing works. Replace it with your own product details and images in the tile upload manager.{% else %}Catalog images show the surface and collection inspiration. Please contact us to confirm current stock, finish and the best match for your project.{% endif %}</p>
         <a class="tile-enquiry-button" href="{{ url_for('tiles_contact') }}?interest={{ product.name|urlencode }}">Ask about this tile</a>
         <a class="tile-detail-contact" href="{{ url_for('tiles_contact') }}">Discuss a project with us</a>
       </section>

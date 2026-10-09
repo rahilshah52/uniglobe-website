@@ -1,0 +1,86 @@
+[
+  {
+    "code": "DEMO001",
+    "brand": "Simpolo",
+    "title": "Preview tile · warm stone",
+    "category": "Demo preview",
+    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
+    "details": "Sample listing · confirm product format and finish",
+    "stock": 0,
+    "demo": true,
+    "images": ["images/surfaces/catalog/digital-fullbody-living.jpg", "images/surfaces/catalog/products/urban-xl-grey-room.jpg"],
+    "tags": ["living-room-tiles", "balcony-tiles", "concrete", "stone", "grey", "glyphstone"]
+  },
+  {
+    "code": "DEMO002",
+    "brand": "Simpolo",
+    "title": "Preview tile · pale marble",
+    "category": "Demo preview",
+    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
+    "details": "Sample listing · confirm product format and finish",
+    "stock": 0,
+    "demo": true,
+    "images": ["images/surfaces/catalog/products/traver-grey-white-room.jpg", "images/surfaces/catalog/products/traver-grey-white.jpg"],
+    "tags": ["bathroom-tiles", "marble", "white", "marmorica"]
+  },
+  {
+    "code": "DEMO003",
+    "brand": "Simpolo",
+    "title": "Preview tile · expressive finish",
+    "category": "Demo preview",
+    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
+    "details": "Sample listing · confirm product format and finish",
+    "stock": 0,
+    "demo": true,
+    "images": ["images/surfaces/catalog/carving-matt-bedroom.jpg", "images/surfaces/catalog/radiant-shade-interior.jpg"],
+    "tags": ["bedroom-tiles", "decor", "metallic", "special", "alchimia", "spectra"]
+  },
+  {
+    "code": "DEMO004",
+    "brand": "Simpolo",
+    "title": "Preview tile · warm neutral",
+    "category": "Demo preview",
+    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
+    "details": "Sample listing · confirm product format and finish",
+    "stock": 0,
+    "demo": true,
+    "images": ["images/surfaces/catalog/regular-fullbody-interior.jpg", "images/surfaces/catalog/products/urban-latte-room.jpg"],
+    "tags": ["kitchen-tiles", "countertop-tiles", "wood", "cream", "ricco-2-0", "kitchdeck"]
+  },
+  {
+    "code": "DEMO005",
+    "brand": "Simpolo",
+    "title": "Preview tile · dark stone",
+    "category": "Demo preview",
+    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
+    "details": "Sample listing · confirm product format and finish",
+    "stock": 0,
+    "demo": true,
+    "images": ["images/surfaces/catalog/punch-matt-exterior.jpg", "images/surfaces/catalog/products/bali-stone-black-room.jpg"],
+    "tags": ["outdoor-tiles", "elevation-tiles", "rustic", "stone", "black", "brown", "basaltino"]
+  },
+  {
+    "code": "DEMO006",
+    "brand": "Simpolo",
+    "title": "Preview tile · architectural grey",
+    "category": "Demo preview",
+    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
+    "details": "Sample listing · confirm product format and finish",
+    "stock": 0,
+    "demo": true,
+    "images": ["images/surfaces/catalog/fullbody-step-riser.jpg", "images/surfaces/catalog/products/elite-ash-grey-room.jpg"],
+    "tags": ["staircase-tiles", "commercial-tiles", "concrete", "grey", "sparko", "venitto"]
+  },
+  {
+    "code": "DEMO007",
+    "brand": "Simpolo",
+    "title": "Preview tile · polished black",
+    "category": "Demo preview",
+    "description": "A sample listing to demonstrate one tile appearing in Kitchen, Black and Glossy results at the same time. Replace or edit this preview with your own product details.",
+    "details": "Sample listing · confirm product format and finish",
+    "stock": 0,
+    "demo": true,
+    "images": ["images/surfaces/catalog/products/bruno-black-room.jpg", "images/surfaces/catalog/products/bruno-black.jpg"],
+    "tags": ["kitchen-tiles", "black", "glossy", "kitchdeck"]
+  }
+]

@@ -29,6 +29,21 @@
 
 </div>
 
+<section class="tile-upload-route mb-4" aria-labelledby="tile-upload-heading">
+  <div>
+    <p class="text-uppercase small fw-semibold mb-1">Tiles &amp; Bathware</p>
+    <h3 id="tile-upload-heading" class="h5 mb-2">Manage products and showroom brands</h3>
+    <p class="mb-0">Add new products, create brand cards, or search and filter existing products by name, code, brand and department to edit or remove them.</p>
+  </div>
+  <a href="{{ url_for('tiles_manage') }}" class="btn btn-dark">Open Tiles &amp; Bathware product manager <span aria-hidden="true">↗</span></a>
+</section>
+<style>
+  .tile-upload-route { display:flex; justify-content:space-between; align-items:center; gap:22px; padding:20px 22px; border:1px solid #dedfd9; background:#f4f4f0; }
+  .tile-upload-route p { max-width:610px; color:#69706b; font-size:.86rem; }
+  .tile-upload-route .text-uppercase { color:#858a84; font-size:.65rem; letter-spacing:.13em; }
+  @media(max-width:650px) { .tile-upload-route { align-items:flex-start; flex-direction:column; padding:17px; } .tile-upload-route .btn { width:100%; } }
+</style>
+
   <form method="POST" enctype="multipart/form-data">
 
     {% if edit_product %}

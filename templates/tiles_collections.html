@@ -1,27 +1,27 @@
 {% extends "tiles_base.html" %}
-{% block title %}Tile Collections | Uniglobe Surfaces{% endblock %}
+{% block title %}{% if brand %}{{ brand }} Tile Collection{% else %}Tile Collections{% endif %} | Uniglobe Surfaces{% endblock %}
 {% block meta_description %}Explore Uniglobe Surfaces tile collections by catalogue, finish and design. Browse our tile ranges and ask us about formats and availability.{% endblock %}
 {% block content %}
 <section class="collection-hero">
   <div class="container collection-hero-inner">
-    <p class="eyebrow">UNIGLOBE SURFACES · THE COLLECTION</p>
-    <h1>Materials for spaces<br>made to feel like yours.</h1>
-    <p>Explore tile designs from our catalogues, with details to help you find a material that suits your space.</p>
+    <p class="eyebrow">{% if brand %}{{ brand|upper }} · TILE COLLECTION{% else %}UNIGLOBE SURFACES · THE COLLECTION{% endif %}</p>
+    <h1>{% if brand %}{{ brand }} tile designs,<br>all in one place.{% else %}Materials for spaces<br>made to feel like yours.{% endif %}</h1>
+    <p>{% if brand %}Explore all designs currently featured in the Uniglobe Surfaces catalogues, organised by their source collection.{% else %}Explore tile designs from our catalogues, with details to help you find a material that suits your space.{% endif %}</p>
     <div class="collection-entry-links" aria-label="Explore collection categories">
-      <a href="#tiles">Explore tiles <span aria-hidden="true">↓</span></a>
+      <a href="#tiles">{% if brand %}View {{ brand }} designs{% else %}Explore tiles{% endif %} <span aria-hidden="true">↓</span></a>
       <a href="{{ url_for('tiles_bath') }}">Bath &amp; sanitaryware <span aria-hidden="true"></span></a>
     </div>
   </div>
 </section>
 
 <nav class="collection-section-nav" aria-label="Collection sections">
-  <div class="container"><a class="is-active" href="#tiles">01 <span>Tile collections</span></a><a href="{{ url_for('tiles_bath') }}">02 <span>Bath &amp; sanitaryware</span></a></div>
+  <div class="container"><a class="is-active" href="#tiles">01 <span>{% if brand %}{{ brand }} designs{% else %}Tile collections{% endif %}</span></a><a href="{{ url_for('tiles_bath') }}">02 <span>Bath &amp; sanitaryware</span></a></div>
 </nav>
 
 <section class="collection-main-section" id="tiles">
   <div class="container">
     <div class="section-heading">
-      <div><p class="eyebrow">01 · TILE COLLECTIONS</p><h2>Find your tile collection.</h2></div>
+      <div><p class="eyebrow">01 · {% if brand %}{{ brand|upper }}{% else %}TILE COLLECTIONS{% endif %}</p><h2>{% if brand %}Browse {{ brand }} designs.{% else %}Find your tile collection.{% endif %}</h2></div>
       <p>Choose a catalogue to see its designs. Product details and formats are shown with each tile; ask us to confirm current stock and suitability.</p>
     </div>
     <div class="catalog-list">
@@ -66,7 +66,7 @@
             {% for product in surface_products %}
             <article class="tile-card">
               <div class="tile-card-image">{% if product.images %}<img src="{{ url_for('static', filename=product.images[0]) }}" alt="{{ product.title }} tile surface" loading="lazy">{% endif %}</div>
-              <div class="tile-card-copy"><p class="tile-card-family">{{ product.category }}{% if product.code %} · {{ product.code }}{% endif %}</p><h3>{{ product.title }}</h3><p>{{ product.description }}</p><a class="tile-card-spec" href="{{ url_for('tiles_contact') }}?interest={{ product.title|urlencode }}">Ask about this design </a></div>
+              <div class="tile-card-copy"><p class="tile-card-family">{{ product.category }}{% if product.code %} · {{ product.code }}{% endif %}</p>{% if product.demo %}<span class="tile-preview-badge">Preview example · not a stock listing</span>{% endif %}<h3>{{ product.title }}</h3><p>{{ product.description }}</p><a class="tile-card-spec" href="{% if product.demo %}{{ url_for('tiles_uploaded_product_detail', code=product.code) }}{% else %}{{ url_for('tiles_contact') }}?interest={{ product.title|urlencode }}{% endif %}">{% if product.demo %}See product preview{% else %}Ask about this design{% endif %}</a></div>
             </article>
             {% endfor %}
           </div>
@@ -138,6 +138,7 @@
   .tile-card-open { position: absolute; right: 11px; bottom: 11px; display: grid; place-items: center; width: 33px; height: 33px; border-radius: 50%; color: #303634; background: rgba(255,255,255,.92); }
   .tile-card-copy { padding: 15px 15px 17px; }
   .tile-card-family { margin: 0 0 6px; color: #858b87; font-size: .57rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .tile-preview-badge { display:inline-block; margin:0 0 8px; padding:4px 6px; color:#65593f; background:#f1ecdd; font-size:.61rem; }
   .tile-card h3 { margin: 0 0 7px; color: #303634; font-size: 1rem; font-weight: 500; }
   .tile-card-copy > p:not(.tile-card-family) { min-height: 41px; margin: 0 0 9px; color: #747a76; font-size: .73rem; line-height: 1.55; }
   .tile-card-spec { color: #5f6662; font-size: .65rem; line-height: 1.5; }
@@ -197,5 +198,7 @@
       if (catalog.open) document.querySelectorAll('.catalog-accordion').forEach((other) => { if (other !== catalog) other.open = false; });
     });
   });
+  const requestedCatalog = window.location.hash ? document.querySelector(window.location.hash) : null;
+  if (requestedCatalog && requestedCatalog.matches('.catalog-accordion')) requestedCatalog.open = true;
 </script>
 {% endblock %}

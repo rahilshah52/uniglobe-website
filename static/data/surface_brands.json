@@ -1,0 +1,31 @@
+[
+  {
+    "slug": "simpolo",
+    "name": "Simpolo",
+    "department": "tiles",
+    "description": "Explore tiles by location, look and feel, colour, or collection.",
+    "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+  },
+  {
+    "slug": "jaquar",
+    "name": "Jaquar",
+    "department": "bathware",
+    "description": "Bath fittings, showers and sanitaryware for considered bathroom spaces.",
+    "image": "images/sanitaryware/brands/jaquar-bath-inspiration.jpg"
+  },
+  {
+    "slug": "kohler",
+    "name": "KOHLER",
+    "department": "bathware",
+    "description": "Distinctive bath, basin and sanitaryware options for your project.",
+    "image": "images/sanitaryware/brands/kohler-bath-inspiration.jpg"
+  },
+  {
+    "slug": "rahil-s-brand",
+    "name": "Rahil's Brand",
+    "department": "tiles",
+    "description": "Testing",
+    "image": "uploads/surface-brands/rahil-s-brand.webp",
+    "active": true
+  }
+]
