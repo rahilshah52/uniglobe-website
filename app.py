@@ -798,13 +798,16 @@ def products():
     with open(DATA_FILE, "r") as f:
         all_product_data = json.load(f)
 
-    selected_categories = [value for value in request.args.getlist('category') if value in all_product_data]
+    # The general products file can also contain legacy surface records. Keep
+    # the furniture storefront scoped to the furniture categories above.
+    furniture_product_data = {key: value for key, value in all_product_data.items() if key in categories}
+    selected_categories = [value for value in request.args.getlist('category') if value in furniture_product_data]
     selected_brands = list(dict.fromkeys(value.strip() for value in request.args.getlist('brand') if value.strip()))
-    product_brands = sorted({str(item.get('brand', '')).strip() for section in all_product_data.values()
+    product_brands = sorted({str(item.get('brand', '')).strip() for section in furniture_product_data.values()
                               for item in section.get('items', []) if str(item.get('brand', '')).strip()}, key=str.lower)
     product_data = {}
     selected_brand_names = {value.lower() for value in selected_brands}
-    for category, section in all_product_data.items():
+    for category, section in furniture_product_data.items():
         if selected_categories and category not in selected_categories:
             continue
         matching_items = [item for item in section.get('items', [])
@@ -812,7 +815,7 @@ def products():
         if matching_items:
             product_data[category] = {**section, 'items': matching_items}
 
-    return render_template("products.html", product_data=product_data, product_categories=all_product_data,
+    return render_template("products.html", product_data=product_data, product_categories=furniture_product_data,
                            product_brands=product_brands, selected_categories=selected_categories,
                            selected_brands=selected_brands)
 

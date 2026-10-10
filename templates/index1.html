@@ -442,14 +442,15 @@
     <div class="col-md-6 mt-3 mt-md-0">
       <div class="img-ratio-box">
         <img 
-          src="{{ url_for('static', filename='images/about.webp') }}"
+          src="{{ url_for('static', filename='images/optimized/responsive/about-800.webp') }}"
           srcset="
-            {{ url_for('static', filename='images/about.webp') }} 400w,
-            {{ url_for('static', filename='images/about.webp') }} 800w
+            {{ url_for('static', filename='images/optimized/responsive/about-400.webp') }} 400w,
+            {{ url_for('static', filename='images/optimized/responsive/about-800.webp') }} 800w
           "
-          sizes="(max-width: 600px) 400px, 800px"
+          sizes="(max-width: 767px) 100vw, 50vw"
           class="img-fluid product-img"
-          alt="Uniglobe Lifestyles China furniture sourcing and factory procurement services">
+          alt="Uniglobe Lifestyles China furniture sourcing and factory procurement services"
+          loading="lazy" decoding="async">
       </div>
     </div>
   </div>
@@ -480,15 +481,16 @@
     {% for cat, img in homepage_display.items() %}
       <div class="scroll-item">
         <a href="/products?category={{ cat }}" style="text-decoration: none; color: black;">
+          {% set image_stem = img.rsplit('/', 1)[-1].rsplit('.', 1)[0] %}
           <img 
-            src="{{ url_for('static', filename=img) }}"
+            src="{{ url_for('static', filename='images/optimized/responsive/' + image_stem + '-800.webp') }}"
             srcset="
-              {{ url_for('static', filename=img) }} 400w,
-              {{ url_for('static', filename=img) }} 800w
+              {{ url_for('static', filename='images/optimized/responsive/' + image_stem + '-400.webp') }} 400w,
+              {{ url_for('static', filename='images/optimized/responsive/' + image_stem + '-800.webp') }} 800w
             "
-            sizes="(max-width: 600px) 400px, 800px"
+            sizes="(max-width: 767px) 160px, 220px"
             alt="Wholesale {{ homepage_display_names[cat] }} sourcing from China factories"
-            loading="lazy">
+            loading="lazy" decoding="async">
           <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
         </a>
       </div>
@@ -497,15 +499,16 @@
     {% for cat, img in homepage_display.items() %}
       <div class="scroll-item">
         <a href="/products?category={{ cat }}" style="text-decoration: none; color: black;">
+          {% set image_stem = img.rsplit('/', 1)[-1].rsplit('.', 1)[0] %}
           <img 
-            src="{{ url_for('static', filename=img) }}"
+            src="{{ url_for('static', filename='images/optimized/responsive/' + image_stem + '-800.webp') }}"
             srcset="
-              {{ url_for('static', filename=img) }} 400w,
-              {{ url_for('static', filename=img) }} 800w
+              {{ url_for('static', filename='images/optimized/responsive/' + image_stem + '-400.webp') }} 400w,
+              {{ url_for('static', filename='images/optimized/responsive/' + image_stem + '-800.webp') }} 800w
             "
-            sizes="(max-width: 600px) 400px, 800px"
+            sizes="(max-width: 767px) 160px, 220px"
             alt="Wholesale {{ homepage_display_names[cat] }} sourcing from China factories"
-            loading="lazy">
+            loading="lazy" decoding="async">
           <p class="mt-2 fw-semibold">{{ homepage_display_names[cat] }}</p>
         </a>
       </div>
@@ -534,14 +537,15 @@
       <div class="col-6 col-md-3">
         <a href="/services" style="text-decoration: none; color: inherit;">
           <div class="card border-0 shadow-sm h-100 p-2 rounded-4">
-            <img src="{{ url_for('static', filename='images/services/' + img) }}"
+            <img src="{{ url_for('static', filename='images/optimized/responsive/' + img.rsplit('/', 1)[-1].rsplit('.', 1)[0] + '-400.webp') }}"
             srcset="
-              {{ url_for('static', filename='images/services/' + img) }} 100w,
-              {{ url_for('static', filename='images/services/' + img) }} 200w
+              {{ url_for('static', filename='images/optimized/responsive/' + img.rsplit('/', 1)[-1].rsplit('.', 1)[0] + '-200.webp') }} 200w,
+              {{ url_for('static', filename='images/optimized/responsive/' + img.rsplit('/', 1)[-1].rsplit('.', 1)[0] + '-400.webp') }} 400w
             "
-            sizes="(max-width: 600px) 100px, 200px"
+            sizes="(max-width: 767px) 150px, 240px"
             class="img-fluid rounded-3 mb-2"
-            alt="{{ label }} - China furniture sourcing service by Uniglobe Lifestyles">
+            alt="{{ label }} - China furniture sourcing service by Uniglobe Lifestyles"
+            loading="lazy" decoding="async">
             <p class="fw-semibold mb-0">{{ label }}</p>
           </div>
         </a>

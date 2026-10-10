@@ -42,14 +42,35 @@
           {% if tile_brands %}<div class="tile-brand-grid">
             {% for tile_brand in tile_brands %}
             <article class="tile-brand-card{% if brand and tile_brand.slug == brand_slug %} is-selected{% endif %}" id="{{ tile_brand.slug }}">
-              <a class="tile-brand-picture" href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}" aria-label="Explore {{ tile_brand.name }} tile collection"><img src="{{ url_for('static', filename=tile_brand.image) }}" alt="{{ tile_brand.name }} tile collection" loading="lazy"></a>
-              <div><span>{% if brand and tile_brand.slug == brand_slug %}CURRENTLY SELECTED{% else %}SHOWROOM BRAND{% endif %}</span><h3><a href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}">{{ tile_brand.name }}</a></h3><p>{{ tile_brand.description }}</p><a class="tile-brand-enquiry" href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}">{% if brand and tile_brand.slug == brand_slug %}Selected collection{% else %}Explore {{ tile_brand.name }}{% endif %} <b aria-hidden="true">↗</b></a></div>
+              <a class="tile-brand-card-link" href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}" aria-label="Explore {{ tile_brand.name }} tile collection">
+                <span class="tile-brand-picture"><img src="{{ url_for('static', filename=tile_brand.image) }}" alt="{{ tile_brand.name }} tile collection" loading="lazy"></span>
+                <span class="tile-brand-copy"><span>{% if brand and tile_brand.slug == brand_slug %}CURRENTLY SELECTED{% else %}SHOWROOM BRAND{% endif %}</span><strong>{{ tile_brand.name }}</strong><span class="tile-brand-description">{{ tile_brand.description }}</span><span class="tile-brand-enquiry">{% if brand and tile_brand.slug == brand_slug %}Selected collection{% else %}Explore {{ tile_brand.name }}{% endif %} <b aria-hidden="true">↗</b></span></span>
+              </a>
             </article>
             {% endfor %}
           </div>{% else %}<p class="tile-brands-empty">Tile brand cards added in the Upload manager will appear here.</p>{% endif %}
         </section>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="tile-brand-section" id="tile-showroom-brands">
+  <div class="container">
+    <div class="tile-brand-section-heading">
+      <div><p class="tile-page-kicker">SHOWROOM BRANDS</p><h2>Explore tiles by<br>the brands we carry.</h2></div>
+      <p>Choose a brand to browse its tile range by location, look and feel, colour, or collection.</p>
+    </div>
+    {% if tile_brands %}<div class="tile-brand-grid">
+      {% for tile_brand in tile_brands %}
+      <article class="tile-brand-card{% if brand and tile_brand.slug == brand_slug %} is-selected{% endif %}" id="tile-brand-card-{{ tile_brand.slug }}">
+        <a class="tile-brand-card-link" href="{{ url_for('tiles_collection_brand', slug=tile_brand.slug) }}" aria-label="Explore {{ tile_brand.name }} tile collection">
+          <span class="tile-brand-picture"><img src="{{ url_for('static', filename=tile_brand.image) }}" alt="{{ tile_brand.name }} tile collection" loading="lazy"></span>
+          <span class="tile-brand-copy"><span>{% if brand and tile_brand.slug == brand_slug %}CURRENTLY SELECTED{% else %}SHOWROOM BRAND{% endif %}</span><strong>{{ tile_brand.name }}</strong><span class="tile-brand-description">{{ tile_brand.description }}</span><span class="tile-brand-enquiry">{% if brand and tile_brand.slug == brand_slug %}Selected collection{% else %}Explore {{ tile_brand.name }}{% endif %} <b aria-hidden="true">↗</b></span></span>
+        </a>
+      </article>
+      {% endfor %}
+    </div>{% else %}<p class="tile-brands-empty">Tile brand cards added in the Upload manager will appear here.</p>{% endif %}
   </div>
 </section>
 
@@ -105,11 +126,11 @@
   .tile-category-card:hover .tile-category-name b { opacity:1; transform:translate(2px,-2px); }
   .tile-category-tab:focus-visible,.tile-category-card:focus-visible { outline:2px solid #d8d0bd; outline-offset:3px; }
   .tile-brand-section { padding:clamp(54px,7vw,84px) 0; background:#fff; }
-  .tile-brands-panel { background:#fff; color:#303634; }
+  .tile-brands-panel { background:#202321; color:#fff; }
   .tile-brands-panel .tile-category-panel-heading { margin-bottom:20px; }
-  .tile-brands-panel .tile-category-panel-heading .tile-page-kicker { color:#818983; }
-  .tile-brands-panel .tile-category-panel-heading h3 { color:#2d3330; }
-  .tile-brands-panel .tile-category-panel-heading > span { color:#747b76; }
+  .tile-brands-panel .tile-category-panel-heading .tile-page-kicker { color:#c1c2bb; }
+  .tile-brands-panel .tile-category-panel-heading h3 { color:#fff; }
+  .tile-brands-panel .tile-category-panel-heading > span { color:rgba(255,255,255,.55); }
   .tile-brands-empty { margin:0; padding:22px; background:#f4f4f1; color:#737a75; font-size:.82rem; }
   .tile-brand-section-heading { display:grid; grid-template-columns:1fr minmax(260px,430px); align-items:end; gap:36px; margin-bottom:28px; }
   .tile-brand-section-heading .tile-page-kicker { margin-bottom:10px; }
@@ -117,26 +138,29 @@
   .tile-brand-section-heading > p { margin:0 0 4px; color:#737a75; font-size:.86rem; line-height:1.8; }
   .tile-brand-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
   .tile-brand-card { display:grid; grid-template-columns:1.05fr .95fr; min-height:300px; background:#f4f4f1; }
+  .tile-brand-card:last-child:nth-child(odd) { grid-column:1 / -1; justify-self:center; width:calc((100% - 20px) / 2); }
   .tile-brand-card.is-selected { outline:2px solid #898b80; outline-offset:-2px; background:#eeeee9; }
+  .tile-brand-card-link { display:grid; grid-template-columns:1.05fr .95fr; min-height:300px; color:inherit; text-decoration:none; }
+  .tile-brand-card-link:focus-visible { outline:2px solid #898b80; outline-offset:3px; }
   .tile-brand-picture { display:block; min-height:300px; overflow:hidden; }
   .tile-brand-picture img { display:block; width:100%; height:100%; min-height:300px; object-fit:cover; transition:transform .5s ease; }
-  .tile-brand-picture:hover img { transform:scale(1.03); }
-  .tile-brand-card > div { align-self:center; padding:clamp(19px,2.4vw,33px); }
-  .tile-brand-card > div > span { color:#858b86; font-size:.52rem; letter-spacing:.13em; }
-  .tile-brand-card h3 { margin:12px 0 9px; color:#2d3330; font-size:clamp(1.75rem,3vw,2.5rem); font-weight:400; letter-spacing:-.05em; }
-  .tile-brand-card h3 a { color:inherit; text-decoration:none; }
-  .tile-brand-card p { min-height:64px; margin:0 0 16px; color:#707772; font-size:.74rem; line-height:1.7; }
+  .tile-brand-card:hover .tile-brand-picture img { transform:scale(1.03); }
+  .tile-brand-copy { display:flex; flex-direction:column; align-self:center; align-items:flex-start; padding:clamp(19px,2.4vw,38px); }
+  .tile-brand-copy > span:first-child { color:#858b86; font-size:.52rem; letter-spacing:.13em; }
+  .tile-brand-copy strong { margin:12px 0 9px; color:#2d3330; font-size:clamp(1.75rem,3vw,2.5rem); font-weight:400; letter-spacing:-.05em; }
+  .tile-brand-description { min-height:64px; margin:0 0 16px; color:#707772; font-size:.74rem; line-height:1.7; }
   .tile-brand-enquiry { display:inline-flex; justify-content:space-between; gap:15px; padding-bottom:5px; border-bottom:1px solid #bdc2bd; color:#303634; font-size:.68rem; text-decoration:none; }
+  .tile-brand-card-link:hover .tile-brand-enquiry { border-color:#555c57; }
   .tile-brand-enquiry b { font-weight:400; }
   .tile-page-footer-cta { padding:60px 0; color:#fff; background:#343a37; }
   .tile-page-footer-cta .tile-page-kicker { color:#c1c7c1; }
   .tile-page-footer-cta h2 { margin:0 0 20px; font-size:clamp(2rem,4vw,3.2rem); font-weight:400; letter-spacing:-.05em; }
   .tile-page-footer-cta a { display:inline-flex; justify-content:space-between; gap:22px; padding:13px 16px; color:#303634; background:#f6f6f3; font-size:.72rem; text-decoration:none; }
   @media(max-width:1100px) { .tile-category-explorer { grid-template-columns:minmax(165px,.28fr) 1fr; } }
-  @media(max-width:991.98px) { .tile-category-explorer { grid-template-columns:1fr; } .tile-category-tabs { flex-direction:row; padding:0 12px; overflow-x:auto; scrollbar-width:thin; } .tile-category-tab { flex:0 0 auto; grid-template-columns:auto 20px; gap:11px; min-height:58px; padding:0 16px; border-left:0; border-bottom:2px solid transparent; white-space:nowrap; } .tile-category-tab-index { display:none; } .tile-category-tab.is-active { border-bottom-color:#c5bda9; } .tile-category-panels { padding:25px 24px 30px; } }
-  @media(max-width:991.98px) { .tile-brand-grid { grid-template-columns:1fr; } }
-  @media(max-width:767.98px) { .tile-page-hero { min-height:490px; } .tile-page-hero-image { background-position:58% center; } .tile-page-hero-shade { background:linear-gradient(90deg,rgba(25,30,28,.69),rgba(25,30,28,.16)),linear-gradient(0deg,rgba(25,30,28,.45),transparent 68%); } .tile-page-hero-copy { padding-top:70px; padding-bottom:48px; } .tile-page-hero h1 { font-size:clamp(2.85rem,12vw,4.4rem); } .tile-page-hero-copy > p:not(.tile-page-eyebrow) { max-width:430px; font-size:.83rem; } .tile-range-heading { grid-template-columns:1fr; gap:12px; margin-bottom:24px; } .tile-range-heading > p { font-size:.78rem; } .tile-category-tabs { padding:0 7px; } .tile-category-tab { min-height:54px; padding:0 12px; font-size:.76rem; } .tile-category-panels { padding:23px 15px 25px; } .tile-category-panel-heading { align-items:start; } .tile-category-panel-heading > span { font-size:.6rem; white-space:nowrap; } .tile-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:19px 11px; } .tile-category-image { aspect-ratio:1.2; } .tile-category-name { align-items:start; padding-top:8px; font-size:.68rem; line-height:1.35; } .tile-brand-section-heading { grid-template-columns:1fr; gap:12px; margin-bottom:20px; } .tile-brand-card { min-height:215px; } .tile-brand-picture,.tile-brand-picture img { min-height:215px; } .tile-brand-card > div { padding:15px 12px; } .tile-brand-card h3 { margin:8px 0; font-size:1.55rem; } .tile-brand-card p { min-height:0; margin-bottom:12px; font-size:.67rem; line-height:1.55; } .tile-brand-enquiry { gap:7px; font-size:.59rem; } .tile-page-footer-cta { padding:47px 0; } }
-  @media(max-width:370px) { .tile-brand-card { grid-template-columns:1fr; } .tile-brand-picture,.tile-brand-picture img { height:190px; min-height:190px; } }
+  @media(max-width:991.98px) { .tile-category-explorer { grid-template-columns:1fr; } .tile-category-tabs { flex-direction:row; padding:0 12px; overflow-x:auto; scrollbar-width:thin; } .tile-category-tab { flex:0 0 auto; width:auto; grid-template-columns:auto 20px; gap:11px; min-height:58px; padding:0 16px; border-left:0; border-bottom:2px solid transparent; white-space:nowrap; } .tile-category-tab-index { display:none; } .tile-category-tab.is-active { border-bottom-color:#c5bda9; } .tile-category-panels { padding:25px 24px 30px; } }
+  @media(max-width:991.98px) { .tile-brand-grid { grid-template-columns:1fr; } .tile-brand-card:last-child:nth-child(odd) { grid-column:auto; justify-self:stretch; width:auto; } }
+  @media(max-width:767.98px) { .tile-page-hero { min-height:490px; } .tile-page-hero-image { background-position:58% center; } .tile-page-hero-shade { background:linear-gradient(90deg,rgba(25,30,28,.69),rgba(25,30,28,.16)),linear-gradient(0deg,rgba(25,30,28,.45),transparent 68%); } .tile-page-hero-copy { padding-top:70px; padding-bottom:48px; } .tile-page-hero h1 { font-size:clamp(2.85rem,12vw,4.4rem); } .tile-page-hero-copy > p:not(.tile-page-eyebrow) { max-width:430px; font-size:.83rem; } .tile-range-heading { grid-template-columns:1fr; gap:12px; margin-bottom:24px; } .tile-range-heading > p { font-size:.78rem; } .tile-category-tabs { padding:0 7px; } .tile-category-tab { min-height:54px; padding:0 12px; font-size:.76rem; } .tile-category-panels { padding:23px 15px 25px; } .tile-category-panel-heading { align-items:start; } .tile-category-panel-heading > span { font-size:.6rem; white-space:nowrap; } .tile-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:19px 11px; } .tile-category-image { aspect-ratio:1.2; } .tile-category-name { align-items:start; padding-top:8px; font-size:.68rem; line-height:1.35; } .tile-brand-section-heading { grid-template-columns:1fr; gap:12px; margin-bottom:20px; } .tile-brand-card,.tile-brand-card-link { min-height:215px; } .tile-brand-picture,.tile-brand-picture img { min-height:215px; } .tile-brand-copy { padding:15px 12px; } .tile-brand-copy strong { margin:8px 0; font-size:1.55rem; } .tile-brand-description { min-height:0; margin-bottom:12px; font-size:.67rem; line-height:1.55; } .tile-brand-enquiry { gap:7px; font-size:.59rem; } .tile-page-footer-cta { padding:47px 0; } }
+  @media(max-width:370px) { .tile-brand-card-link { grid-template-columns:1fr; } .tile-brand-picture,.tile-brand-picture img { height:190px; min-height:190px; } }
   @media(prefers-reduced-motion:reduce) { .tile-category-tab,.tile-category-tab-arrow,.tile-category-image img { transition:none; } }
 </style>
 <script>
