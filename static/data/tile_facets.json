@@ -1,0 +1,11 @@
+{
+  "look-feel": {
+    "added": [
+      {
+        "name": "Granulla",
+        "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+      }
+    ],
+    "removed": []
+  }
+}

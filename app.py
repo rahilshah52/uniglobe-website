@@ -931,9 +931,15 @@ def tiles_manage():
         uploaded_image_paths = {}
         for uploaded in files:
             if uploaded and uploaded.filename:
-                filename = os.path.splitext(secure_filename(uploaded.filename))[0] + ".webp"
-                process_image(uploaded, os.path.join(folder, filename))
+                original_stem = os.path.splitext(secure_filename(uploaded.filename))[0] or 'tile-photo'
+                filename = original_stem + ".webp"
+                suffix = 2
                 image_path = f"uploads/surfaces/{code}/{filename}"
+                while os.path.exists(os.path.join(folder, filename)) or image_path in product.get("images", []):
+                    filename = f"{original_stem}-{suffix}.webp"
+                    suffix += 1
+                    image_path = f"uploads/surfaces/{code}/{filename}"
+                process_image(uploaded, os.path.join(folder, filename))
                 if image_path not in product["images"]:
                     product["images"].append(image_path)
                 uploaded_image_paths[uploaded.filename] = image_path

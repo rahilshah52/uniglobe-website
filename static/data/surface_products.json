@@ -313,5 +313,39 @@
       "statuario-series"
     ],
     "demo": false
+  },
+  {
+    "code": "S00002",
+    "images": [
+      "uploads/surfaces/S00002/Calcatta_Oro.webp",
+      "uploads/surfaces/S00002/CALACATTA_ORO_R3.webp",
+      "uploads/surfaces/S00002/CALACATTA_ORO_R1_1.webp",
+      "uploads/surfaces/S00002/CALACATTA_ORO_R1.webp"
+    ],
+    "card_image": "uploads/surfaces/S00002/CALACATTA_ORO_R3.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "White Body",
+    "title": "Calcatta Oro",
+    "description": "",
+    "details": "",
+    "stock": 0,
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "granulla",
+      "white",
+      "600-1200-mm",
+      "statuario-series"
+    ],
+    "demo": false
   }
 ]

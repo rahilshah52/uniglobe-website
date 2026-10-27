@@ -64,10 +64,10 @@
             {% endfor %}
           </div>
         </div>
-        <div class="col-12"><label class="form-label" for="product-images">Product photos</label><input class="form-control" id="product-images" type="file" name="images" accept="image/*" multiple><div class="form-text">Select product close-ups, alternate angles and an installed-room photo. Choose the “Card image” below; that photo represents this tile before someone opens it. Photos are optimized automatically.</div>
+        <div class="col-12"><label class="form-label" for="product-images-picker">Product photos</label><input class="form-control" id="product-images-picker" type="file" accept="image/*" multiple><input id="product-images" type="file" name="images" accept="image/*" multiple hidden><div class="form-text">Choose photos in one or more batches; each new selection is added to the list below. Use the red × on a preview to remove it. Choose the “Card image” below to select the photo shown before someone opens this tile. Photos are optimized automatically.</div>
           {% if edit_product %}<div class="form-check mt-2"><input class="form-check-input" type="checkbox" value="yes" id="replace-images" name="replace_images"><label class="form-check-label" for="replace-images">Replace all current photos with the new selection</label></div>{% endif %}
           {% if edit_product and edit_product.images %}<p class="image-picker-heading">Choose the image shown on this tile's card</p><div class="current-images image-choice-grid">{% for image in edit_product.images %}<label class="image-choice"><input type="radio" name="primary_image_choice" value="{{ image }}" {% if edit_product.get('card_image') == image or (not edit_product.get('card_image') and loop.first) %}checked{% endif %}><img src="{{ url_for('static', filename=image) }}" alt="Product photo option {{ loop.index }}"><span>{{ image.split('/')[-1] }} · {{ 'Card image' if edit_product.get('card_image') == image or (not edit_product.get('card_image') and loop.first) else 'Gallery photo' }}</span></label>{% endfor %}</div>{% endif %}
-          <div class="current-images image-choice-grid" id="new-image-previews" hidden></div>
+          <div class="current-images image-choice-grid" id="new-image-previews" hidden></div><p class="upload-image-count" id="upload-image-count" aria-live="polite"></p>
         </div>
       </div>
       <div class="form-actions"><button class="manage-button" type="submit">{{ 'Save changes' if edit_product else 'Add product' }}</button>{% if edit_product %}<a href="{{ url_for('tiles_manage') }}">Cancel</a>{% endif %}</div>
@@ -166,6 +166,10 @@
   .image-choice:has(input:checked) span { color:#3c443f; font-weight:600; }
   .new-image-choice img { object-fit:contain; }
   .image-choice-grid[hidden] { display:none; }
+  .new-image-choice { padding-top:28px; }
+  .image-choice-remove { position:absolute; top:6px; right:6px; z-index:2; display:grid; place-items:center; width:24px; height:24px; padding:0; border:1px solid #c94e45; border-radius:50%; color:#fff; background:#c94e45; font-size:1rem; line-height:1; cursor:pointer; box-shadow:0 2px 7px rgba(50,30,28,.2); }
+  .image-choice-remove:hover { background:#a93630; border-color:#a93630; }
+  .upload-image-count { margin:8px 0 0; color:#737a75; font-size:.72rem; }
   .product-list-heading { display: flex; justify-content: space-between; align-items: center; margin: 50px 0 16px; }
   .product-list-heading h2 { font-size: 1.45rem; font-weight: 500; margin: 0; }
   .product-list-heading span, .manage-table small { color: #777; font-size: .84rem; }
@@ -207,42 +211,99 @@
   updateProductFields();
   })();
   (() => {
+    const picker = document.getElementById('product-images-picker');
     const input = document.getElementById('product-images');
     const preview = document.getElementById('new-image-previews');
-    if (!input || !preview) return;
-    input.addEventListener('change', () => {
+    const count = document.getElementById('upload-image-count');
+    if (!picker || !input || !preview) return;
+    let stagedFiles = [];
+    let nextId = 0;
+    let previewUrls = [];
+    const syncSubmitFiles = () => {
+      if (typeof DataTransfer === 'undefined') {
+        count.textContent = 'Your browser cannot queue photo selections. Please use a current version of Chrome, Edge, Firefox or Safari.';
+        return;
+      }
+      const transfer = new DataTransfer();
+      stagedFiles.forEach(item => transfer.items.add(item.file));
+      input.files = transfer.files;
+    };
+    const refreshLabels = () => {
+      document.querySelectorAll('.image-choice').forEach(card => {
+        const choice = card.querySelector('input[name="primary_image_choice"]');
+        const text = card.querySelector('span');
+        if (!choice || !text) return;
+        const base = text.dataset.baseLabel || text.textContent.replace(/ · (Card image|Gallery photo)$/, '');
+        text.dataset.baseLabel = base;
+        text.textContent = base + (choice.checked ? ' · Card image' : ' · Gallery photo');
+      });
+    };
+    const renderStagedFiles = selectedValue => {
+      previewUrls.forEach(url => URL.revokeObjectURL(url));
+      previewUrls = [];
       preview.replaceChildren();
-      const files = [...(input.files || [])].filter(file => file.type.startsWith('image/'));
-      preview.hidden = files.length === 0;
-      const existingSelection = document.querySelector('input[name="primary_image_choice"]:checked');
-      files.forEach((file, index) => {
-        const label = document.createElement('label');
-        label.className = 'image-choice new-image-choice';
+      preview.hidden = stagedFiles.length === 0;
+      stagedFiles.forEach((item, index) => {
+        const file = item.file;
+        const card = document.createElement('div');
+        card.className = 'image-choice new-image-choice';
         const radio = document.createElement('input');
         radio.type = 'radio';
         radio.name = 'primary_image_choice';
         radio.value = file.name;
-        radio.checked = !existingSelection && index === 0;
+        radio.checked = selectedValue ? selectedValue === file.name : (!document.querySelector('input[name="primary_image_choice"]:checked') && index === 0);
         const image = document.createElement('img');
         image.src = URL.createObjectURL(file);
+        previewUrls.push(image.src);
         image.alt = 'New photo preview';
         const caption = document.createElement('span');
         caption.dataset.baseLabel = file.name;
         caption.textContent = file.name + (radio.checked ? ' · Card image' : ' · Gallery photo');
-        radio.addEventListener('change', () => {
-          document.querySelectorAll('.image-choice').forEach(card => {
-            const choice = card.querySelector('input[name="primary_image_choice"]');
-            const text = card.querySelector('span');
-            if (choice && text) {
-              const base = text.dataset.baseLabel || text.textContent.replace(/ · (Card image|Gallery photo)$/, '');
-              text.dataset.baseLabel = base;
-              text.textContent = base + (choice.checked ? ' · Card image' : ' · Gallery photo');
-            }
-          });
+        radio.addEventListener('change', refreshLabels);
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'image-choice-remove';
+        remove.setAttribute('aria-label', `Remove ${file.name}`);
+        remove.title = `Remove ${file.name}`;
+        remove.textContent = '×';
+        remove.addEventListener('click', () => {
+          const wasSelected = radio.checked;
+          const oldValue = radio.value;
+          stagedFiles = stagedFiles.filter(staged => staged.id !== item.id);
+          syncSubmitFiles();
+          renderStagedFiles(wasSelected ? '' : oldValue);
+          if (wasSelected && !document.querySelector('input[name="primary_image_choice"]:checked')) {
+            const fallback = document.querySelector('input[name="primary_image_choice"]');
+            if (fallback) fallback.checked = true;
+          }
+          refreshLabels();
         });
-        label.append(radio, image, caption);
-        preview.append(label);
+        card.append(radio, image, caption, remove);
+        preview.append(card);
       });
+      const existingCount = document.querySelectorAll('.current-images:not(#new-image-previews) .image-choice').length;
+      count.textContent = stagedFiles.length ? `${stagedFiles.length} new photo${stagedFiles.length === 1 ? '' : 's'} queued${existingCount ? ` · ${existingCount + stagedFiles.length} total after upload` : ''}.` : '';
+    };
+    picker.addEventListener('change', () => {
+      const newlySelected = [...(picker.files || [])].filter(file => file.type.startsWith('image/'));
+      newlySelected.forEach(file => {
+        const duplicate = stagedFiles.some(item => item.originalName === file.name && item.file.size === file.size && item.file.lastModified === file.lastModified);
+        if (duplicate) return;
+        const originalName = file.name;
+        const extensionIndex = originalName.lastIndexOf('.');
+        const stem = extensionIndex > 0 ? originalName.slice(0, extensionIndex) : originalName;
+        const extension = extensionIndex > 0 ? originalName.slice(extensionIndex) : '';
+        let uniqueName = originalName;
+        let suffix = 2;
+        while (stagedFiles.some(item => item.file.name.toLowerCase() === uniqueName.toLowerCase())) {
+          uniqueName = `${stem} (${suffix++})${extension}`;
+        }
+        const queuedFile = uniqueName === originalName ? file : new File([file], uniqueName, { type: file.type, lastModified: file.lastModified });
+        stagedFiles.push({ id: nextId++, file: queuedFile, originalName });
+      });
+      syncSubmitFiles();
+      renderStagedFiles(document.querySelector('input[name="primary_image_choice"]:checked')?.value || '');
+      picker.value = '';
     });
   })();
   (() => {
