@@ -22,7 +22,7 @@
     <div class="bath-gallery">
       {% for item in items %}
       <article class="bath-gallery-card">
-        <div class="bath-gallery-image"><img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.brand }} {{ category.title|lower }} inspiration — {{ item.caption }}" loading="lazy"></div>
+        <div class="bath-gallery-image"><img src="{{ url_for('static', filename=item.thumbnail or item.image) }}" alt="{{ item.brand }} {{ category.title|lower }} inspiration — {{ item.caption }}" loading="lazy" decoding="async"></div>
         <div class="bath-gallery-caption"><span>{{ item.brand }} · CATALOGUE</span><h3>{{ item.caption }}</h3></div>
       </article>
       {% endfor %}

@@ -13,7 +13,7 @@
   <p class="bath-brand-count">{{ products|length }} catalogue {{ 'image' if products|length == 1 else 'images' }}{% if selected_category_names %} · {{ selected_category_names|join(' + ') }}{% endif %}</p>
   <div class="bath-brand-products">
     {% for product in products %}
-    <article class="bath-brand-product"><div class="bath-brand-product-image"><img src="{{ url_for('static', filename=product.image) }}" alt="{{ brand }} {{ product.category|lower }} — {{ product.caption }}" loading="lazy"></div><div class="bath-brand-product-copy"><small>{{ product.category }}</small><h3>{{ product.caption }}</h3></div></article>
+    <article class="bath-brand-product"><div class="bath-brand-product-image"><img src="{{ url_for('static', filename=product.thumbnail or product.image) }}" alt="{{ brand }} {{ product.category|lower }} — {{ product.caption }}" loading="lazy" decoding="async"></div><div class="bath-brand-product-copy"><small>{{ product.category }}</small><h3>{{ product.caption }}</h3></div></article>
     {% endfor %}
   </div>
   <div class="bath-brand-contact"><p>PROJECTS · MODELS · AVAILABILITY</p><h2>Enquire about {{ brand }}.</h2><a href="{{ url_for('tiles_contact') }}?interest={{ brand|urlencode }}">Talk to our team <span aria-hidden="true">↗</span></a></div>

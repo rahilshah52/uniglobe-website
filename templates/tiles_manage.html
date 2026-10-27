@@ -18,6 +18,29 @@
       </form>
       <div class="brand-list"><h3>Brands in the manager</h3>{% for item in all_brands %}<div class="brand-list-item"><span><strong>{{ item.name }}</strong><small>{{ item.department|title }}{% if not item.get('active', true) %} · Previously hidden{% endif %}</small></span><a href="{{ url_for('tiles_manage', edit_brand=item.slug) }}">Edit</a><form method="post" action="{{ url_for('tiles_manage_brand_remove', slug=item.slug) }}" onsubmit="return confirm('Remove {{ item.name }} from the brand list? Its products will leave public listings but stay saved in the manager.')"><button type="submit">Remove</button></form></div>{% endfor %}</div>
     </section>
+    <section class="brand-manager series-manager"><div><p class="eyebrow">TILE COLLECTION SETUP</p><h2>{{ 'Edit tile series' if edit_series else 'Add a tile series' }}</h2><p>Series group related colour designs such as Elite Mushroom and Elite Celadon. Add a series here, then assign each individual tile to it and to every room, finish, colour and size where it belongs.</p></div>
+      <form method="post" action="{{ url_for('tiles_manage_series') }}" enctype="multipart/form-data" class="brand-form">
+        {% if edit_series %}<input type="hidden" name="slug" value="{{ edit_series.slug }}">{% endif %}
+        <label>Series name<input name="name" required value="{{ edit_series.name if edit_series else '' }}" placeholder="For example, Elite"></label>
+        <label>Short description<input name="description" value="{{ edit_series.description if edit_series else '' }}" placeholder="Optional line shown with the series"></label>
+        <label>Image shown on the series card<select name="cover_image_choice"><option value="">Use a tile's selected cover image</option>{% if edit_series and edit_series.cover_image and not (series_image_options|selectattr('image', 'equalto', edit_series.cover_image)|list) %}<option value="keep-current" selected>Keep current series cover</option>{% endif %}{% for option in series_image_options %}<option value="{{ option.image }}" {% if edit_series and edit_series.cover_image == option.image %}selected{% endif %}>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select><small>Choose a photo already assigned to this series.</small></label>
+        <label>Or upload a dedicated series cover<input type="file" name="cover_image" accept="image/*"><small>Optional; this image takes priority over the selected tile photo.</small></label>
+        {% if edit_series and edit_series.cover_image %}<div class="series-cover-preview"><img src="{{ url_for('static', filename=edit_series.cover_image) }}" alt="Current {{ edit_series.name }} series cover"><span>Current series cover</span></div>{% endif %}
+        <button class="manage-button" type="submit">{{ 'Save series changes' if edit_series else 'Add tile series' }}</button>{% if edit_series %}<a class="brand-cancel" href="{{ url_for('tiles_manage') }}">Cancel editing</a>{% endif %}
+      </form>
+      <div class="brand-list"><h3>Tile series</h3>{% for item in all_series %}<div class="brand-list-item"><span><strong>{{ item.name }}</strong><small>{{ item.slug }}</small></span><a href="{{ url_for('tiles_manage', edit_series=item.slug) }}">Edit</a><form method="post" action="{{ url_for('tiles_manage_series_remove', slug=item.slug) }}" onsubmit="return confirm('Remove {{ item.name }}? Its products stay saved, but need another series assignment to appear in the tile collection.')"><button type="submit">Remove</button></form></div>{% else %}<p>No tile series have been added yet.</p>{% endfor %}</div>
+    </section>
+    <section class="facet-manager" aria-labelledby="facet-manager-title">
+      <div class="facet-manager-heading"><div><p class="eyebrow">FILTER OPTIONS</p><h2 id="facet-manager-title">Manage tile categories</h2><p>Add or remove the choices customers can browse by. Removed options stop appearing in the collection, while existing product assignments stay saved in case you add the option back.</p></div></div>
+      <div class="facet-manager-groups">
+        {% for group in tile_category_groups if group.slug != 'collection' %}
+        <details class="facet-category"><summary><span>{{ group.name }}</span><b>{{ group.cards|length }} options</b></summary>
+          <form class="facet-add-form" method="post" action="{{ url_for('tiles_manage_facet') }}"><input type="hidden" name="group" value="{{ group.slug }}"><input type="hidden" name="action" value="add"><label class="visually-hidden" for="facet-new-{{ group.slug }}">Add a {{ group.name|lower }} option</label><input id="facet-new-{{ group.slug }}" name="name" maxlength="80" required placeholder="Add a {{ group.name|lower }} option"><button type="submit">Add option</button></form>
+          <div class="facet-option-list">{% for item in group.cards %}<div class="facet-option"><span>{{ item.name }}</span><form method="post" action="{{ url_for('tiles_manage_facet') }}" onsubmit="return confirm('Remove {{ item.name }} from {{ group.name|lower }} choices? Existing product assignments will be kept.')"><input type="hidden" name="group" value="{{ group.slug }}"><input type="hidden" name="action" value="remove"><input type="hidden" name="option_slug" value="{{ item.slug }}"><button type="submit" aria-label="Remove {{ item.name }}">Remove</button></form></div>{% else %}<p class="facet-empty">No options yet.</p>{% endfor %}</div>
+        </details>
+        {% endfor %}
+      </div>
+    </section>
     <form class="manage-form" method="post" enctype="multipart/form-data">
       {% if edit_product %}<input type="hidden" name="code" value="{{ edit_product.code }}">{% endif %}
       <div class="row g-3">
@@ -30,20 +53,21 @@
         <div class="col-12"><label class="form-label" for="product-details">Size and finish</label><input class="form-control" id="product-details" name="details" value="{{ edit_product.details if edit_product else '' }}" placeholder="For example, 600 × 1200 mm · Matt"></div>
         <div class="col-12"><label class="demo-toggle"><input type="checkbox" name="demo" value="yes" {% if edit_product and edit_product.demo %}checked{% endif %}><span><strong>Mark as a preview example</strong><small>Preview examples are clearly labelled on the website and aren’t presented as confirmed stock.</small></span></label></div>
         <div class="col-12 tile-category-assignments">
-          <div class="category-assignment-heading"><div><h2>Where should this tile appear?</h2><p>Select every category that applies. The same product will show in each selected category.</p></div></div>
+          <div class="category-assignment-heading"><div><h2>Assign this tile to a series and categories</h2><p>Choose one series for this colour/design, then select every room, finish, colour and size that applies. A series appears only in categories assigned to its products.</p></div></div>
           <div class="category-assignment-grid">
             {% for group in tile_category_groups %}
             <fieldset class="category-assignment-group"><legend>{{ group.name }}</legend>
               {% for item in group.cards if not (group.slug == 'collection' and item.slug == 'all-collections') %}
-              <label class="category-check"><input type="checkbox" name="tags" value="{{ item.slug }}" {% if edit_product and item.slug in edit_product.get('tags', []) %}checked{% endif %}><span>{{ item.name }}</span></label>
+              <label class="category-check"><input type="{{ 'radio' if group.slug == 'collection' else 'checkbox' }}" name="{{ 'series' if group.slug == 'collection' else 'tags' }}" value="{{ item.slug }}" {% if edit_product and item.slug in edit_product.get('tags', []) %}checked{% endif %}><span>{{ item.name }}</span></label>
               {% endfor %}
             </fieldset>
             {% endfor %}
           </div>
         </div>
-        <div class="col-12"><label class="form-label" for="product-images">Product photos</label><input class="form-control" id="product-images" type="file" name="images" accept="image/*" multiple><div class="form-text">Select product close-ups, alternate angles and an installed-room photo. The first photo is used on category cards; all photos appear in the product gallery. Photos are resized and optimized automatically.</div>
+        <div class="col-12"><label class="form-label" for="product-images">Product photos</label><input class="form-control" id="product-images" type="file" name="images" accept="image/*" multiple><div class="form-text">Select product close-ups, alternate angles and an installed-room photo. Choose the “Card image” below; that photo represents this tile before someone opens it. Photos are optimized automatically.</div>
           {% if edit_product %}<div class="form-check mt-2"><input class="form-check-input" type="checkbox" value="yes" id="replace-images" name="replace_images"><label class="form-check-label" for="replace-images">Replace all current photos with the new selection</label></div>{% endif %}
-          {% if edit_product and edit_product.images %}<div class="current-images">{% for image in edit_product.images %}<img src="{{ url_for('static', filename=image) }}" alt="Current photo {{ loop.index }}">{% endfor %}</div>{% endif %}
+          {% if edit_product and edit_product.images %}<p class="image-picker-heading">Choose the image shown on this tile's card</p><div class="current-images image-choice-grid">{% for image in edit_product.images %}<label class="image-choice"><input type="radio" name="primary_image_choice" value="{{ image }}" {% if edit_product.get('card_image') == image or (not edit_product.get('card_image') and loop.first) %}checked{% endif %}><img src="{{ url_for('static', filename=image) }}" alt="Product photo option {{ loop.index }}"><span>{{ image.split('/')[-1] }} · {{ 'Card image' if edit_product.get('card_image') == image or (not edit_product.get('card_image') and loop.first) else 'Gallery photo' }}</span></label>{% endfor %}</div>{% endif %}
+          <div class="current-images image-choice-grid" id="new-image-previews" hidden></div>
         </div>
       </div>
       <div class="form-actions"><button class="manage-button" type="submit">{{ 'Save changes' if edit_product else 'Add product' }}</button>{% if edit_product %}<a href="{{ url_for('tiles_manage') }}">Cancel</a>{% endif %}</div>
@@ -81,6 +105,28 @@
   .brand-list-item small { color:#7a817c; font-size:.66rem; }
   .brand-list-item a,.brand-list-item button { border:0; padding:0; background:none; color:#424947; font:inherit; text-decoration:underline; }
   .brand-list-item form { margin:0; }
+  .facet-manager { margin:0 0 22px; padding:clamp(20px,4vw,34px); border:1px solid #e4e6e2; background:#fff; }
+  .facet-manager-heading { max-width:680px; margin-bottom:18px; }
+  .facet-manager h2 { margin:0 0 8px; color:#303634; font-size:1.45rem; font-weight:500; }
+  .facet-manager-heading p:not(.eyebrow) { margin:0; color:#727975; font-size:.8rem; line-height:1.7; }
+  .facet-manager-groups { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .facet-category { min-width:0; border:1px solid #e3e5e0; background:#fafaf8; }
+  .facet-category > summary { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:13px 15px; color:#353c38; font-size:.86rem; cursor:pointer; list-style:none; }
+  .facet-category > summary::-webkit-details-marker { display:none; }
+  .facet-category > summary::after { content:'+'; color:#737a75; font-size:1.1rem; }
+  .facet-category[open] > summary::after { content:'−'; }
+  .facet-category > summary b { margin-left:auto; color:#828981; font-size:.67rem; font-weight:400; }
+  .facet-add-form { display:flex; gap:8px; padding:0 12px 12px; }
+  .facet-add-form input { flex:1; min-width:0; padding:9px 10px; border:1px solid #dfe2dc; background:#fff; font:inherit; font-size:.75rem; }
+  .facet-add-form button { padding:0 12px; border:0; color:#fff; background:#343a38; font-size:.72rem; }
+  .facet-option-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; padding:0 12px 12px; }
+  .facet-option { display:flex; align-items:center; justify-content:space-between; gap:8px; min-width:0; padding:7px 9px; border:1px solid #e7e8e4; background:#fff; color:#535b56; font-size:.68rem; }
+  .facet-option > span { overflow-wrap:anywhere; }
+  .facet-option form { flex:0 0 auto; margin:0; }
+  .facet-option button { padding:2px 0; border:0; color:#7d5d56; background:none; font:inherit; font-size:.62rem; text-decoration:underline; text-underline-offset:2px; }
+  .facet-empty { grid-column:1/-1; margin:0; padding:8px; color:#7c837e; font-size:.72rem; }
+  .series-cover-preview { display:grid; grid-template-columns:92px 1fr; align-items:center; gap:10px; color:#737a75; font-size:.7rem; }
+  .series-cover-preview img { width:92px; height:68px; object-fit:cover; border:1px solid #d9dcd7; box-shadow:0 4px 12px rgba(35,40,37,.12); }
   .department-chip { display:inline-block; margin-bottom:4px; padding:3px 6px; background:#eff0ec; color:#5d655f; font-size:.62rem; }
   .manage-page .eyebrow { color: #777b79; font-size: .72rem; letter-spacing: .16em; }
   .manage-back-link { display:inline-block; margin-bottom:20px; color:#5e6561; font-size:.8rem; text-decoration:none; }
@@ -110,6 +156,16 @@
   .manage-button { border: 0; padding: 13px 22px; background: #343a38; color: #fff; }
   .current-images { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
   .current-images img { width: 88px; height: 72px; object-fit: cover; }
+  .image-picker-heading { margin:14px 0 0; color:#59615c; font-size:.76rem; font-weight:600; }
+  .image-choice-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,150px)); gap:11px; }
+  .image-choice { position:relative; display:grid; gap:6px; padding:7px; border:1px solid #e0e3de; background:#fff; color:#6c736e; font-size:.65rem; cursor:pointer; }
+  .image-choice:has(input:checked) { border-color:#7f887f; box-shadow:0 5px 16px rgba(35,40,37,.11); }
+  .image-choice input { position:absolute; z-index:1; top:11px; left:11px; width:16px; height:16px; accent-color:#39413c; }
+  .image-choice img { width:100%; height:95px; padding:4px; object-fit:contain; background:radial-gradient(ellipse at center,#fff 0,#f7f7f4 72%,#e9ebe6 100%); border:1px solid #e5e7e2; box-shadow:inset 0 0 10px rgba(29,35,31,.08); }
+  .image-choice span { padding:0 2px; }
+  .image-choice:has(input:checked) span { color:#3c443f; font-weight:600; }
+  .new-image-choice img { object-fit:contain; }
+  .image-choice-grid[hidden] { display:none; }
   .product-list-heading { display: flex; justify-content: space-between; align-items: center; margin: 50px 0 16px; }
   .product-list-heading h2 { font-size: 1.45rem; font-weight: 500; margin: 0; }
   .product-list-heading span, .manage-table small { color: #777; font-size: .84rem; }
@@ -128,8 +184,8 @@
   .product-pagination button { padding:8px 10px; border:1px solid #d8dcd8; background:#fff; color:#343a37; font:inherit; }
   .product-pagination button:disabled { opacity:.42; cursor:not-allowed; }
   .product-results-empty { padding:18px; background:#fff; color:#717873; font-size:.82rem; }
-  @media(max-width:767.98px) { .brand-manager { grid-template-columns:1fr; gap:18px; } .brand-form { grid-template-columns:1fr; } }
-  @media(max-width:575.98px) { .manage-page { padding: 42px 0 65px; } .product-list-heading { align-items: flex-start; gap: 10px; flex-direction: column; } .product-tools { grid-template-columns:1fr 1fr; padding:11px; gap:9px; } .product-search { grid-column:1/-1; } .product-pagination { align-items:flex-start; flex-direction:column; } .category-assignment-grid { grid-template-columns:1fr; } .category-assignment-group { gap:6px; padding:10px; } .category-check { font-size:.71rem; } }
+  @media(max-width:767.98px) { .brand-manager { grid-template-columns:1fr; gap:18px; } .brand-form { grid-template-columns:1fr; } .facet-manager-groups { grid-template-columns:1fr; } }
+  @media(max-width:575.98px) { .manage-page { padding: 42px 0 65px; } .product-list-heading { align-items: flex-start; gap: 10px; flex-direction: column; } .product-tools { grid-template-columns:1fr 1fr; padding:11px; gap:9px; } .product-search { grid-column:1/-1; } .product-pagination { align-items:flex-start; flex-direction:column; } .category-assignment-grid { grid-template-columns:1fr; } .category-assignment-group { gap:6px; padding:10px; } .category-check { font-size:.71rem; } .image-choice-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .facet-manager { padding:17px 13px; } .facet-option-list { grid-template-columns:1fr; } .facet-add-form { padding-inline:9px; } }
 </style>
 <script>
   (() => {
@@ -149,6 +205,45 @@
     };
   department?.addEventListener('change', updateProductFields);
   updateProductFields();
+  })();
+  (() => {
+    const input = document.getElementById('product-images');
+    const preview = document.getElementById('new-image-previews');
+    if (!input || !preview) return;
+    input.addEventListener('change', () => {
+      preview.replaceChildren();
+      const files = [...(input.files || [])].filter(file => file.type.startsWith('image/'));
+      preview.hidden = files.length === 0;
+      const existingSelection = document.querySelector('input[name="primary_image_choice"]:checked');
+      files.forEach((file, index) => {
+        const label = document.createElement('label');
+        label.className = 'image-choice new-image-choice';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'primary_image_choice';
+        radio.value = file.name;
+        radio.checked = !existingSelection && index === 0;
+        const image = document.createElement('img');
+        image.src = URL.createObjectURL(file);
+        image.alt = 'New photo preview';
+        const caption = document.createElement('span');
+        caption.dataset.baseLabel = file.name;
+        caption.textContent = file.name + (radio.checked ? ' · Card image' : ' · Gallery photo');
+        radio.addEventListener('change', () => {
+          document.querySelectorAll('.image-choice').forEach(card => {
+            const choice = card.querySelector('input[name="primary_image_choice"]');
+            const text = card.querySelector('span');
+            if (choice && text) {
+              const base = text.dataset.baseLabel || text.textContent.replace(/ · (Card image|Gallery photo)$/, '');
+              text.dataset.baseLabel = base;
+              text.textContent = base + (choice.checked ? ' · Card image' : ' · Gallery photo');
+            }
+          });
+        });
+        label.append(radio, image, caption);
+        preview.append(label);
+      });
+    });
   })();
   (() => {
     const tbody = document.getElementById('product-table-body');

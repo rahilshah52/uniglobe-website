@@ -5,19 +5,19 @@
 <section class="tile-filter-hero">
   <div class="tile-filter-hero-image" style="background-image:url('{{ url_for('static', filename=category_image) }}')"></div><div class="tile-filter-hero-shade"></div>
   <div class="container tile-filter-hero-copy">
-    <a href="{% if brand_slug %}{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges{% else %}{{ url_for('tiles_collections') }}#tile-ranges{% endif %}">← {% if brand %}All {{ brand }} categories{% else %}All tile categories{% endif %}</a>
-    <p>{{ brand|upper ~ ' · ' if brand }}{{ group.name|upper }} · TILE IDEAS</p>
+    <a href="{% if selected_series and group.slug != 'collection' %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug or None) }}{% elif brand_slug %}{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges{% else %}{{ url_for('tiles_collections') }}#tile-ranges{% endif %}">← {% if selected_series and group.slug != 'collection' %}Back to {{ group.name|lower }} series{% elif brand %}All {{ brand }} categories{% else %}All tile categories{% endif %}</a>
+    <p>{{ brand|upper ~ ' · ' if brand }}{% if selected_series %}{{ selected_series.name|upper }} SERIES{% else %}{{ group.name|upper }}{% endif %} · TILE DESIGNS</p>
     <h1>{{ category }}</h1>
-    <span>{% if brand %}Browse the {{ brand }} tile examples placed in this category.{% else %}Products can appear in more than one category, so you can explore the same tile from different starting points.{% endif %}</span>
+    <span>{% if selected_series %}Explore the individual colours and formats in the {{ selected_series.name }} series{% if group.slug != 'collection' %}, selected for {{ request.view_args['category_slug']|replace('-', ' ') }}{% endif %}.{% elif brand %}Browse the {{ brand }} tile examples placed in this category.{% else %}Products can appear in more than one category, so you can explore the same tile from different starting points.{% endif %}</span>
     {% if brand %}<div class="tile-brand-active"><span>SHOWING BRAND</span><strong>✓ {{ brand }}</strong><a href="{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges">Change brand</a></div>{% endif %}
   </div>
 </section>
 <section class="tile-filter-results">
   <div class="container">
-    <div class="tile-filter-heading"><div><p>{% if brand %}{{ brand|upper }} · {% endif %}CURATED FOR THIS CATEGORY</p><h2>{{ products|length }} {{ 'example' if products|length == 1 else 'examples' }} to explore</h2></div><a href="{% if brand %}{{ url_for('tiles_category_products', group_slug='collection', category_slug='all-collections', brand=brand_slug) }}{% else %}{{ url_for('tiles_catalogues') }}{% endif %}">{% if brand %}View all {{ brand }} tiles{% else %}View all catalogue designs{% endif %}<span aria-hidden="true">↗</span></a></div>
-    <form class="tile-refine" method="get" action="{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}" aria-label="Refine tile designs">
+    <div class="tile-filter-heading"><div><p>{% if brand %}{{ brand|upper }} · {% endif %}{% if selected_series %}{{ selected_series.name|upper }} SERIES · {% endif %}CURATED FOR THIS CATEGORY</p><h2>{{ products|length }} {{ 'design' if products|length == 1 else 'designs' }} to explore</h2></div><a href="{% if brand %}{{ url_for('tiles_category_products', group_slug='collection', category_slug='all-collections', brand=brand_slug) }}{% else %}{{ url_for('tiles_catalogues') }}{% endif %}">{% if brand %}View all {{ brand }} tiles{% else %}View all catalogue designs{% endif %}<span aria-hidden="true">↗</span></a></div>
+    <form class="tile-refine" method="get" action="{% if selected_series %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], series_slug=selected_series_slug) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}{% endif %}" aria-label="Refine tile designs">
       {% if brand_slug %}<input type="hidden" name="brand" value="{{ brand_slug }}">{% endif %}
-      <div class="tile-refine-top"><span><i aria-hidden="true">✳</i> Refine this selection</span><a href="{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug) if brand_slug else url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}">Clear choices</a></div>
+      <div class="tile-refine-top"><span><i aria-hidden="true">✳</i> Refine this selection{% if selected_series %} · {{ selected_series.name }} series{% endif %}</span><a href="{% if selected_series %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], series_slug=selected_series_slug, brand=brand_slug or None) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug or None) }}{% endif %}">Clear choices</a></div>
       <div class="tile-refine-fields">
         <details class="tile-facet"><summary><span>Brand</span><b>{{ selected_filters.filter_brand|length if selected_filters.filter_brand else 'Every brand' }}</b></summary><div class="tile-facet-options">{% for name in available_brands %}<label><input type="checkbox" name="filter_brand" value="{{ name }}" {% if name in selected_filters.filter_brand %}checked{% endif %}><span>{{ name }}</span></label>{% else %}<p>Brands appear here when products are added.</p>{% endfor %}</div></details>
         {% for facet in filter_groups %}
@@ -25,15 +25,15 @@
         {% endfor %}
         <button type="submit">Show designs <span aria-hidden="true">↗</span></button>
       </div>
-      {% if selected_filters.filter_brand or selected_filters.location or selected_filters['look-feel'] or selected_filters.color or selected_filters.collection %}<div class="tile-active-filters" aria-live="polite"><span>ACTIVE SELECTION</span>{% for name in selected_filters.filter_brand %}<b>Brand · {{ name }}</b>{% endfor %}{% for facet in filter_groups %}{% for option in facet['items'] if option.slug in selected_filters[facet.slug] %}<b>{{ facet.name }} · {{ option.name }}</b>{% endfor %}{% endfor %}</div>{% endif %}
-      <p>Combine a brand, room, finish, colour or collection. A design can appear in several relevant categories.</p>
+      {% if selected_series or selected_filters.filter_brand or selected_filters.location or selected_filters['look-feel'] or selected_filters.color or selected_filters['size'] or selected_filters.collection %}<div class="tile-active-filters" aria-live="polite"><span>ACTIVE SELECTION</span>{% if selected_series %}<b>Series · {{ selected_series.name }}</b>{% endif %}{% for name in selected_filters.filter_brand %}<b>Brand · {{ name }}</b>{% endfor %}{% for facet in filter_groups %}{% for option in facet['items'] if option.slug in selected_filters[facet.slug] %}<b>{{ facet.name }} · {{ option.name }}</b>{% endfor %}{% endfor %}</div>{% endif %}
+      <p>Combine brands with room, finish, colour, size or series. A design can appear in several relevant categories.</p>
     </form>
     {% if products %}
     <div class="tile-filter-grid">
       {% for product in products %}
-      <a class="tile-filter-card" href="{{ url_for('tiles_uploaded_product_detail', code=product.code, brand=brand_slug if brand else None) }}">
+      <a class="tile-filter-card" href="{{ url_for('tiles_uploaded_product_detail', code=product.code, brand=brand_slug if brand else None, return_to=request.full_path.rstrip('?')) }}">
         <div class="tile-filter-photo">
-          {% if product.images %}<img src="{{ url_for('static', filename=product.images[0]) }}" alt="{{ product.title }} tile example" loading="lazy">{% endif %}
+          {% if product.images %}<img src="{{ url_for('static', filename=product.get('thumbnail') or product.images[0]) }}" alt="{{ product.title }} tile example" loading="lazy" decoding="async">{% endif %}
           {% if product.demo %}<span>Preview example</span>{% endif %}
           <b aria-hidden="true">↗</b>
         </div>
@@ -42,7 +42,7 @@
       {% endfor %}
     </div>
     {% else %}
-    <div class="tile-filter-empty">{% if selected_filters.filter_brand or selected_filters.location or selected_filters['look-feel'] or selected_filters.color or selected_filters.collection %}<h3>No designs match this combination yet.</h3><p>Try removing one or more choices, or clear the filters to see all designs in this category.</p><a href="{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug) if brand_slug else url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}">Clear filters</a>{% else %}<h3>More tile designs are on their way.</h3><p>This category is ready. Add a tile from the upload page and select this category to have it appear here.</p><a href="{{ url_for('tiles_contact') }}">Ask our team about tiles</a>{% endif %}</div>
+    <div class="tile-filter-empty">{% if selected_filters.filter_brand or selected_filters.location or selected_filters['look-feel'] or selected_filters.color or selected_filters['size'] or selected_filters.collection %}<h3>No designs match this combination yet.</h3><p>Try removing one or more choices, or clear the filters to see all designs in this category.</p><a href="{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug) if brand_slug else url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}">Clear filters</a>{% else %}<h3>More tile designs are on their way.</h3><p>This category is ready. Add a tile from the upload page and select this category to have it appear here.</p><a href="{{ url_for('tiles_contact') }}">Ask our team about tiles</a>{% endif %}</div>
     {% endif %}
   </div>
 </section>
@@ -88,9 +88,9 @@
   .tile-active-filters b { padding:5px 8px; border:1px solid #e3e4de; color:#4a514c; background:#f8f8f5; font-size:.63rem; font-weight:500; }
   .tile-filter-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
   .tile-filter-card { min-width:0; color:inherit; background:#fff; text-decoration:none; }
-  .tile-filter-photo { position:relative; aspect-ratio:1.25; overflow:hidden; background:#e8e9e5; }
-  .tile-filter-photo img { width:100%; height:100%; object-fit:cover; transition:transform .4s ease; }
-  .tile-filter-card:hover .tile-filter-photo img { transform:scale(1.035); }
+  .tile-filter-photo { position:relative; aspect-ratio:.78; overflow:hidden; background:radial-gradient(ellipse at center,#fff 0,#f7f7f4 72%,#e9ebe6 100%); border:1px solid #d9dcd6; box-shadow:0 7px 18px rgba(34,40,36,.1),inset 0 0 12px rgba(34,40,36,.06); }
+  .tile-filter-photo img { width:100%; height:100%; padding:10px; object-fit:contain; filter:drop-shadow(0 9px 10px rgba(31,37,33,.17)); transition:transform .4s ease; }
+  .tile-filter-card:hover .tile-filter-photo img { transform:scale(1.02); }
   .tile-filter-photo > span { position:absolute; top:12px; left:12px; padding:6px 8px; color:#4d4a3f; background:rgba(248,245,233,.94); font-size:.63rem; letter-spacing:.04em; }
   .tile-filter-photo > b { position:absolute; right:12px; bottom:12px; display:grid; place-items:center; width:34px; height:34px; border-radius:50%; color:#303633; background:#fff; font-weight:400; }
   .tile-filter-copy { padding:17px 18px 20px; }
@@ -103,7 +103,7 @@
   .tile-filter-empty a { color:#303633; font-size:.85rem; }
   @media(max-width:991.98px) { .tile-refine-fields { grid-template-columns:repeat(3,minmax(0,1fr)); } }
   @media(max-width:767.98px) { .tile-brand-active { gap:7px; margin-top:14px; padding:8px 9px; } .tile-filter-hero .tile-brand-active a { margin-bottom:0; } }
-  @media(max-width:767.98px) { .tile-filter-hero { min-height:490px; } .tile-filter-hero-image { background-position:58% center; } .tile-filter-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.17)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .tile-filter-hero-copy { padding-top:68px; padding-bottom:47px; } .tile-filter-hero a { margin-bottom:25px; } .tile-filter-hero-copy > span { font-size:.82rem; } .tile-filter-results { padding:38px 0 60px; } .tile-filter-heading { align-items:flex-start; flex-direction:column; margin-bottom:20px; } .tile-filter-heading > a { width:100%; justify-content:space-between; } .tile-refine { padding:14px 12px 12px; margin-bottom:20px; } .tile-refine-fields { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .tile-facet > summary { min-height:42px; padding:7px 8px; font-size:.68rem; } .tile-facet-options { width:max(100%,190px); } .tile-facet:nth-child(even) .tile-facet-options { right:0; left:auto; } .tile-refine-fields button { grid-column:1/-1; width:100%; } .tile-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; } .tile-filter-photo { aspect-ratio:.95; } .tile-filter-copy { padding:12px 11px 14px; } .tile-filter-copy h3 { font-size:.91rem; } .tile-filter-copy > span { font-size:.68rem; } .tile-filter-photo > span { top:7px; left:7px; padding:5px 6px; font-size:.57rem; } }
-  @media(max-width:390px) { .tile-filter-grid { grid-template-columns:1fr; } .tile-filter-photo { aspect-ratio:1.25; } }
+  @media(max-width:767.98px) { .tile-filter-hero { min-height:490px; } .tile-filter-hero-image { background-position:58% center; } .tile-filter-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.17)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .tile-filter-hero-copy { padding-top:68px; padding-bottom:47px; } .tile-filter-hero a { margin-bottom:25px; } .tile-filter-hero-copy > span { font-size:.82rem; } .tile-filter-results { padding:38px 0 60px; } .tile-filter-heading { align-items:flex-start; flex-direction:column; margin-bottom:20px; } .tile-filter-heading > a { width:100%; justify-content:space-between; } .tile-refine { padding:14px 12px 12px; margin-bottom:20px; } .tile-refine-fields { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .tile-facet > summary { min-height:42px; padding:7px 8px; font-size:.68rem; } .tile-facet-options { width:max(100%,190px); } .tile-facet:nth-child(even) .tile-facet-options { right:0; left:auto; } .tile-refine-fields button { grid-column:1/-1; width:100%; } .tile-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; } .tile-filter-photo { aspect-ratio:.78; } .tile-filter-photo img { padding:7px; } .tile-filter-copy { padding:12px 11px 14px; } .tile-filter-copy h3 { font-size:.91rem; } .tile-filter-copy > span { font-size:.68rem; } .tile-filter-photo > span { top:7px; left:7px; padding:5px 6px; font-size:.57rem; } }
+  @media(max-width:390px) { .tile-filter-grid { grid-template-columns:1fr; } .tile-filter-photo { aspect-ratio:.78; } }
 </style>
 {% endblock %}

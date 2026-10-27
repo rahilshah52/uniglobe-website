@@ -8,8 +8,18 @@
     "details": "Sample listing · confirm product format and finish",
     "stock": 0,
     "demo": true,
-    "images": ["images/surfaces/catalog/digital-fullbody-living.jpg", "images/surfaces/catalog/products/urban-xl-grey-room.jpg"],
-    "tags": ["living-room-tiles", "balcony-tiles", "concrete", "stone", "grey", "glyphstone"]
+    "images": [
+      "images/surfaces/catalog/digital-fullbody-living.jpg",
+      "images/surfaces/catalog/products/urban-xl-grey-room.jpg"
+    ],
+    "tags": [
+      "living-room-tiles",
+      "balcony-tiles",
+      "concrete",
+      "stone",
+      "grey",
+      "glyphstone"
+    ]
   },
   {
     "code": "DEMO002",
@@ -20,8 +30,16 @@
     "details": "Sample listing · confirm product format and finish",
     "stock": 0,
     "demo": true,
-    "images": ["images/surfaces/catalog/products/traver-grey-white-room.jpg", "images/surfaces/catalog/products/traver-grey-white.jpg"],
-    "tags": ["bathroom-tiles", "marble", "white", "marmorica"]
+    "images": [
+      "images/surfaces/catalog/products/traver-grey-white-room.jpg",
+      "images/surfaces/catalog/products/traver-grey-white.jpg"
+    ],
+    "tags": [
+      "bathroom-tiles",
+      "marble",
+      "white",
+      "marmorica"
+    ]
   },
   {
     "code": "DEMO003",
@@ -32,8 +50,17 @@
     "details": "Sample listing · confirm product format and finish",
     "stock": 0,
     "demo": true,
-    "images": ["images/surfaces/catalog/carving-matt-bedroom.jpg", "images/surfaces/catalog/radiant-shade-interior.jpg"],
-    "tags": ["bedroom-tiles", "decor", "metallic", "special", "alchimia", "spectra"]
+    "images": [
+      "images/surfaces/catalog/carving-matt-bedroom.jpg",
+      "images/surfaces/catalog/radiant-shade-interior.jpg"
+    ],
+    "tags": [
+      "bedroom-tiles",
+      "decor",
+      "metallic",
+      "special",
+      "alchimia"
+    ]
   },
   {
     "code": "DEMO004",
@@ -44,8 +71,17 @@
     "details": "Sample listing · confirm product format and finish",
     "stock": 0,
     "demo": true,
-    "images": ["images/surfaces/catalog/regular-fullbody-interior.jpg", "images/surfaces/catalog/products/urban-latte-room.jpg"],
-    "tags": ["kitchen-tiles", "countertop-tiles", "wood", "cream", "ricco-2-0", "kitchdeck"]
+    "images": [
+      "images/surfaces/catalog/regular-fullbody-interior.jpg",
+      "images/surfaces/catalog/products/urban-latte-room.jpg"
+    ],
+    "tags": [
+      "kitchen-tiles",
+      "countertop-tiles",
+      "wood",
+      "cream",
+      "ricco-2-0"
+    ]
   },
   {
     "code": "DEMO005",
@@ -56,8 +92,19 @@
     "details": "Sample listing · confirm product format and finish",
     "stock": 0,
     "demo": true,
-    "images": ["images/surfaces/catalog/punch-matt-exterior.jpg", "images/surfaces/catalog/products/bali-stone-black-room.jpg"],
-    "tags": ["outdoor-tiles", "elevation-tiles", "rustic", "stone", "black", "brown", "basaltino"]
+    "images": [
+      "images/surfaces/catalog/punch-matt-exterior.jpg",
+      "images/surfaces/catalog/products/bali-stone-black-room.jpg"
+    ],
+    "tags": [
+      "outdoor-tiles",
+      "elevation-tiles",
+      "rustic",
+      "stone",
+      "black",
+      "brown",
+      "basaltino"
+    ]
   },
   {
     "code": "DEMO006",
@@ -68,8 +115,17 @@
     "details": "Sample listing · confirm product format and finish",
     "stock": 0,
     "demo": true,
-    "images": ["images/surfaces/catalog/fullbody-step-riser.jpg", "images/surfaces/catalog/products/elite-ash-grey-room.jpg"],
-    "tags": ["staircase-tiles", "commercial-tiles", "concrete", "grey", "sparko", "venitto"]
+    "images": [
+      "images/surfaces/catalog/fullbody-step-riser.jpg",
+      "images/surfaces/catalog/products/elite-ash-grey-room.jpg"
+    ],
+    "tags": [
+      "staircase-tiles",
+      "commercial-tiles",
+      "concrete",
+      "grey",
+      "sparko"
+    ]
   },
   {
     "code": "DEMO007",
@@ -80,7 +136,182 @@
     "details": "Sample listing · confirm product format and finish",
     "stock": 0,
     "demo": true,
-    "images": ["images/surfaces/catalog/products/bruno-black-room.jpg", "images/surfaces/catalog/products/bruno-black.jpg"],
-    "tags": ["kitchen-tiles", "black", "glossy", "kitchdeck"]
+    "images": [
+      "images/surfaces/catalog/products/bruno-black-room.jpg",
+      "images/surfaces/catalog/products/bruno-black.jpg"
+    ],
+    "tags": [
+      "kitchen-tiles",
+      "black",
+      "glossy",
+      "kitchdeck"
+    ]
+  },
+  {
+    "code": "DEMO008",
+    "department": "tiles",
+    "brand": "Simpolo",
+    "title": "Elite Mushroom",
+    "category": "Demo preview",
+    "description": "Preview design showing how a colour within a named tile series is presented. Replace with verified catalogue details.",
+    "details": "Preview example · 600 × 1200 mm · finish to confirm",
+    "stock": 0,
+    "demo": true,
+    "images": [
+      "images/surfaces/catalog/products/elite-ash-grey-room.jpg",
+      "images/surfaces/catalog/products/elite-ash-grey.jpg"
+    ],
+    "tags": [
+      "elite",
+      "bathroom-tiles",
+      "marble",
+      "cream",
+      "600-1200-mm"
+    ]
+  },
+  {
+    "code": "DEMO009",
+    "department": "tiles",
+    "brand": "Simpolo",
+    "title": "Elite Celadon",
+    "category": "Demo preview",
+    "description": "Preview design showing another colour in the Elite series, with its own room and size assignments.",
+    "details": "Preview example · 600 × 1200 mm · finish to confirm",
+    "stock": 0,
+    "demo": true,
+    "images": [
+      "images/surfaces/catalog/carving-matt-bedroom.jpg",
+      "images/surfaces/catalog/radiant-shade-interior.jpg"
+    ],
+    "tags": [
+      "elite",
+      "bedroom-tiles",
+      "decor",
+      "special",
+      "600-1200-mm"
+    ]
+  },
+  {
+    "code": "DEMO010",
+    "department": "tiles",
+    "brand": "Simpolo",
+    "title": "Prism Pearl",
+    "category": "Demo preview",
+    "description": "Preview design showing one colour in the Prism series. Replace with the matching product photos and details.",
+    "details": "Preview example · 600 × 1200 mm · finish to confirm",
+    "stock": 0,
+    "demo": true,
+    "images": [
+      "images/surfaces/catalog/products/traver-grey-white-room.jpg",
+      "images/surfaces/catalog/products/traver-grey-white.jpg"
+    ],
+    "tags": [
+      "prism",
+      "bathroom-tiles",
+      "marble",
+      "white",
+      "600-1200-mm"
+    ]
+  },
+  {
+    "code": "DEMO011",
+    "department": "tiles",
+    "brand": "Simpolo",
+    "title": "Prism Ash",
+    "category": "Demo preview",
+    "description": "Preview design showing Prism in a second location and tone; individual tags determine where it appears.",
+    "details": "Preview example · 600 × 1200 mm · finish to confirm",
+    "stock": 0,
+    "demo": true,
+    "images": [
+      "images/surfaces/catalog/products/urban-xl-grey-room.jpg",
+      "images/surfaces/catalog/products/urban-xl-grey.jpg"
+    ],
+    "tags": [
+      "prism",
+      "bedroom-tiles",
+      "concrete",
+      "grey",
+      "600-1200-mm"
+    ]
+  },
+  {
+    "code": "DEMO012",
+    "department": "tiles",
+    "brand": "Simpolo",
+    "title": "Spectra Sand",
+    "category": "Demo preview",
+    "description": "Preview design for the Spectra series. Replace with verified product details and catalogue photos.",
+    "details": "Preview example · 600 × 600 mm · finish to confirm",
+    "stock": 0,
+    "demo": true,
+    "images": [
+      "images/surfaces/catalog/radiant-shade-interior.jpg",
+      "images/surfaces/catalog/carving-matt-bedroom.jpg"
+    ],
+    "tags": [
+      "spectra",
+      "bedroom-tiles",
+      "decor",
+      "cream",
+      "600-600-mm"
+    ]
+  },
+  {
+    "code": "DEMO013",
+    "department": "tiles",
+    "brand": "Simpolo",
+    "title": "Venitto Grey",
+    "category": "Demo preview",
+    "description": "Preview design for the Venitto series. Replace with verified product details and catalogue photos.",
+    "details": "Preview example · 600 × 1200 mm · finish to confirm",
+    "stock": 0,
+    "demo": true,
+    "images": [
+      "images/surfaces/catalog/products/urban-xl-grey-room.jpg",
+      "images/surfaces/catalog/products/urban-xl-grey.jpg"
+    ],
+    "tags": [
+      "venitto",
+      "commercial-tiles",
+      "concrete",
+      "grey",
+      "600-1200-mm"
+    ]
+  },
+  {
+    "code": "S00001",
+    "images": [
+      "uploads/surfaces/S00001/STATUARIO_WHITE_4.webp",
+      "uploads/surfaces/S00001/STATUARIO_WHITE_3.webp",
+      "uploads/surfaces/S00001/STATUARIO_WHITE_2.webp",
+      "uploads/surfaces/S00001/STATUARIO_WHITE_1.webp"
+    ],
+    "card_image": "uploads/surfaces/S00001/STATUARIO_WHITE_4.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "White Body",
+    "title": "Statuario White",
+    "description": "",
+    "details": "",
+    "stock": 0,
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "staircase-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic",
+      "white",
+      "600-1200-mm",
+      "statuario-series"
+    ],
+    "demo": false
   }
 ]

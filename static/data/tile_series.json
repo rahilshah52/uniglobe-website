@@ -1,0 +1,87 @@
+[
+  {
+    "slug": "alchimia",
+    "name": "Alchimia",
+    "image": "images/surfaces/catalog/radiant-shade-interior.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "basaltino",
+    "name": "Basaltino",
+    "image": "images/surfaces/catalog/products/bali-stone-black-room.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "glyphstone",
+    "name": "Glyphstone",
+    "image": "images/surfaces/catalog/products/bali-stone-brown-room.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "sparko",
+    "name": "Sparko",
+    "image": "images/surfaces/catalog/products/elite-ash-grey-room.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "venitto",
+    "name": "Venitto",
+    "image": "images/surfaces/catalog/regular-fullbody-interior.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "marmorica",
+    "name": "Marmorica",
+    "image": "images/surfaces/catalog/products/traver-grey-white-room.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "spectra",
+    "name": "Spectra",
+    "image": "images/surfaces/catalog/carving-matt-bedroom.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "ricco-2-0",
+    "name": "Ricco 2.0",
+    "image": "images/surfaces/catalog/products/aspire-sand-room.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "kitchdeck",
+    "name": "Kitchdeck",
+    "image": "images/surfaces/catalog/regular-fullbody-interior.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "elite",
+    "name": "Elite",
+    "image": "images/surfaces/catalog/products/elite-ash-grey-room.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "prism",
+    "name": "Prism",
+    "image": "images/surfaces/catalog/carving-matt-bedroom.jpg",
+    "description": "",
+    "active": true
+  },
+  {
+    "slug": "statuario-series",
+    "name": "Statuario Series",
+    "description": "",
+    "image": "",
+    "cover_image": "uploads/surfaces/series/statuario-series/Calcatta_oro_Living_Room.webp",
+    "active": true
+  }
+]

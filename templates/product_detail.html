@@ -24,8 +24,11 @@
       <!-- THUMBNAILS -->
       <div class="d-flex gap-2 mt-3 flex-wrap">
         {% for img in product.images %}
-          <img src="{{ url_for('static', filename=img) }}"
+          <img src="{{ url_for('static', filename=product.image_thumbnails[loop.index0] if product.image_thumbnails else img) }}"
                class="thumb-img"
+               data-full-image="{{ url_for('static', filename=img) }}"
+               loading="lazy"
+               decoding="async"
                onclick="changeImage(this)">
         {% endfor %}
       </div>
@@ -155,7 +158,7 @@
 <script>
 
 function changeImage(element) {
-  document.getElementById("mainImage").src = element.src;
+  document.getElementById("mainImage").src = element.dataset.fullImage || element.src;
 
   document.querySelectorAll(".thumb-img").forEach(img => {
     img.style.borderColor = "#eee";

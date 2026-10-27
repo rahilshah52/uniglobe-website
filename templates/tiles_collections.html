@@ -65,7 +65,7 @@
           <div class="catalog-grid">
             {% for product in surface_products %}
             <article class="tile-card">
-              <div class="tile-card-image">{% if product.images %}<img src="{{ url_for('static', filename=product.images[0]) }}" alt="{{ product.title }} tile surface" loading="lazy">{% endif %}</div>
+              <div class="tile-card-image">{% if product.images %}<img src="{{ url_for('static', filename=product.get('thumbnail') or product.images[0]) }}" alt="{{ product.title }} tile surface" loading="lazy" decoding="async">{% endif %}</div>
               <div class="tile-card-copy"><p class="tile-card-family">{{ product.category }}{% if product.code %} · {{ product.code }}{% endif %}</p>{% if product.demo %}<span class="tile-preview-badge">Preview example · not a stock listing</span>{% endif %}<h3>{{ product.title }}</h3><p>{{ product.description }}</p><a class="tile-card-spec" href="{% if product.demo %}{{ url_for('tiles_uploaded_product_detail', code=product.code) }}{% else %}{{ url_for('tiles_contact') }}?interest={{ product.title|urlencode }}{% endif %}">{% if product.demo %}See product preview{% else %}Ask about this design{% endif %}</a></div>
             </article>
             {% endfor %}

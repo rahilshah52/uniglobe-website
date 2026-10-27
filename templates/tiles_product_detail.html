@@ -3,14 +3,14 @@
 {% block content %}
 <section class="tile-detail-page">
   <div class="container">
-    <a href="{% if brand_slug %}{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges{% else %}{{ url_for('tiles_catalogues') }}#tiles{% endif %}" class="detail-back">← Back to tile collections</a>
+    <a href="{% if return_to %}{{ return_to }}{% elif brand_slug %}{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges{% else %}{{ url_for('tiles_catalogues') }}#tiles{% endif %}" class="detail-back">← {% if return_to %}Back to selected tile designs{% else %}Back to tile collections{% endif %}</a>
     <div class="tile-detail-grid">
       <section class="tile-gallery" aria-label="{{ product.name }} image gallery">
         <div class="tile-gallery-main"><img id="tileGalleryMain" src="{{ url_for('static', filename=gallery[0].src) }}" alt="{{ product.name }} — {{ gallery[0].label }}"></div>
         <div class="tile-gallery-thumbs" role="group" aria-label="More views of {{ product.name }}">
           {% for view in gallery %}
           <button class="tile-gallery-thumb {{ 'active' if loop.first else '' }}" type="button" data-image="{{ url_for('static', filename=view.src) }}" data-label="{{ view.label }}" aria-label="Show {{ view.label }}" aria-pressed="{{ 'true' if loop.first else 'false' }}">
-            <img src="{{ url_for('static', filename=view.src) }}" alt="" loading="lazy"><span>{{ view.label }}</span>
+            <img src="{{ url_for('static', filename=view.thumbnail or view.src) }}" alt="" loading="lazy" decoding="async"><span>{{ view.label }}</span>
           </button>
           {% endfor %}
         </div>
@@ -32,12 +32,13 @@
   .detail-back { display: inline-block; margin-bottom: 26px; color: #666d69; font-size: .82rem; text-decoration: none; }
   .detail-back:hover { color: #252a28; }
   .tile-detail-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(300px,.8fr); align-items: start; gap: clamp(36px,7vw,96px); }
-  .tile-gallery-main { display: grid; place-items: center; height: min(66vw,680px); min-height: 390px; overflow: hidden; background: #f1f1ee; }
-  .tile-gallery-main img { width: 100%; height: 100%; object-fit: contain; }
+  .tile-gallery-main { display: grid; place-items: center; width:min(100%,320px); aspect-ratio:1 / 2; height:auto; margin-inline:auto; overflow: hidden; border:1px solid #dcded9; background:radial-gradient(ellipse at center,#fff 0,#f6f6f3 68%,#e8eae5 100%); box-shadow:0 9px 26px rgba(34,40,36,.09),inset 0 0 20px rgba(34,40,36,.06); }
+  .tile-gallery-main img { display:block; width:100% !important; height:100% !important; max-width:100%; object-fit:cover !important; object-position:center; filter:drop-shadow(0 10px 12px rgba(31,37,33,.2)); transition:transform .35s ease; }
+  @media(hover:hover) and (pointer:fine) { .tile-gallery-main { cursor:zoom-in; } .tile-gallery-main:hover img { transform:scale(1.28); } }
   .tile-gallery-thumbs { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-top: 11px; }
   .tile-gallery-thumb { display: flex; flex-direction: column; padding: 0; overflow: hidden; border: 1px solid #e2e4e1; background: #f7f7f5; color: #5f6662; text-align: left; cursor: pointer; }
   .tile-gallery-thumb.active { border-color: #8d806d; }
-  .tile-gallery-thumb img { width: 100%; height: 96px; object-fit: cover; }
+  .tile-gallery-thumb img { width: 100%; height: 96px; padding:5px; object-fit: contain; background:radial-gradient(ellipse at center,#fff 0,#f4f5f1 100%); filter:drop-shadow(0 4px 5px rgba(31,37,33,.14)); }
   .tile-gallery-thumb span { padding: 8px; font-size: .68rem; line-height: 1.3; }
   .tile-detail-copy { position: sticky; top: 32px; padding: 32px 0; }
   .tile-detail-copy .eyebrow { margin-bottom: 15px; }
@@ -49,7 +50,7 @@
   .tile-detail-note { color: #7a807d; font-size: .8rem; line-height: 1.7; }
   .tile-enquiry-button { display: inline-flex; align-items: center; gap: 20px; margin-top: 16px; padding: 14px 18px; color: #fff; background: #343938; text-decoration: none; font-size: .86rem; }
   .tile-detail-contact { display: block; width: fit-content; margin-top: 17px; color: #4e5551; font-size: .8rem; text-decoration: underline; text-underline-offset: 4px; }
-  @media(max-width: 767.98px) { .tile-detail-page { padding: 24px 0 60px; } .tile-detail-grid { grid-template-columns: 1fr; gap: 25px; } .tile-gallery-main { height: 105vw; min-height: 310px; max-height: 540px; } .tile-gallery-thumbs { gap: 7px; } .tile-gallery-thumb img { height: clamp(70px,21vw,120px); } .tile-gallery-thumb span { padding: 6px; font-size: .62rem; } .tile-detail-copy { position: static; padding: 8px 0 0; } .tile-detail-copy h1 { font-size: clamp(2.3rem,11vw,3.6rem); } }
+  @media(max-width: 767.98px) { .tile-detail-page { padding: 24px 0 60px; } .tile-detail-grid { grid-template-columns: 1fr; gap: 25px; } .tile-gallery-main { width:min(100%,320px); aspect-ratio:1 / 2; } .tile-gallery-thumbs { gap: 7px; } .tile-gallery-thumb img { height: clamp(70px,21vw,120px); } .tile-gallery-thumb span { padding: 6px; font-size: .62rem; } .tile-detail-copy { position: static; padding: 8px 0 0; } .tile-detail-copy h1 { font-size: clamp(2.3rem,11vw,3.6rem); } }
 </style>
 <script>
 document.querySelectorAll('.tile-gallery-thumb').forEach(function (button) {
