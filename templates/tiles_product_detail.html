@@ -16,13 +16,13 @@
         </div>
       </section>
       <section class="tile-detail-copy">
-        <p class="eyebrow">{{ 'PREVIEW EXAMPLE' if demo else product.group ~ ' · CATALOGUE DESIGN' }}</p>
+        <p class="eyebrow">{{ 'PREVIEW EXAMPLE' if demo else (product.series_name if product.series_name else product.group ~ ' · TILE DESIGN') }}</p>
         <h1>{{ product.name }}</h1>
         <p class="tile-detail-description">{{ product.description }}</p>
-        <div class="tile-spec"><span>FORMAT &amp; FINISH</span><p>{{ product.details }}</p></div>
+        <div class="tile-spec"><span>SIZE · FINISH · COLOUR</span><p>{{ product.details }}</p></div>
         <p class="tile-detail-note">{% if demo %}This is a preview example to show how a product listing works. Replace it with your own product details and images in the tile upload manager.{% else %}Catalog images show the surface and collection inspiration. Please contact us to confirm current stock, finish and the best match for your project.{% endif %}</p>
         <a class="tile-enquiry-button" href="{{ url_for('tiles_contact') }}?interest={{ product.name|urlencode }}">Ask about this tile</a>
-        <a class="tile-detail-contact" href="{{ url_for('tiles_contact') }}">Discuss a project with us</a>
+        <button class="wishlist-toggle tile-wishlist-button" type="button" data-wishlist-toggle data-wishlist-kind="tile" data-wishlist-id="{{ product.wishlist_id }}" data-wishlist-name="{{ product.name }}" data-wishlist-image="{{ wishlist_image }}" data-wishlist-url="{{ wishlist_url }}" data-wishlist-subtitle="{{ product.series_name or product.group }} · {{ product.details }}" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save to wishlist</span></button>
       </section>
     </div>
   </div>
@@ -33,8 +33,7 @@
   .detail-back:hover { color: #252a28; }
   .tile-detail-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(300px,.8fr); align-items: start; gap: clamp(36px,7vw,96px); }
   .tile-gallery-main { display: grid; place-items: center; width:min(100%,320px); aspect-ratio:1 / 2; height:auto; margin-inline:auto; overflow: hidden; border:1px solid #dcded9; background:radial-gradient(ellipse at center,#fff 0,#f6f6f3 68%,#e8eae5 100%); box-shadow:0 9px 26px rgba(34,40,36,.09),inset 0 0 20px rgba(34,40,36,.06); }
-  .tile-gallery-main img { display:block; width:100% !important; height:100% !important; max-width:100%; object-fit:cover !important; object-position:center; filter:drop-shadow(0 10px 12px rgba(31,37,33,.2)); transition:transform .35s ease; }
-  @media(hover:hover) and (pointer:fine) { .tile-gallery-main { cursor:zoom-in; } .tile-gallery-main:hover img { transform:scale(1.28); } }
+  .tile-gallery-main img { display:block; width:auto !important; height:auto !important; max-width:100%; max-height:100%; object-fit:contain !important; object-position:center; filter:drop-shadow(0 12px 16px rgba(31,37,33,.28)); }
   .tile-gallery-thumbs { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-top: 11px; }
   .tile-gallery-thumb { display: flex; flex-direction: column; padding: 0; overflow: hidden; border: 1px solid #e2e4e1; background: #f7f7f5; color: #5f6662; text-align: left; cursor: pointer; }
   .tile-gallery-thumb.active { border-color: #8d806d; }
@@ -49,7 +48,7 @@
   .tile-spec p { margin: 8px 0 0; color: #343a37; font-size: .9rem; line-height: 1.65; }
   .tile-detail-note { color: #7a807d; font-size: .8rem; line-height: 1.7; }
   .tile-enquiry-button { display: inline-flex; align-items: center; gap: 20px; margin-top: 16px; padding: 14px 18px; color: #fff; background: #343938; text-decoration: none; font-size: .86rem; }
-  .tile-detail-contact { display: block; width: fit-content; margin-top: 17px; color: #4e5551; font-size: .8rem; text-decoration: underline; text-underline-offset: 4px; }
+  .tile-wishlist-button { margin-top:16px; }
   @media(max-width: 767.98px) { .tile-detail-page { padding: 24px 0 60px; } .tile-detail-grid { grid-template-columns: 1fr; gap: 25px; } .tile-gallery-main { width:min(100%,320px); aspect-ratio:1 / 2; } .tile-gallery-thumbs { gap: 7px; } .tile-gallery-thumb img { height: clamp(70px,21vw,120px); } .tile-gallery-thumb span { padding: 6px; font-size: .62rem; } .tile-detail-copy { position: static; padding: 8px 0 0; } .tile-detail-copy h1 { font-size: clamp(2.3rem,11vw,3.6rem); } }
 </style>
 <script>

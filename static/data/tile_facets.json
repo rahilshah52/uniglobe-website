@@ -7,5 +7,24 @@
       }
     ],
     "removed": []
+  },
+  "color": {
+    "added": [
+      {
+        "name": "Beige",
+        "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+      }
+    ],
+    "removed": []
+  },
+  "location": {
+    "added": [],
+    "removed": [],
+    "card_images": {
+      "bathroom-tiles": "uploads/surfaces/categories/location/bathroom-tiles-card-20261028180318401828.webp"
+    },
+    "hero_images": {
+      "bathroom-tiles": "uploads/surfaces/categories/location/bathroom-tiles-hero-20261028180318608570.webp"
+    }
   }
 }

@@ -1,0 +1,48 @@
+{% extends "tiles_base.html" %}
+{% block title %}Your Wishlist | Uniglobe Surfaces{% endblock %}
+{% block meta_description %}View tile and bathware designs saved to your wishlist on this device.{% endblock %}
+{% block content %}
+<section class="wishlist-page">
+  <div class="container">
+    <p class="wishlist-eyebrow">YOUR SHORTLIST · NO ACCOUNT NEEDED</p>
+    <div class="wishlist-heading"><div><h1>Your wishlist</h1><p>Keep tiles and bathware you like together while you plan.</p></div><span id="wishlistTotal" aria-live="polite">0 saved items</span></div>
+    <div class="wishlist-grid" id="wishlistGrid" aria-live="polite"></div>
+    <div class="wishlist-empty" id="wishlistEmpty">
+      <span aria-hidden="true">♡</span><h2>Your shortlist is ready.</h2>
+      <p>Save a tile or bathware design with the heart button and it will appear here.</p>
+      <div><a href="{{ url_for('tiles_collections') }}">Explore tiles</a><a href="{{ url_for('tiles_bath') }}">Explore bathware</a></div>
+    </div>
+    <p class="wishlist-note">Your wishlist is saved in this browser on this device. It stays private and doesn’t require an account.</p>
+  </div>
+</section>
+<style>
+  .wishlist-page { min-height:65vh; padding:clamp(45px,7vw,82px) 0 90px; background:#f8f8f5; }
+  .wishlist-eyebrow { margin:0 0 10px; color:#888f89; font-size:.62rem; font-weight:600; letter-spacing:.17em; }
+  .wishlist-heading { display:flex; justify-content:space-between; align-items:end; gap:22px; margin-bottom:28px; padding-bottom:22px; border-bottom:1px solid #e0e3dd; }
+  .wishlist-heading h1 { margin:0 0 8px; color:#303633; font-size:clamp(2.6rem,6vw,4.6rem); font-weight:400; letter-spacing:-.07em; }
+  .wishlist-heading p { margin:0; color:#707873; font-size:.88rem; }
+  .wishlist-heading > span { color:#828a84; font-size:.7rem; white-space:nowrap; }
+  .wishlist-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px; }
+  .wishlist-card { position:relative; min-width:0; background:#fff; border:1px solid #e3e5e0; }
+  .wishlist-card-link { display:block; color:inherit; text-decoration:none; }
+  .wishlist-card-media { display:grid; place-items:center; aspect-ratio:1.25; overflow:hidden; padding:10px; background:radial-gradient(ellipse at center,#fff 0,#f2f3ef 72%,#e1e3dd 100%); }
+  .wishlist-card-media img { display:block; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 10px 13px rgba(31,37,33,.2)); }
+  .wishlist-card-copy { padding:15px 15px 45px; }
+  .wishlist-card-copy > span:first-child { color:#868d87; font-size:.55rem; font-weight:600; letter-spacing:.14em; }
+  .wishlist-card-copy h2 { margin:6px 0; color:#303633; font-size:1.02rem; font-weight:500; }
+  .wishlist-card-copy p { margin:0; color:#777f79; font-size:.69rem; }
+  .wishlist-card-view { display:inline-block; margin-top:12px; color:#4c554f; font-size:.68rem; }
+  .wishlist-remove { position:absolute; right:13px; bottom:15px; padding:4px 0; border:0; border-bottom:1px solid #aeb4ae; color:#777f79; background:transparent; font:inherit; font-size:.66rem; cursor:pointer; }
+  .wishlist-empty { margin:34px 0; padding:45px 20px; border:1px solid #e4e6e1; background:#fff; text-align:center; }
+  .wishlist-empty[hidden] { display:none; }
+  .wishlist-empty > span { color:#a78b7d; font-size:2.2rem; }
+  .wishlist-empty h2 { margin:10px 0 7px; color:#343a37; font-size:1.5rem; font-weight:400; }
+  .wishlist-empty p { color:#747c76; font-size:.8rem; }
+  .wishlist-empty > div { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:18px; }
+  .wishlist-empty a { padding:11px 14px; color:#fff; background:#343a38; font-size:.73rem; text-decoration:none; }
+  .wishlist-note { margin-top:20px; color:#8a908b; font-size:.68rem; }
+  @media(max-width:991.98px) { .wishlist-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; } }
+  @media(max-width:575.98px) { .wishlist-page { padding:38px 0 58px; } .wishlist-heading { align-items:flex-start; flex-direction:column; gap:6px; margin-bottom:19px; } .wishlist-heading h1 { font-size:2.8rem; } .wishlist-heading p { font-size:.78rem; line-height:1.6; } .wishlist-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .wishlist-card-media { aspect-ratio:.82; padding:6px; } .wishlist-card-copy { padding:11px 10px 43px; } .wishlist-card-copy h2 { font-size:.86rem; line-height:1.3; } .wishlist-card-copy p { font-size:.62rem; line-height:1.4; } .wishlist-card-view { font-size:.62rem; } .wishlist-remove { right:10px; bottom:12px; font-size:.61rem; } .wishlist-empty { margin:22px 0; padding:34px 15px; } .wishlist-note { line-height:1.6; } }
+  @media(max-width:359px) { .wishlist-grid { grid-template-columns:1fr; } .wishlist-card-media { aspect-ratio:1.25; } }
+</style>
+{% endblock %}

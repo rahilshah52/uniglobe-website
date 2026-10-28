@@ -21,8 +21,8 @@
     </div>
     <div class="bath-category-grid">
       {% for category in bath_categories %}
-      <a class="bath-category-card" href="{{ url_for('tiles_bath_category', slug=category.slug) }}">
-        <img src="{{ url_for('static', filename=category.image) }}" alt="{{ category.alt }}" loading="lazy">
+      <a class="bath-category-card{% if category.image_is_portrait %} has-portrait-cover{% endif %}" href="{{ url_for('tiles_bath_category', slug=category.slug) }}">
+        <img src="{{ url_for('static', filename=category.thumbnail) }}" alt="{{ category.title }} category cover" loading="lazy" decoding="async">
         <span class="bath-category-count">{{ category.number }} · BATHROOM</span>
         <span class="bath-category-copy"><strong>{{ category.title }}</strong><span>View category</span></span>
       </a>
@@ -70,6 +70,8 @@
   .bath-category-card { position:relative; display:block; aspect-ratio:.78; overflow:hidden; color:#fff; background:#303432; text-decoration:none; }
   .bath-category-card::after { position:absolute; inset:35% 0 0; content:""; background:linear-gradient(transparent,rgba(12,16,15,.78)); }
   .bath-category-card img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .55s ease; }
+  .bath-category-card.has-portrait-cover { background:radial-gradient(ellipse at center,#fff 0,#f4f5f1 72%,#e1e4de 100%); }
+  .bath-category-card.has-portrait-cover img { padding:8px; object-fit:contain; filter:drop-shadow(0 10px 12px rgba(20,26,22,.25)); }
   .bath-category-card:hover img { transform:scale(1.045); }
   .bath-category-count { position:absolute; z-index:1; top:14px; left:14px; padding:7px 9px; color:#3c423e; background:rgba(255,255,255,.88); font-size:.53rem; letter-spacing:.11em; }
   .bath-category-copy { position:absolute; z-index:1; right:17px; bottom:16px; left:17px; display:grid; gap:10px; }

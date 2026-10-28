@@ -30,6 +30,13 @@
     .tiles-navbar .navbar-toggler-icon { filter: invert(1); }
     .tiles-navbar .nav-link { color: rgba(255,255,255,.78); font-size: .82rem; letter-spacing: .01em; padding: .65rem .2rem !important; transition: color .2s ease; }
     .tiles-navbar .nav-link:hover, .tiles-navbar .nav-link.active { color: #fff; }
+    .wishlist-nav-count { display:inline-grid; place-items:center; min-width:18px; height:18px; margin-left:4px; padding:0 5px; border-radius:999px; color:#303433; background:#e4e5e2; font-size:.61rem; font-weight:700; vertical-align:middle; }
+    .wishlist-toggle { display:inline-flex; justify-content:center; align-items:center; gap:8px; min-height:44px; padding:10px 15px; border:1px solid #bfc5bf; color:#39413c; background:#fff; font:inherit; font-size:.8rem; cursor:pointer; transition:background .2s ease,color .2s ease,border-color .2s ease; }
+    .wishlist-toggle:hover,.wishlist-toggle.is-saved { border-color:#343a38; color:#fff; background:#343a38; }
+    .wishlist-toggle .wishlist-heart { color:#8a7168; font-size:1.15rem; line-height:1; }
+    .wishlist-toggle.is-saved .wishlist-heart { color:#f1c8b9; }
+    .wishlist-toggle--overlay { position:absolute; z-index:2; top:12px; right:12px; width:40px; min-height:40px; padding:0; border:0; border-radius:50%; box-shadow:0 3px 12px rgba(0,0,0,.18); }
+    .wishlist-toggle--overlay .wishlist-label { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
     .business-nav-layout { display: flex !important; align-items: center; gap: 10px; flex: 0 0 auto; width: auto; min-width: 0; }
     .business-nav-layout > .nav-item { display: flex; justify-content: center; align-items: center; width: auto; min-width: 0; margin: 0; }
     .business-nav-layout > .nav-item:first-child { justify-content: center; }
@@ -87,6 +94,7 @@
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/services') else '' }}" href="{{ url_for('tiles_services') }}">Our approach</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/collections') or request.path.startswith('/tiles/catalogues') else '' }}" href="{{ url_for('tiles_collections') }}">Tiles</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/bath') else '' }}" href="{{ url_for('tiles_bath') }}">Bathware</a></li>
+        <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/wishlist') else '' }}" href="{{ url_for('tiles_wishlist') }}">Wishlist <span class="wishlist-nav-count" id="wishlistNavCount" hidden>0</span></a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/contact') else '' }}" href="{{ url_for('tiles_contact') }}">Contact us</a></li>
       </ul>
     </div>
@@ -122,6 +130,113 @@
   .tiles-whatsapp:hover { color: #fff; transform: translateY(-3px); box-shadow: 0 8px 22px rgba(0,0,0,.25); }
   @media (max-width: 575.98px) { .tiles-whatsapp { right: 16px; bottom: 16px; left: auto; width: 48px; height: 48px; font-size: 26px; } }
 </style>
+<script>
+(() => {
+  const storageKey = 'uniglobeWishlist';
+  const read = () => {
+    try {
+      const value = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      return Array.isArray(value) ? value.filter(item => item && typeof item.key === 'string') : [];
+    } catch (_) { return []; }
+  };
+  const write = items => {
+    try { localStorage.setItem(storageKey, JSON.stringify(items)); return true; }
+    catch (_) { return false; }
+  };
+  const safePath = (value, fallback) => typeof value === 'string' && value.startsWith('/') && !value.startsWith('//') ? value : fallback;
+  const sync = () => {
+    const items = read();
+    const keys = new Set(items.map(item => item.key));
+    document.querySelectorAll('[data-wishlist-toggle]').forEach(button => {
+      const key = `${button.dataset.wishlistKind}:${button.dataset.wishlistId}`;
+      const saved = keys.has(key);
+      button.classList.toggle('is-saved', saved);
+      button.setAttribute('aria-pressed', saved ? 'true' : 'false');
+      const label = button.querySelector('.wishlist-label');
+      if (label) label.textContent = saved ? 'Saved' : 'Save';
+      button.title = saved ? 'Remove from wishlist' : 'Save to wishlist';
+    });
+    const count = document.getElementById('wishlistNavCount');
+    if (count) { count.textContent = String(items.length); count.hidden = items.length === 0; }
+    renderPage(items);
+  };
+  const renderPage = items => {
+    const grid = document.getElementById('wishlistGrid');
+    if (!grid) return;
+    const empty = document.getElementById('wishlistEmpty');
+    const total = document.getElementById('wishlistTotal');
+    grid.replaceChildren();
+    if (total) total.textContent = `${items.length} saved ${items.length === 1 ? 'item' : 'items'}`;
+    if (empty) empty.hidden = items.length > 0;
+    items.forEach(item => {
+      const card = document.createElement('article');
+      card.className = 'wishlist-card';
+      const link = document.createElement('a');
+      link.className = 'wishlist-card-link';
+      link.href = safePath(item.url, '/tiles');
+      const media = document.createElement('div');
+      media.className = 'wishlist-card-media';
+      if (typeof item.image === 'string' && item.image.startsWith('/static/')) {
+        const image = document.createElement('img');
+        image.src = safePath(item.image, '');
+        image.alt = item.name || 'Saved design';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        media.append(image);
+      }
+      const copy = document.createElement('div');
+      copy.className = 'wishlist-card-copy';
+      const kind = document.createElement('span');
+      kind.textContent = item.kind === 'bathware' ? 'BATHWARE' : 'TILE';
+      const name = document.createElement('h2');
+      name.textContent = item.name || 'Saved design';
+      const subtitle = document.createElement('p');
+      subtitle.textContent = item.subtitle || '';
+      const view = document.createElement('span');
+      view.className = 'wishlist-card-view';
+      view.textContent = 'View saved item ↗';
+      copy.append(kind, name, subtitle, view);
+      link.append(media, copy);
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'wishlist-remove';
+      remove.dataset.wishlistRemoveKey = item.key;
+      remove.textContent = 'Remove';
+      remove.setAttribute('aria-label', `Remove ${item.name || 'item'} from wishlist`);
+      card.append(link, remove);
+      grid.append(card);
+    });
+  };
+  document.addEventListener('click', event => {
+    const remove = event.target.closest('[data-wishlist-remove-key]');
+    if (remove) {
+      write(read().filter(item => item.key !== remove.dataset.wishlistRemoveKey));
+      sync();
+      return;
+    }
+    const button = event.target.closest('[data-wishlist-toggle]');
+    if (!button) return;
+    const key = `${button.dataset.wishlistKind}:${button.dataset.wishlistId}`;
+    const items = read();
+    const existing = items.findIndex(item => item.key === key);
+    if (existing >= 0) items.splice(existing, 1);
+    else items.unshift({
+      key,
+      kind: button.dataset.wishlistKind,
+      id: button.dataset.wishlistId,
+      name: button.dataset.wishlistName || 'Saved design',
+      image: button.dataset.wishlistImage || '',
+      url: button.dataset.wishlistUrl || '/tiles',
+      subtitle: button.dataset.wishlistSubtitle || ''
+    });
+    if (!write(items)) { window.alert('Your browser could not save this wishlist. Check that site storage is enabled, then try again.'); return; }
+    sync();
+  });
+  window.addEventListener('storage', event => { if (event.key === storageKey) sync(); });
+  window.UniglobeWishlist = { refresh: sync };
+  sync();
+})();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

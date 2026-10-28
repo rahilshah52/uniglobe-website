@@ -260,6 +260,17 @@ def get_bath_categories():
             {'brand': brand, 'image': f'images/sanitaryware/catalog/{image}', 'caption': caption}
             for brand, image, caption in category['items']
         ]
+    bath_settings = load_tile_facet_config().get('bathware-category', {})
+    bath_legacy_overrides = bath_settings.get('images', {})
+    bath_card_overrides = {**bath_legacy_overrides, **bath_settings.get('card_images', {})}
+    bath_hero_overrides = {**bath_legacy_overrides, **bath_settings.get('hero_images', {})}
+    for category in bath_categories:
+        default_image = category['image']
+        if bath_card_overrides.get(category['slug']):
+            category['image'] = bath_card_overrides[category['slug']]
+        category['hero_image'] = bath_hero_overrides.get(category['slug']) or default_image
+        category['thumbnail'] = card_image_path(category['image'])
+        category['image_is_portrait'] = is_portrait_surface_image(category['image'])
     return bath_categories
 
 @app.route('/tiles/bath')
@@ -334,7 +345,7 @@ def get_tile_category_groups():
         representative = next((get_surface_product_cover(product) for product in tile_products
                                if series_record.get('slug') in get_product_tile_tags(product)
                                and get_surface_product_cover(product)), None)
-        series_image = series_record.get('cover_image') or representative or series_record.get('image') or 'images/surfaces/catalog/double-charge-800-room.jpg'
+        series_image = series_record.get('card_image') or series_record.get('cover_image') or representative or series_record.get('image') or 'images/surfaces/catalog/double-charge-800-room.jpg'
         available_series.append((series_record['name'], series_image))
     groups = [
         {
@@ -456,9 +467,18 @@ def get_tile_category_groups():
                     group['items'].append((option_name, option.get('image') or 'images/surfaces/catalog/double-charge-800-room.jpg'))
                     existing.add(option_slug)
         group['cards'] = [
-            {'name': name, 'image': image, 'slug': tile_product_slug(name)}
+            {'name': name, 'image': image, 'default_image': image, 'thumbnail': card_image_path(image), 'slug': tile_product_slug(name)}
             for name, image in group['items']
         ]
+        group_settings = facet_config.get(group['slug'], {})
+        legacy_overrides = group_settings.get('images', {})
+        cover_overrides = {**legacy_overrides, **group_settings.get('card_images', {})}
+        hero_overrides = {**legacy_overrides, **group_settings.get('hero_images', {})}
+        for card in group['cards']:
+            if cover_overrides.get(card['slug']):
+                card['image'] = cover_overrides[card['slug']]
+                card['thumbnail'] = card_image_path(card['image'])
+            card['hero_image'] = hero_overrides.get(card['slug']) or card['default_image']
     return groups
 
 def load_tile_facet_config():
@@ -513,6 +533,68 @@ def tiles_manage_facet():
         flash('That category change could not be applied.', 'warning')
     return redirect(url_for('tiles_manage'))
 
+@app.route('/tiles/manage/category-cover', methods=['POST'])
+def tiles_manage_category_cover():
+    if not session.get('admin_logged'):
+        return redirect(url_for('admin_login', next='tiles_manage'))
+    group_slug = request.form.get('group', '').strip()
+    option_slug = request.form.get('option_slug', '').strip()
+    card_choice = request.form.get('card_image_choice', '').strip()
+    hero_choice = request.form.get('hero_image_choice', '').strip()
+    card_upload = request.files.get('card_image')
+    hero_upload = request.files.get('hero_image')
+    if group_slug == 'bathware':
+        config_group = 'bathware-category'
+        department = 'bathware'
+        category = next((item for item in get_bath_categories() if item['slug'] == option_slug), None)
+    else:
+        config_group = group_slug
+        department = 'tiles'
+        group = next((item for item in get_tile_category_groups() if item['slug'] == group_slug and group_slug in {'location', 'look-feel', 'color'}), None)
+        category = next((item for item in group['cards'] if item['slug'] == option_slug), None) if group else None
+    if not category:
+        flash('Choose a valid image category.', 'warning')
+        return redirect(url_for('tiles_manage'))
+
+    valid_images = {image for product in load_surface_products()
+                    if product.get('department', 'tiles') == department
+                    for image in product.get('images', [])}
+    config = load_tile_facet_config()
+    settings = config.setdefault(config_group, {'added': [], 'removed': []})
+    legacy_images = settings.get('images', {})
+    card_images = settings.setdefault('card_images', dict(legacy_images))
+    hero_images = settings.setdefault('hero_images', dict(legacy_images))
+
+    def update_category_image(kind, choice, upload):
+        image_map = card_images if kind == 'card' else hero_images
+        if upload and upload.filename:
+            folder = os.path.join(UPLOAD_FOLDER, 'surfaces', 'categories', group_slug)
+            os.makedirs(folder, exist_ok=True)
+            filename = f"{option_slug}-{kind}-{datetime.now().strftime('%Y%m%d%H%M%S%f')}.webp"
+            image_path = f'uploads/surfaces/categories/{group_slug}/{filename}'
+            process_image(upload, os.path.join(app.static_folder, image_path))
+            create_card_image(image_path)
+            image_map[option_slug] = image_path
+            return True
+        previous = image_map.get(option_slug, legacy_images.get(option_slug, ''))
+        if choice in valid_images or (previous and choice == previous):
+            image_map[option_slug] = choice
+            return True
+        if choice == 'default':
+            image_map.pop(option_slug, None)
+            return True
+        return False
+
+    if not update_category_image('card', card_choice, card_upload) or not update_category_image('hero', hero_choice, hero_upload):
+        flash('Choose an existing product photo, upload a new image, or use the default.', 'warning')
+        return redirect(url_for('tiles_manage'))
+    # New explicit maps replace the older single-image setting. Keep uploaded
+    # assets in place because either image may still be referenced elsewhere.
+    settings.pop('images', None)
+    save_tile_facet_config(config)
+    flash(f'{category.get("name", category.get("title", "Category"))} card and hero images updated.', 'success')
+    return redirect(url_for('tiles_manage'))
+
 def load_tile_series():
     """Load editable tile series while preserving the original collection tags."""
     defaults = [
@@ -549,9 +631,10 @@ def clear_tile_series_cover_images(image_paths):
     series = load_tile_series()
     changed = False
     for record in series:
-        if record.get('cover_image') in removed:
-            record['cover_image'] = ''
-            changed = True
+        for key in ('cover_image', 'card_image', 'hero_image'):
+            if record.get(key) in removed:
+                record[key] = ''
+                changed = True
     if changed:
         with open(TILE_SERIES_FILE, 'w', encoding='utf-8') as file:
             json.dump(series, file, indent=2, ensure_ascii=False)
@@ -589,6 +672,16 @@ def card_image_path(image_path):
     stem, _ = os.path.splitext(image_path)
     thumbnail = f'{stem}-card.webp'
     return thumbnail if os.path.isfile(os.path.join(app.static_folder, thumbnail)) else image_path
+
+def is_portrait_surface_image(image_path):
+    """Identify portrait cover art so wide hero areas can show the whole image."""
+    if not image_path:
+        return False
+    try:
+        with Image.open(os.path.join(app.static_folder, image_path)) as image:
+            return image.height / max(image.width, 1) > 1.25
+    except (OSError, ValueError):
+        return False
 
 def card_image_disk_path(image_path):
     stem, _ = os.path.splitext(image_path)
@@ -652,13 +745,28 @@ def tiles_category_products(group_slug, category_slug, series_slug=None):
     if group_slug != 'collection' and not selected_series:
         if brand_name:
             base_products = [item for item in base_products if str(item.get('brand', '')).lower() == brand_name.lower()]
+        series_filter_groups = [
+            {**facet_group, 'items': [card for card in facet_group['cards'] if card['slug'] != 'all-collections']}
+            for facet_group in category_groups
+            if facet_group['slug'] not in {group_slug, 'collection'}
+        ]
+        series_available_brands = sorted({str(item.get('brand', '')).strip() for item in base_products
+                                          if str(item.get('brand', '')).strip()}, key=str.lower)
+        if selected['filter_brand']:
+            wanted_brands = {name.lower() for name in selected['filter_brand']}
+            base_products = [item for item in base_products if str(item.get('brand', '')).strip().lower() in wanted_brands]
+        for facet_group in series_filter_groups:
+            wanted_values = selected.get(facet_group['slug'], [])
+            if wanted_values:
+                base_products = [item for item in base_products
+                                 if any(tag in get_product_tile_tags(item) for tag in wanted_values)]
         series_cards = []
         for record in series_records:
             member_products = [item for item in base_products if record['slug'] in get_product_tile_tags(item)]
             if not member_products:
                 continue
             representative = next((get_surface_product_cover(product) for product in member_products if get_surface_product_cover(product)), None)
-            image = record.get('cover_image') or representative or record.get('image') or category_item['image']
+            image = record.get('card_image') or record.get('cover_image') or representative or record.get('image') or category_item['image']
             series_cards.append({
                 **record,
                 'image': card_image_path(image),
@@ -667,8 +775,10 @@ def tiles_category_products(group_slug, category_slug, series_slug=None):
                                series_slug=record['slug'], brand=brand_slug or None),
             })
         return render_template('tiles_category_series.html', group=group, category=category_item['name'],
-                               category_image=category_item['image'], series_cards=series_cards,
-                               brand=brand_name, brand_slug=brand_slug)
+                               category_image=category_item.get('hero_image', category_item['image']), series_cards=series_cards,
+                               category_image_portrait=is_portrait_surface_image(category_item.get('hero_image', category_item['image'])),
+                               brand=brand_name, brand_slug=brand_slug, filter_groups=series_filter_groups,
+                               available_brands=series_available_brands, selected_filters=selected)
     if selected_series:
         base_products = [item for item in base_products if selected_series_slug in get_product_tile_tags(item)]
     available_brands = sorted({str(item.get('brand', '')).strip() for item in base_products if str(item.get('brand', '')).strip()}, key=str.lower)
@@ -691,8 +801,8 @@ def tiles_category_products(group_slug, category_slug, series_slug=None):
                 f'{selected_series["name"]} · {category_item["name"]}' if selected_series and group_slug != 'collection' else
                 f'{selected_series["name"]} Series' if selected_series else category_item['name'])
     series_image = next((image for item in products for image in item.get('images', []) if image), None)
-    category_image = card_image_path(series_image) if selected_series and series_image else category_item['image']
-    return render_template('tiles_category_products.html', group=group, category=category, category_image=category_image, products=products, brand=brand_name, brand_slug=brand_slug, filter_groups=filter_groups, available_brands=available_brands, selected_filters=selected, selected_series=selected_series, selected_series_slug=selected_series_slug)
+    category_image = (selected_series.get('hero_image') or category_item.get('hero_image', category_item['image'])) if selected_series else category_item.get('hero_image', category_item['image'])
+    return render_template('tiles_category_products.html', group=group, category=category, category_image=category_image, category_image_portrait=is_portrait_surface_image(category_image), products=products, brand=brand_name, brand_slug=brand_slug, filter_groups=filter_groups, available_brands=available_brands, selected_filters=selected, selected_series=selected_series, selected_series_slug=selected_series_slug)
 
 @app.route('/tiles/collections/brand/<slug>')
 def tiles_collection_brand(slug):
@@ -700,6 +810,10 @@ def tiles_collection_brand(slug):
     if brand_record:
         return render_template('tiles_collection_home.html', tile_category_groups=get_tile_category_groups(), tile_brands=[brand_record], brand=brand_record['name'], brand_slug=brand_record['slug'])
     return redirect(url_for('tiles_collections'))
+
+@app.route('/tiles/wishlist')
+def tiles_wishlist():
+    return render_template('tiles_wishlist.html')
 
 @app.route('/tiles/catalogues')
 def tiles_catalogues():
@@ -774,18 +888,37 @@ def tiles_product_detail(slug):
         }.get(product['group'])
         if inspiration and (len(gallery) == 1 or product['group'].startswith('5 mm')):
             gallery.append({'src': inspiration, 'label': 'Collection inspiration'})
-    return render_template('tiles_product_detail.html', product=product, gallery=gallery)
+    product['wishlist_id'] = slug
+    return render_template('tiles_product_detail.html', product=product, gallery=gallery,
+                           wishlist_image=url_for('static', filename=gallery[0]['src']),
+                           wishlist_url=request.full_path.rstrip('?'))
 
 @app.route('/tiles/product-uploaded/<code>')
 def tiles_uploaded_product_detail(code):
     item = next((product for product in load_surface_products() if product.get('code') == code), None)
     if item is None or item.get('department', 'tiles') != 'tiles' or not is_public_surface_product(item, 'tiles') or not item.get('images'):
         return redirect(url_for('tiles_collections'))
+    assigned_tags = get_product_tile_tags(item)
+    series_record = next((series for series in load_tile_series()
+                          if series.get('slug') in assigned_tags), None)
+    selected_specs = {'size': [], 'look-feel': [], 'color': []}
+    if item.get('department', 'tiles') == 'tiles':
+        for group in get_tile_category_groups():
+            if group['slug'] not in selected_specs:
+                continue
+            selected_specs[group['slug']] = [card['name'] for card in group['cards']
+                                             if card['slug'] in assigned_tags]
+    spec_labels = {'size': 'Size', 'look-feel': 'Finish', 'color': 'Colour'}
+    details = ' · '.join(
+        f"{spec_labels[slug]}: {', '.join(values)}"
+        for slug, values in selected_specs.items() if values
+    ) or item.get('details') or 'Please enquire for available sizes and finishes.'
     product = {
         'name': item.get('title', 'Tile design'),
-        'group': item.get('category', 'Tile collection'),
+        'group': item.get('category') or 'Tile design',
+        'series_name': series_record.get('name', '') if series_record else '',
         'description': item.get('description', ''),
-        'details': item.get('details') or 'Product details and formats confirmed on enquiry.',
+        'details': details,
     }
     product_images = item.get('images', [])
     cover_image = get_surface_product_cover(item)
@@ -798,7 +931,11 @@ def tiles_uploaded_product_detail(code):
     return_to = request.args.get('return_to', '')
     if not return_to.startswith('/tiles/category/') or return_to.startswith('//') or '\r' in return_to or '\n' in return_to:
         return_to = None
-    return render_template('tiles_product_detail.html', product=product, gallery=gallery, demo=item.get('demo', False), brand_slug=brand_slug, return_to=return_to)
+    product['wishlist_id'] = code
+    return render_template('tiles_product_detail.html', product=product, gallery=gallery,
+                           demo=item.get('demo', False), brand_slug=brand_slug, return_to=return_to,
+                           wishlist_image=url_for('static', filename=gallery[0]['src']),
+                           wishlist_url=request.full_path.rstrip('?'))
 
 @app.route('/tiles/about')
 def tiles_about():
@@ -850,6 +987,38 @@ def tiles_manage():
     edit_brand = next((item for item in all_brands if item.get('slug') == request.args.get('edit_brand')), None)
     edit_series = next((item for item in all_series if item.get('slug') == request.args.get('edit_series')), None)
     series_image_options = []
+    tile_category_groups = get_tile_category_groups()
+    category_cover_cards = {
+        card['slug']: card
+        for group in tile_category_groups if group['slug'] in {'location', 'look-feel', 'color'}
+        for card in group['cards']
+    }
+    cover_options_by_category = {slug: [] for slug in category_cover_cards}
+    seen_images_by_category = {slug: set() for slug in category_cover_cards}
+    for product in products:
+        if product.get('department', 'tiles') != 'tiles':
+            continue
+        image = get_surface_product_cover(product)
+        if not image:
+            continue
+        for slug in get_product_tile_tags(product).intersection(category_cover_cards):
+            if image not in seen_images_by_category[slug]:
+                seen_images_by_category[slug].add(image)
+                cover_options_by_category[slug].append({'image': image, 'title': product.get('title', 'Tile design')})
+    for slug, card in category_cover_cards.items():
+        card['cover_options'] = cover_options_by_category[slug]
+    bath_categories = get_bath_categories()
+    bath_cover_options = []
+    seen_bath_covers = set()
+    for product in products:
+        if product.get('department', 'tiles') != 'bathware':
+            continue
+        image = get_surface_product_cover(product)
+        if image and image not in seen_bath_covers:
+            seen_bath_covers.add(image)
+            bath_cover_options.append({'image': image, 'title': product.get('title', 'Bathware product')})
+    for category in bath_categories:
+        category['cover_options'] = bath_cover_options
     if edit_series:
         for product in products:
             if product.get('department', 'tiles') != 'tiles' or edit_series['slug'] not in get_product_tile_tags(product):
@@ -861,6 +1030,7 @@ def tiles_manage():
 
     if request.method == "POST":
         code = request.form.get("code", "").strip()
+        product = next((item for item in products if item.get("code") == code), None) if code else None
         department = request.form.get('department', 'tiles').strip().lower()
         if department not in {'tiles', 'bathware'}:
             department = 'tiles'
@@ -868,13 +1038,11 @@ def tiles_manage():
         available_brands = {item['name'] for item in brands if item.get('department') in {department, 'both'}}
         if brand not in available_brands:
             brand = 'Other / not specified'
-        category = request.form.get("category", "Tiles").strip()
+        category = request.form.get("category", "").strip() or ("Tile design" if department == 'tiles' else "Bathware")
         title = request.form.get("title", "").strip()
         description = request.form.get("description", "").strip()
-        details = request.form.get("details", "").strip()
+        details = request.form.get("details", product.get("details", "") if product else "").strip()
         tags = list(dict.fromkeys(request.form.getlist("tags") + request.form.getlist("series")))
-        if department == 'tiles':
-            tags = list(dict.fromkeys(tags + [tile_product_slug(size) for size in get_product_tile_sizes({'details': details})]))
         allowed_tags = {
             tile['slug']
             for group in get_tile_category_groups()
@@ -889,15 +1057,10 @@ def tiles_manage():
         if department == 'tiles' and (not has_series or not has_tile_category):
             flash("Choose a tile series and at least one category for this design. A series appears only in categories assigned to its products.", "danger")
             return redirect(url_for("tiles_manage", edit=code or None))
-        try:
-            stock = max(0, int(request.form.get("stock", "0")))
-        except ValueError:
-            stock = 0
-        if not title or not category:
-            flash("Please enter a product name and product type.", "danger")
+        if not title:
+            flash("Please enter a product name.", "danger")
             return redirect(url_for("tiles_manage", edit=code or None))
 
-        product = next((item for item in products if item.get("code") == code), None) if code else None
         if not product:
             next_number = max([int(item.get("code", "S00000")[1:]) for item in products if item.get("code", "").startswith("S") and item.get("code", "")[1:].isdigit()] or [0]) + 1
             code = f"S{next_number:05d}"
@@ -954,7 +1117,8 @@ def tiles_manage():
         for image_path in product.get('images', []):
             if image_path.startswith(f'uploads/surfaces/{code}/'):
                 create_card_image(image_path)
-        product.update({"department": department, "brand": brand, "brand_removed": False, "category": category, "title": title, "description": description, "details": details, "stock": stock, "tags": tags, "card_image": product.get('card_image', ''), "demo": request.form.get("demo") == "yes"})
+        product.pop('stock', None)
+        product.update({"department": department, "brand": brand, "brand_removed": False, "category": category, "title": title, "description": description, "details": details, "tags": tags, "card_image": product.get('card_image', ''), "demo": request.form.get("demo") == "yes"})
         os.makedirs(os.path.dirname(SURFACE_DATA_FILE), exist_ok=True)
         with open(SURFACE_DATA_FILE, "w", encoding="utf-8") as file:
             json.dump(products, file, indent=2, ensure_ascii=False)
@@ -963,7 +1127,7 @@ def tiles_manage():
 
     if edit_product and edit_product.get('department', 'tiles') == 'tiles':
         edit_product = {**edit_product, 'tags': list(get_product_tile_tags(edit_product))}
-    return render_template("tiles_manage.html", products=products, edit_product=edit_product, tile_category_groups=get_tile_category_groups(), brands=brands, all_brands=all_brands, edit_brand=edit_brand, all_series=all_series, edit_series=edit_series, series_image_options=series_image_options)
+    return render_template("tiles_manage.html", products=products, edit_product=edit_product, tile_category_groups=tile_category_groups, bath_categories=bath_categories, brands=brands, all_brands=all_brands, edit_brand=edit_brand, all_series=all_series, edit_series=edit_series, series_image_options=series_image_options)
 
 @app.route('/tiles/manage/series', methods=['POST'])
 def tiles_manage_series():
@@ -974,8 +1138,10 @@ def tiles_manage_series():
     old_slug = request.form.get('slug', '').strip()
     name = request.form.get('name', '').strip()
     description = request.form.get('description', '').strip()
-    cover_choice = request.form.get('cover_image_choice', '').strip()
-    cover_file = request.files.get('cover_image')
+    card_choice = request.form.get('card_image_choice', '').strip()
+    hero_choice = request.form.get('hero_image_choice', '').strip()
+    card_file = request.files.get('card_image')
+    hero_file = request.files.get('hero_image')
     slug = tile_product_slug(name)
     if not name or not slug:
         flash('Enter a series name.', 'danger')
@@ -991,7 +1157,7 @@ def tiles_manage_series():
     valid_cover_images = {image for product in products
                           if product.get('department', 'tiles') == 'tiles' and old_slug in get_product_tile_tags(product)
                           for image in product.get('images', [])}
-    previous_cover = record.get('cover_image', '') if record else ''
+    previous_images = {key: record.get(key, '') for key in ('card_image', 'hero_image', 'cover_image')} if record else {}
     if record:
         previous_slug = record.get('slug')
         record.update({'slug': slug, 'name': name, 'description': description, 'active': True})
@@ -1001,30 +1167,32 @@ def tiles_manage_series():
                     product['tags'] = [slug if tag == previous_slug else tag for tag in product.get('tags', [])]
         message = f'{name} series updated.'
     else:
-        record = {'slug': slug, 'name': name, 'description': description, 'image': '', 'cover_image': '', 'active': True}
+        record = {'slug': slug, 'name': name, 'description': description, 'image': '', 'card_image': '', 'hero_image': '', 'cover_image': '', 'active': True}
         series.append(record)
         message = f'{name} series added. Assign it to tile products below.'
-    if cover_file and cover_file.filename:
-        cover_folder = os.path.join(UPLOAD_FOLDER, 'surfaces', 'series', slug)
-        os.makedirs(cover_folder, exist_ok=True)
-        filename = os.path.splitext(secure_filename(cover_file.filename))[0] + '.webp'
-        cover_path = f'uploads/surfaces/series/{slug}/{filename}'
-        process_image(cover_file, os.path.join(app.static_folder, cover_path))
-        create_card_image(cover_path)
-        record['cover_image'] = cover_path
-    elif cover_choice == 'keep-current' and record.get('cover_image'):
-        pass
-    elif cover_choice in valid_cover_images:
-        record['cover_image'] = cover_choice
-    else:
-        record['cover_image'] = ''
-    if previous_cover and previous_cover != record.get('cover_image') and previous_cover.startswith('uploads/surfaces/series/'):
-        previous_cover_path = os.path.join(app.static_folder, previous_cover)
-        if os.path.isfile(previous_cover_path):
-            os.remove(previous_cover_path)
-        previous_thumbnail = os.path.join(app.static_folder, card_image_disk_path(previous_cover))
-        if os.path.isfile(previous_thumbnail):
-            os.remove(previous_thumbnail)
+    def save_series_image(kind, choice, uploaded, fallback=''):
+        field = f'{kind}_image'
+        previous = record.get(field) or fallback
+        if uploaded and uploaded.filename:
+            image_folder = os.path.join(UPLOAD_FOLDER, 'surfaces', 'series', slug)
+            os.makedirs(image_folder, exist_ok=True)
+            filename = f"{kind}-{datetime.now().strftime('%Y%m%d%H%M%S%f')}.webp"
+            image_path = f'uploads/surfaces/series/{slug}/{filename}'
+            process_image(uploaded, os.path.join(app.static_folder, image_path))
+            create_card_image(image_path)
+            record[field] = image_path
+        elif choice == 'keep-current' and previous:
+            record[field] = previous
+        elif choice in valid_cover_images:
+            record[field] = choice
+        else:
+            record[field] = ''
+
+    save_series_image('card', card_choice, card_file, record.get('cover_image', ''))
+    save_series_image('hero', hero_choice, hero_file)
+    # The old field remains as a fallback for existing data, but new edits use
+    # card_image and hero_image independently. Retain files to avoid deleting an
+    # image still used by the other slot or by a tile gallery.
     os.makedirs(os.path.dirname(TILE_SERIES_FILE), exist_ok=True)
     with open(TILE_SERIES_FILE, 'w', encoding='utf-8') as file:
         json.dump(series, file, indent=2, ensure_ascii=False)
@@ -1042,14 +1210,14 @@ def tiles_manage_series_remove(slug):
     record = next((item for item in series if item.get('slug') == slug), None)
     if not record:
         return redirect(url_for('tiles_manage'))
-    cover_image = record.get('cover_image', '')
-    if cover_image.startswith('uploads/surfaces/series/'):
-        cover_path = os.path.join(app.static_folder, cover_image)
-        if os.path.isfile(cover_path):
-            os.remove(cover_path)
-        cover_thumbnail = os.path.join(app.static_folder, card_image_disk_path(cover_image))
-        if os.path.isfile(cover_thumbnail):
-            os.remove(cover_thumbnail)
+    for image_path in {record.get('cover_image', ''), record.get('card_image', ''), record.get('hero_image', '')}:
+        if image_path.startswith('uploads/surfaces/series/'):
+            disk_path = os.path.join(app.static_folder, image_path)
+            if os.path.isfile(disk_path):
+                os.remove(disk_path)
+            thumbnail_path = os.path.join(app.static_folder, card_image_disk_path(image_path))
+            if os.path.isfile(thumbnail_path):
+                os.remove(thumbnail_path)
     series = [item for item in series if item.get('slug') != slug]
     products = load_surface_products()
     changed = False

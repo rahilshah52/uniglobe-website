@@ -13,7 +13,7 @@
   <p class="bath-brand-count">{{ products|length }} catalogue {{ 'image' if products|length == 1 else 'images' }}{% if selected_category_names %} · {{ selected_category_names|join(' + ') }}{% endif %}</p>
   <div class="bath-brand-products">
     {% for product in products %}
-    <article class="bath-brand-product"><div class="bath-brand-product-image"><img src="{{ url_for('static', filename=product.thumbnail or product.image) }}" alt="{{ brand }} {{ product.category|lower }} — {{ product.caption }}" loading="lazy" decoding="async"></div><div class="bath-brand-product-copy"><small>{{ product.category }}</small><h3>{{ product.caption }}</h3></div></article>
+    <article class="bath-brand-product"><div class="bath-brand-product-image"><img src="{{ url_for('static', filename=product.thumbnail or product.image) }}" alt="{{ brand }} {{ product.category|lower }} — {{ product.caption }}" loading="lazy" decoding="async"><button class="wishlist-toggle wishlist-toggle--overlay" type="button" data-wishlist-toggle data-wishlist-kind="bathware" data-wishlist-id="{{ product.product_code or (brand ~ '|' ~ product.category ~ '|' ~ product.caption ~ '|' ~ product.image) }}" data-wishlist-name="{{ product.caption }}" data-wishlist-image="{{ url_for('static', filename=product.image) }}" data-wishlist-url="{{ request.full_path.rstrip('?') }}" data-wishlist-subtitle="{{ brand }} · {{ product.category }}" aria-label="Save {{ product.caption }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save</span></button></div><div class="bath-brand-product-copy"><small>{{ product.category }}</small><h3>{{ product.caption }}</h3></div></article>
     {% endfor %}
   </div>
   <div class="bath-brand-contact"><p>PROJECTS · MODELS · AVAILABILITY</p><h2>Enquire about {{ brand }}.</h2><a href="{{ url_for('tiles_contact') }}?interest={{ brand|urlencode }}">Talk to our team <span aria-hidden="true">↗</span></a></div>
@@ -49,7 +49,7 @@
   .bath-brand-count { margin:0 0 13px; color:#8a908b; font-size:.65rem; }
   .bath-brand-products { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px; }
   .bath-brand-product { min-width:0; background:#f4f4f1; }
-  .bath-brand-product-image { aspect-ratio:1.05; overflow:hidden; background:#e7e8e4; }
+  .bath-brand-product-image { position:relative; aspect-ratio:1.05; overflow:hidden; background:#e7e8e4; }
   .bath-brand-product-image img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .45s ease; }
   .bath-brand-product:hover img { transform:scale(1.025); }
   .bath-brand-product-copy { padding:13px 15px 16px; }
