@@ -93,5 +93,15 @@
     "image": "",
     "cover_image": "uploads/surfaces/series/barcelona-series/Barceolona_grey.webp",
     "active": true
+  },
+  {
+    "slug": "tavertino-series",
+    "name": "Tavertino Series",
+    "description": "",
+    "image": "",
+    "card_image": "uploads/surfaces/series/tavertino-series/card-20261028195357215690.webp",
+    "hero_image": "uploads/surfaces/series/tavertino-series/hero-20261028195357535763.webp",
+    "cover_image": "",
+    "active": true
   }
 ]
