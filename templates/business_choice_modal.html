@@ -1,0 +1,32 @@
+{% if request.endpoint in ['home', 'tiles_home'] %}
+<div class="modal fade" id="businessChoiceModal" tabindex="-1" aria-labelledby="businessChoiceTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered business-choice-dialog">
+    <div class="modal-content business-choice-content">
+      <div class="modal-header border-0 px-4 pt-4 pb-0">
+        <div>
+          <p class="text-uppercase text-muted small fw-semibold mb-2 business-choice-eyebrow">UNIGLOBE LIFESTYLES</p>
+          <h2 class="modal-title fs-4 fw-semibold" id="businessChoiceTitle">What are you looking for?</h2>
+          <p class="text-muted mb-0 mt-2">Choose the collection that best fits your project.</p>
+        </div>
+        <button type="button" class="btn-close align-self-start ms-3" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 pt-3">
+        <div class="row g-3">
+          <div class="col-12 col-sm-6">
+            <button type="button" class="business-choice-card" data-business-choice="furniture">
+              <img src="{{ url_for('static', filename='images/business-choice-furniture.jpg') }}" alt="Furniture and living room collection" width="1000" height="650" fetchpriority="high">
+              <span class="business-choice-copy d-block"><h3>Furniture &amp; Living</h3><p>Furniture, lighting and complete interiors.</p></span>
+            </button>
+          </div>
+          <div class="col-12 col-sm-6">
+            <button type="button" class="business-choice-card" data-business-choice="surfaces">
+              <img src="{{ url_for('static', filename='images/business-choice-surfaces.jpg') }}" alt="Bathroom with refined tile, stone and vanity surfaces" width="1000" height="650" fetchpriority="high">
+              <span class="business-choice-copy d-block"><h3>Surfaces &amp; Tiles</h3><p>Tiles, sanitaryware and surface finishes.</p></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

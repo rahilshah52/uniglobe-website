@@ -39,6 +39,7 @@
     <div class="col-lg-6">
 
       <h2 class="fw-semibold mb-3">{{ product.title }}</h2>
+      <button class="wishlist-toggle furniture-detail-wishlist" type="button" data-wishlist-toggle data-wishlist-kind="furniture" data-wishlist-id="{{ request.view_args.category }}:{{ product.code }}" data-wishlist-name="{{ product.title }}" data-wishlist-image="{{ url_for('static', filename=product.images[0]) if product.images else '' }}" data-wishlist-url="{{ request.path }}" data-wishlist-subtitle="{{ product.get('brand', 'Furniture') }}" aria-label="Save {{ product.title }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save to wishlist</span></button>
 
       <p class="text-muted mb-4">
         {{ product.description }}
@@ -84,6 +85,7 @@
   border-radius: 12px;
   overflow: hidden;
 }
+.furniture-detail-wishlist { margin:-4px 0 20px; }
 
 .main-image {
   max-height: 100%;

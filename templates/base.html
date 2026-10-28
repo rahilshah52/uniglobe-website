@@ -13,11 +13,20 @@
 
 <link rel="canonical" href="{{ request.url_root.rstrip('/') }}{{ request.path }}">
 
-<meta property="og:title" content="{% block og_title %}Uniglobe Lifestyles Pvt Ltd{% endblock %}">
-<meta property="og:description" content="{% block og_description %}Global China sourcing and project procurement specialists.{% endblock %}">
+<meta property="og:site_name" content="Uniglobe Lifestyles">
+<meta property="og:title" content="{% block og_title %}Uniglobe Lifestyles | Furniture, Tiles &amp; Surfaces{% endblock %}">
+<meta property="og:description" content="{% block og_description %}Explore furniture, tiles, surface finishes and bathware for residential and commercial projects. Discover both sides of Uniglobe Lifestyles and speak with our team for product and project guidance.{% endblock %}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ request.url }}">
-<meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/Black.webp', _external=True) }}{% endblock %}">
+<meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/share-uniglobe.jpg', _external=True) }}{% endblock %}">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Uniglobe Lifestyles logo for furniture, tiles and surfaces">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ self.og_title() }}">
+<meta name="twitter:description" content="{{ self.og_description() }}">
+<meta name="twitter:image" content="{{ self.og_image() }}">
 
 
 
@@ -32,6 +41,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/business-choice.css') }}">
 
 
   <style>
@@ -109,6 +119,13 @@
     .business-nav-layout > .nav-item { display: flex; justify-content: center; align-items: center; width: auto; min-width: 0; margin: 0; }
     .business-nav-layout > .nav-item:first-child { justify-content: center; }
     .business-nav-layout .nav-link { display: block; width: 100%; padding: .65rem .2rem !important; text-align: center; white-space: nowrap; font-size: .82rem; }
+    .wishlist-nav-count { display:inline-grid; place-items:center; min-width:18px; height:18px; margin-left:4px; padding:0 5px; border-radius:999px; color:#fff; background:#84735f; font-size:.61rem; font-weight:700; vertical-align:middle; }
+    .wishlist-toggle { display:inline-flex; justify-content:center; align-items:center; gap:8px; min-height:42px; padding:9px 13px; border:1px solid #bcb6ad; color:#514b44; background:#fff; font:inherit; font-size:.8rem; cursor:pointer; transition:background .2s ease,color .2s ease,border-color .2s ease; }
+    .wishlist-toggle:hover,.wishlist-toggle.is-saved { border-color:#84735f; color:#fff; background:#84735f; }
+    .wishlist-toggle .wishlist-heart { color:#a17d69; font-size:1.2rem; line-height:1; }
+    .wishlist-toggle.is-saved .wishlist-heart { color:#ffe4d4; }
+    .wishlist-toggle--overlay { position:absolute; z-index:3; top:10px; right:10px; width:40px; min-height:40px; padding:0; border:0; border-radius:50%; box-shadow:0 3px 12px rgba(0,0,0,.18); }
+    .wishlist-toggle--overlay .wishlist-label { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
 
     .business-choice-dialog {
       width: min(800px, calc(100vw - 32px));
@@ -246,7 +263,7 @@
 </head>
 
 
-<body>
+<body data-business-entry="furniture">
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-xl navbar-light bg-white shadow-sm py-2">
@@ -262,8 +279,8 @@
       <ul class="navbar-nav align-items-xl-center furniture-nav business-nav-layout">
         <li class="nav-item">
           <div class="business-switch" aria-label="Choose a business">
-            <a href="/" class="active" aria-current="page" onclick="localStorage.setItem('uniglobeBusinessChoice', 'furniture')">Furniture</a>
-            <a href="{{ url_for('tiles_home') }}" onclick="localStorage.setItem('uniglobeBusinessChoice', 'surfaces')">Surfaces</a>
+            <a href="/" class="active" aria-current="page" onclick="localStorage.setItem('uniglobeBusinessChoice', 'furniture');localStorage.setItem('uniglobeBusinessChoiceAt', Date.now().toString())">Furniture</a>
+            <a href="{{ url_for('tiles_home') }}" onclick="localStorage.setItem('uniglobeBusinessChoice', 'surfaces');localStorage.setItem('uniglobeBusinessChoiceAt', Date.now().toString())">Surfaces</a>
           </div>
         </li>
         <li class="nav-item">
@@ -273,6 +290,7 @@
         <li class="nav-item"><a class="nav-link" href="/products" onclick="localStorage.removeItem('activeCategory')">Products</a></li>
         <li class="nav-item"><a class="nav-link" href="/catalogs">Catalogs</a></li>
         <li class="nav-item"><a class="nav-link" href="/services">Services</a></li>
+        <li class="nav-item"><a class="nav-link {{ 'active' if request.path == '/wishlist' else '' }}" href="{{ url_for('furniture_wishlist') }}">Wishlist <span class="wishlist-nav-count" id="wishlistNavCount" hidden>0</span></a></li>
         <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
       </ul>
     </div>
@@ -284,80 +302,12 @@
   {% block content %}{% endblock %}
 </div>
 
-{% if request.endpoint == 'home' %}
-<div class="modal fade" id="businessChoiceModal" tabindex="-1" aria-labelledby="businessChoiceTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered business-choice-dialog">
-    <div class="modal-content business-choice-content">
-      <div class="modal-header border-0 px-4 pt-4 pb-0">
-        <div>
-          <p class="text-uppercase text-muted small fw-semibold mb-2" style="letter-spacing: .12em;">Uniglobe Lifestyles</p>
-          <h2 class="modal-title fs-4 fw-semibold" id="businessChoiceTitle">What are you looking for?</h2>
-          <p class="text-muted mb-0 mt-2">Explore the business that best fits your project.</p>
-        </div>
-        <button type="button" class="btn-close align-self-start ms-3" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-4 pt-3">
-        <div class="row g-3">
-          <div class="col-12 col-sm-6">
-            <button type="button" class="business-choice-card" data-business-choice="furniture">
-              <img src="{{ url_for('static', filename='images/living/living_room 19.webp') }}" alt="Furniture and living room collection" loading="eager">
-              <span class="business-choice-copy d-block">
-                <h3>Furniture &amp; Living</h3>
-                <p>Furniture, lighting and complete interiors.</p>
-              </span>
-            </button>
-          </div>
-          <div class="col-12 col-sm-6">
-            <button type="button" class="business-choice-card" data-business-choice="surfaces">
-              <img src="{{ url_for('static', filename='images/sanitaryware/ceramic_products 59.webp') }}" alt="Modern bathroom with tiled surfaces and sanitaryware" loading="eager">
-              <span class="business-choice-copy d-block">
-                <h3>Surfaces &amp; Tiles</h3>
-                <p>Tiles, sanitaryware and surface finishes.</p>
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
+{% include 'business_choice_modal.html' %}
 
 <!-- Bootstrap Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-{% if request.endpoint == 'home' %}
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const modalElement = document.getElementById("businessChoiceModal");
-  const choiceModal = new bootstrap.Modal(modalElement);
-
-  if (!localStorage.getItem("uniglobeBusinessChoice") && !sessionStorage.getItem("uniglobeBusinessChoiceDismissed")) {
-    document.body.classList.add("business-choice-open");
-    choiceModal.show();
-  }
-
-  modalElement.querySelectorAll("[data-business-choice]").forEach(function (choice) {
-    choice.addEventListener("click", function () {
-      const business = this.dataset.businessChoice;
-      localStorage.setItem("uniglobeBusinessChoice", business);
-
-      if (business === "surfaces") {
-        window.location.href = "{{ url_for('tiles_home') }}";
-      } else {
-        choiceModal.hide();
-      }
-    });
-  });
-
-  modalElement.addEventListener("hidden.bs.modal", function () {
-    document.body.classList.remove("business-choice-open");
-    if (!localStorage.getItem("uniglobeBusinessChoice")) {
-      sessionStorage.setItem("uniglobeBusinessChoiceDismissed", "true");
-    }
-  });
-});
-</script>
-{% endif %}
+{% include 'business_choice_script.html' %}
+{% include 'wishlist_script.html' %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const buttons = document.querySelectorAll(".category-btn");

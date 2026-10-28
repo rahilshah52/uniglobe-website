@@ -1,0 +1,107 @@
+<script>
+(() => {
+  const storageKey = 'uniglobeWishlist';
+  const read = () => {
+    try {
+      const value = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      return Array.isArray(value) ? value.filter(item => item && typeof item.key === 'string') : [];
+    } catch (_) { return []; }
+  };
+  const write = items => {
+    try { localStorage.setItem(storageKey, JSON.stringify(items)); return true; }
+    catch (_) { return false; }
+  };
+  const safePath = (value, fallback) => typeof value === 'string' && value.startsWith('/') && !value.startsWith('//') ? value : fallback;
+  const sync = () => {
+    const items = read();
+    const keys = new Set(items.map(item => item.key));
+    document.querySelectorAll('[data-wishlist-toggle]').forEach(button => {
+      const key = `${button.dataset.wishlistKind}:${button.dataset.wishlistId}`;
+      const saved = keys.has(key);
+      button.classList.toggle('is-saved', saved);
+      button.setAttribute('aria-pressed', saved ? 'true' : 'false');
+      const label = button.querySelector('.wishlist-label');
+      if (label) label.textContent = saved ? 'Saved' : 'Save';
+      button.title = saved ? 'Remove from wishlist' : 'Save to wishlist';
+    });
+    const count = document.getElementById('wishlistNavCount');
+    if (count) { count.textContent = String(items.length); count.hidden = items.length === 0; }
+    renderPage(items);
+  };
+  const renderPage = items => {
+    const grid = document.getElementById('wishlistGrid');
+    if (!grid) return;
+    const empty = document.getElementById('wishlistEmpty');
+    const total = document.getElementById('wishlistTotal');
+    grid.replaceChildren();
+    if (total) total.textContent = `${items.length} saved ${items.length === 1 ? 'item' : 'items'}`;
+    if (empty) empty.hidden = items.length > 0;
+    items.forEach(item => {
+      const card = document.createElement('article');
+      card.className = 'wishlist-card';
+      const link = document.createElement('a');
+      link.className = 'wishlist-card-link';
+      link.href = safePath(item.url, item.kind === 'furniture' ? '/products' : '/tiles');
+      const media = document.createElement('div');
+      media.className = 'wishlist-card-media';
+      if (typeof item.image === 'string' && item.image.startsWith('/static/')) {
+        const image = document.createElement('img');
+        image.src = safePath(item.image, '');
+        image.alt = item.name || 'Saved design';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        media.append(image);
+      }
+      const copy = document.createElement('div');
+      copy.className = 'wishlist-card-copy';
+      const kind = document.createElement('span');
+      kind.textContent = item.kind === 'bathware' ? 'BATHWARE' : item.kind === 'furniture' ? 'FURNITURE' : 'TILE';
+      const name = document.createElement('h2');
+      name.textContent = item.name || 'Saved design';
+      const subtitle = document.createElement('p');
+      subtitle.textContent = item.subtitle || '';
+      const view = document.createElement('span');
+      view.className = 'wishlist-card-view';
+      view.textContent = 'View saved item ↗';
+      copy.append(kind, name, subtitle, view);
+      link.append(media, copy);
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'wishlist-remove';
+      remove.dataset.wishlistRemoveKey = item.key;
+      remove.textContent = 'Remove';
+      remove.setAttribute('aria-label', `Remove ${item.name || 'item'} from wishlist`);
+      card.append(link, remove);
+      grid.append(card);
+    });
+  };
+  document.addEventListener('click', event => {
+    const remove = event.target.closest('[data-wishlist-remove-key]');
+    if (remove) {
+      write(read().filter(item => item.key !== remove.dataset.wishlistRemoveKey));
+      sync();
+      return;
+    }
+    const button = event.target.closest('[data-wishlist-toggle]');
+    if (!button) return;
+    const key = `${button.dataset.wishlistKind}:${button.dataset.wishlistId}`;
+    const items = read();
+    const existing = items.findIndex(item => item.key === key);
+    if (existing >= 0) items.splice(existing, 1);
+    else items.unshift({
+      key,
+      kind: button.dataset.wishlistKind,
+      id: button.dataset.wishlistId,
+      name: button.dataset.wishlistName || 'Saved design',
+      image: button.dataset.wishlistImage || '',
+      url: button.dataset.wishlistUrl || '/tiles',
+      subtitle: button.dataset.wishlistSubtitle || ''
+    });
+    if (!write(items)) { window.alert('Your browser could not save this wishlist. Check that site storage is enabled, then try again.'); return; }
+    sync();
+  });
+  window.addEventListener('storage', event => { if (event.key === storageKey) sync(); });
+  window.UniglobeWishlist = { refresh: sync };
+  sync();
+})();
+</script>

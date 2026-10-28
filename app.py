@@ -815,6 +815,10 @@ def tiles_collection_brand(slug):
 def tiles_wishlist():
     return render_template('tiles_wishlist.html')
 
+@app.route('/wishlist')
+def furniture_wishlist():
+    return render_template('furniture_wishlist.html')
+
 @app.route('/tiles/catalogues')
 def tiles_catalogues():
     catalog_groups = []

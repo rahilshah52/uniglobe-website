@@ -37,11 +37,9 @@
         {% for item in cat_data["items"] %}
 
         <div class="col-6 col-md-6 col-lg-3">
-
-          <a href="{{ url_for('product_detail', category=category, code=item.code) }}"
-             class="text-decoration-none text-dark">
-
-            <div class="card border-0 h-100 product-card">
+            <div class="card border-0 h-100 product-card furniture-product-card">
+              <button class="wishlist-toggle wishlist-toggle--overlay" type="button" data-wishlist-toggle data-wishlist-kind="furniture" data-wishlist-id="{{ category }}:{{ item.code }}" data-wishlist-name="{{ item.title }}" data-wishlist-image="{{ url_for('static', filename=item.get('thumbnail') or item.images[0]) if item.images else '' }}" data-wishlist-url="{{ url_for('product_detail', category=category, code=item.code) }}" data-wishlist-subtitle="{{ cat_data.display_name }}{{ ' · ' ~ item.brand if item.get('brand') }}" aria-label="Save {{ item.title }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save</span></button>
+              <a href="{{ url_for('product_detail', category=category, code=item.code) }}" class="text-decoration-none text-dark">
 
               {% if item.images %}
              <img src="{{ url_for('static', filename=item.get('thumbnail') or item.images[0]) }}"
@@ -63,9 +61,8 @@
                 <small class="text-muted">{{ item.brand ~ ' · ' if item.get('brand') }}{{ item.code }}</small>
               </div>
 
+              </a>
             </div>
-
-          </a>
 
         </div>
 
@@ -81,6 +78,7 @@
 
 <style>
 .product-card {
+  position: relative;
   border-radius: 16px;
   overflow: hidden;
   background: #fff;

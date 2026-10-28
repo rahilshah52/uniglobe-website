@@ -1,0 +1,70 @@
+{% if request.endpoint in ['home', 'tiles_home'] %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const modalElement = document.getElementById('businessChoiceModal');
+  if (!modalElement || !window.bootstrap) return;
+
+  const selectedKey = 'uniglobeBusinessChoice';
+  const selectedAtKey = 'uniglobeBusinessChoiceAt';
+  const dismissedKey = 'uniglobeBusinessChoiceDismissed';
+  const repeatAfter = 30 * 24 * 60 * 60 * 1000;
+  const read = key => { try { return localStorage.getItem(key); } catch (_) { return null; } };
+  const write = (key, value) => { try { localStorage.setItem(key, value); } catch (_) {} };
+  const readSession = key => { try { return sessionStorage.getItem(key); } catch (_) { return null; } };
+  const writeSession = (key, value) => { try { sessionStorage.setItem(key, value); } catch (_) {} };
+  let preferred = read(selectedKey);
+  let lastChoiceAt = Number(read(selectedAtKey));
+
+  // Existing visitors already have a saved choice from the previous version.
+  // Start their periodic reminder window from this visit instead of prompting
+  // them again immediately after this update.
+  if (preferred && !lastChoiceAt) {
+    lastChoiceAt = Date.now();
+    write(selectedAtKey, String(lastChoiceAt));
+  }
+
+  const promptDue = !preferred || !lastChoiceAt || Date.now() - lastChoiceAt >= repeatAfter;
+  const dismissedThisSession = readSession(dismissedKey) === 'true';
+  const choiceModal = new bootstrap.Modal(modalElement);
+  let visitorMadeChoice = false;
+
+  if (promptDue && !dismissedThisSession) {
+    document.body.classList.add('business-choice-open');
+    choiceModal.show();
+  } else if (document.body.dataset.businessEntry === 'furniture' && preferred === 'surfaces') {
+    window.location.replace('{{ url_for("tiles_home") }}');
+    return;
+  }
+
+  modalElement.querySelectorAll('[data-business-choice]').forEach(function (choice) {
+    choice.addEventListener('click', function () {
+      const business = this.dataset.businessChoice;
+      visitorMadeChoice = true;
+      preferred = business;
+      lastChoiceAt = Date.now();
+      write(selectedKey, business);
+      write(selectedAtKey, String(lastChoiceAt));
+      if (business === 'surfaces' && document.body.dataset.businessEntry !== 'surfaces') {
+        window.location.href = '{{ url_for("tiles_home") }}';
+      } else if (business === 'furniture' && document.body.dataset.businessEntry !== 'furniture') {
+        window.location.href = '/';
+      } else {
+        choiceModal.hide();
+      }
+    });
+  });
+
+  modalElement.addEventListener('hidden.bs.modal', function () {
+    document.body.classList.remove('business-choice-open');
+    if (!visitorMadeChoice) {
+      writeSession(dismissedKey, 'true');
+      if (preferred === 'surfaces' && document.body.dataset.businessEntry === 'furniture') {
+        window.location.replace('{{ url_for("tiles_home") }}');
+      } else if (preferred === 'furniture' && document.body.dataset.businessEntry === 'surfaces') {
+        window.location.replace('/');
+      }
+    }
+  });
+});
+</script>
+{% endif %}

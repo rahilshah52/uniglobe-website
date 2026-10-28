@@ -462,5 +462,80 @@
       "statuario-series"
     ],
     "demo": false
+  },
+  {
+    "code": "S00007",
+    "images": [
+      "uploads/surfaces/S00007/barcelona_beige.webp",
+      "uploads/surfaces/S00007/BARCELONA-BEIGE-R8.webp",
+      "uploads/surfaces/S00007/BARCELONA-BEIGE-R7.webp",
+      "uploads/surfaces/S00007/BARCELONA-BEIGE-R6.webp",
+      "uploads/surfaces/S00007/BARCELONA-BEIGE-R5.webp",
+      "uploads/surfaces/S00007/BARCELONA-BEIGE-R4.webp",
+      "uploads/surfaces/S00007/BARCELONA-BEIGE-R3.webp",
+      "uploads/surfaces/S00007/BARCELONA-BEIGE-R2.webp",
+      "uploads/surfaces/S00007/BARCELONA-BEIGE-R1.webp"
+    ],
+    "card_image": "uploads/surfaces/S00007/barcelona_beige.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Barcelona Beige",
+    "description": "",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "beige",
+      "600-1200-mm",
+      "barcelona-series"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00008",
+    "images": [
+      "uploads/surfaces/S00008/BARCELONA-GREY-R5.webp",
+      "uploads/surfaces/S00008/BARCELONA-GREY-R6.webp",
+      "uploads/surfaces/S00008/BARCELONA-GREY-R7.webp",
+      "uploads/surfaces/S00008/BARCELONA-GREY-R8.webp",
+      "uploads/surfaces/S00008/BARCELONA-GREY-R4.webp",
+      "uploads/surfaces/S00008/BARCELONA-GREY-R3.webp",
+      "uploads/surfaces/S00008/BARCELONA-GREY-R2.webp",
+      "uploads/surfaces/S00008/BARCELONA-GREY-R1.webp",
+      "uploads/surfaces/S00008/Barceolona_grey.webp"
+    ],
+    "card_image": "uploads/surfaces/S00008/Barceolona_grey.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Barcelona Grey",
+    "description": "",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "barcelona-series"
+    ],
+    "demo": false
   }
 ]
