@@ -13,6 +13,14 @@
       {
         "name": "Beige",
         "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+      },
+      {
+        "name": "Gold",
+        "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+      },
+      {
+        "name": "Ivory",
+        "image": "images/surfaces/catalog/double-charge-800-room.jpg"
       }
     ],
     "removed": []
