@@ -41,7 +41,7 @@
       {% for brand in brands %}
       <article class="bath-brand-card" id="{{ brand.slug }}">
         <a class="bath-brand-picture" href="{{ url_for('tiles_bath_brand', brand_slug=brand.slug) }}" aria-label="Explore {{ brand.name }} bathware collection"><img src="{{ url_for('static', filename=brand.image) }}" alt="{{ brand.name }} bathware inspiration" loading="lazy"></a>
-        <div><span>SHOWROOM BRAND</span><h3><a class="bath-brand-name" href="{{ url_for('tiles_bath_brand', brand_slug=brand.slug) }}">{{ brand.name }}</a></h3><p>{{ brand.description }}</p><a class="bath-brand-enquiry" href="{{ url_for('tiles_bath_brand', brand_slug=brand.slug) }}">Explore {{ brand.name }} <b aria-hidden="true">↗</b></a></div>
+        <div><span>SHOWROOM BRAND</span><h3><a class="bath-brand-name" href="{{ url_for('tiles_bath_brand', brand_slug=brand.slug) }}">{{ brand.name }}</a></h3><p>{{ brand.description }}</p><a class="bath-brand-enquiry" href="{{ url_for('tiles_bath_brand', brand_slug=brand.slug) }}">Explore {{ brand.name }} </a></div>
       </article>
       {% endfor %}
     </div>

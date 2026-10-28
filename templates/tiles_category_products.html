@@ -14,7 +14,7 @@
 </section>
 <section class="tile-filter-results">
   <div class="container">
-    <div class="tile-filter-heading"><div><p>{% if brand %}{{ brand|upper }} · {% endif %}{% if selected_series %}{{ selected_series.name|upper }} SERIES · {% endif %}CURATED FOR THIS CATEGORY</p><h2>{{ products|length }} {{ 'design' if products|length == 1 else 'designs' }} to explore</h2></div><a href="{% if brand %}{{ url_for('tiles_category_products', group_slug='collection', category_slug='all-collections', brand=brand_slug) }}{% else %}{{ url_for('tiles_catalogues') }}{% endif %}">{% if brand %}View all {{ brand }} tiles{% else %}View all catalogue designs{% endif %}<span aria-hidden="true">↗</span></a></div>
+    <div class="tile-filter-heading"><div><p>{% if brand %}{{ brand|upper }} · {% endif %}{% if selected_series %}{{ selected_series.name|upper }} SERIES · {% endif %}CURATED FOR THIS CATEGORY</p><h2>{{ products|length }} {{ 'design' if products|length == 1 else 'designs' }} to explore</h2></div><a href="{% if brand %}{{ url_for('tiles_category_products', group_slug='collection', category_slug='all-collections', brand=brand_slug) }}{% else %}{{ url_for('tiles_catalogues') }}{% endif %}">{% if brand %}View all {{ brand }} tiles{% else %}View all catalogue designs{% endif %}</a></div>
     <form class="tile-refine" method="get" action="{% if selected_series %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], series_slug=selected_series_slug) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}{% endif %}" aria-label="Refine tile designs">
       {% if brand_slug %}<input type="hidden" name="brand" value="{{ brand_slug }}">{% endif %}
       <div class="tile-refine-top"><span><i aria-hidden="true">✳</i> Refine this selection{% if selected_series %} · {{ selected_series.name }} series{% endif %}</span><a href="{% if selected_series %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], series_slug=selected_series_slug, brand=brand_slug or None) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug or None) }}{% endif %}">Clear choices</a></div>
@@ -23,7 +23,7 @@
         {% for facet in filter_groups %}
         <details class="tile-facet"><summary><span>{{ facet.name }}</span><b>{{ selected_filters[facet.slug]|length if selected_filters[facet.slug] else 'Any' }}</b></summary><div class="tile-facet-options">{% for option in facet['items'] %}<label><input type="checkbox" name="{{ facet.slug }}" value="{{ option.slug }}" {% if option.slug in selected_filters[facet.slug] %}checked{% endif %}><span>{{ option.name }}</span></label>{% endfor %}</div></details>
         {% endfor %}
-        <button type="submit">Show designs <span aria-hidden="true">↗</span></button>
+        <button type="submit">Show designs </button>
       </div>
       {% if selected_series or selected_filters.filter_brand or selected_filters.location or selected_filters['look-feel'] or selected_filters.color or selected_filters['size'] or selected_filters.collection %}<div class="tile-active-filters" aria-live="polite"><span>ACTIVE SELECTION</span>{% if selected_series %}<b>Series · {{ selected_series.name }}</b>{% endif %}{% for name in selected_filters.filter_brand %}<b>Brand · {{ name }}</b>{% endfor %}{% for facet in filter_groups %}{% for option in facet['items'] if option.slug in selected_filters[facet.slug] %}<b>{{ facet.name }} · {{ option.name }}</b>{% endfor %}{% endfor %}</div>{% endif %}
       <p>Combine brands with room, finish, colour, size or series. A design can appear in several relevant categories.</p>
@@ -35,7 +35,7 @@
         <div class="tile-filter-photo">
           {% if product.images %}<img src="{{ url_for('static', filename=product.get('thumbnail') or product.images[0]) }}" alt="{{ product.title }} tile example" loading="lazy" decoding="async">{% endif %}
           {% if product.demo %}<span>Preview example</span>{% endif %}
-          <b aria-hidden="true">↗</b>
+
         </div>
         <div class="tile-filter-copy"><p>{{ product.category or 'TILE DESIGN' }}</p><h3>{{ product.title }}</h3><span>{{ product.description }}</span></div>
       </a>
@@ -92,7 +92,6 @@
   .tile-filter-photo { position:relative; aspect-ratio:.78; overflow:hidden; background:radial-gradient(ellipse at center,#fff 0,#f4f5f1 70%,#e1e4de 100%); border:1px solid #d5d9d2; box-shadow:0 8px 20px rgba(34,40,36,.13),inset 0 0 14px rgba(34,40,36,.08); }
   .tile-filter-photo img { width:100%; height:100%; padding:10px; object-fit:contain; filter:drop-shadow(0 11px 13px rgba(31,37,33,.25)); }
   .tile-filter-photo > span { position:absolute; top:12px; left:12px; padding:6px 8px; color:#4d4a3f; background:rgba(248,245,233,.94); font-size:.63rem; letter-spacing:.04em; }
-  .tile-filter-photo > b { position:absolute; right:12px; bottom:12px; display:grid; place-items:center; width:34px; height:34px; border-radius:50%; color:#303633; background:#fff; font-weight:400; }
   .tile-filter-copy { padding:17px 18px 20px; }
   .tile-filter-copy p { margin:0 0 6px; color:#858b87; font-size:.58rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; }
   .tile-filter-copy h3 { margin:0 0 8px; color:#303633; font-size:1.08rem; font-weight:500; }

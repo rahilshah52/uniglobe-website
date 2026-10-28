@@ -32,6 +32,12 @@
       </form>
       <div class="brand-list"><h3>Tile series</h3>{% for item in all_series %}<div class="brand-list-item"><span><strong>{{ item.name }}</strong><small>{{ item.slug }}</small></span><a href="{{ url_for('tiles_manage', edit_series=item.slug) }}">Edit</a><form method="post" action="{{ url_for('tiles_manage_series_remove', slug=item.slug) }}" onsubmit="return confirm('Remove {{ item.name }}? Its products stay saved, but need another series assignment to appear in the tile collection.')"><button type="submit">Remove</button></form></div>{% else %}<p>No tile series have been added yet.</p>{% endfor %}</div>
     </section>
+    <section class="brand-manager homepage-featured-manager"><div><p class="eyebrow">TILE HOMEPAGE</p><h2>Choose the three featured series</h2><p>These are the three large cards shown under “Explore our featured series” on the Tiles homepage. Change them whenever you want to highlight a new, seasonal or popular range. Add a series and assign products to it above first.</p></div>
+      <form method="post" action="{{ url_for('tiles_manage_homepage_featured') }}" class="brand-form homepage-featured-form">
+        {% for slot in range(3) %}<label>Featured card {{ '%02d'|format(slot + 1) }}<select name="featured_series" required><option value="">Choose a tile series</option>{% for item in all_series if item.get('active', true) %}<option value="{{ item.slug }}" {% if homepage_featured_slugs[slot] == item.slug %}selected{% endif %}>{{ item.name }}</option>{% endfor %}</select></label>{% endfor %}
+        <button class="manage-button" type="submit">Save featured series</button>
+      </form>
+    </section>
     <section class="facet-manager" aria-labelledby="facet-manager-title">
       <div class="facet-manager-heading"><div><p class="eyebrow">FILTER OPTIONS</p><h2 id="facet-manager-title">Manage tile categories</h2><p>Add or remove the choices customers can browse by. Removed options stop appearing in the collection, while existing product assignments stay saved in case you add the option back.</p></div></div>
       <div class="facet-manager-groups">
@@ -105,7 +111,7 @@
           <div class="current-images image-choice-grid" id="new-image-previews" hidden></div><p class="upload-image-count" id="upload-image-count" aria-live="polite"></p>
         </div>
       </div>
-      <div class="form-actions"><button class="manage-button" type="submit">{{ 'Save changes' if edit_product else 'Add product' }}</button>{% if edit_product %}<a href="{{ url_for('tiles_manage') }}">Cancel</a>{% endif %}</div>
+      <div class="form-actions"><button class="manage-button" id="save-product-button" type="submit">{{ 'Save changes' if edit_product else 'Add product' }}</button><span class="upload-saving-status" id="upload-saving-status" role="status" aria-live="polite"></span>{% if edit_product %}<a href="{{ url_for('tiles_manage') }}">Cancel</a>{% endif %}</div>
     </form>
     <div class="product-list-heading"><h2>Your Tiles &amp; Bathware products</h2><span>{{ products|length }} items</span></div>
     {% if products %}
@@ -198,6 +204,7 @@
   .demo-toggle small { margin-top:3px; color:#7b817d; font-size:.73rem; }
   .demo-chip { display: inline-block; margin-left: 8px; padding: 3px 6px; color: #65593f; background: #f2eee2; font-size: .64rem; font-weight: 500; }
   .manage-form { background: #fff; padding: clamp(20px, 4vw, 36px); border: 1px solid #e4e6e2; }
+  .upload-saving-status { color:#68716b; font-size:.76rem; }
   .manage-form .form-label { font-weight: 600; font-size: .9rem; }
   .manage-form .form-control, .manage-form .form-select { min-height: 46px; border-color: #d8dcd8; border-radius: 2px; }
   .manage-form textarea.form-control { min-height: 110px; }
@@ -267,17 +274,12 @@
     const preview = document.getElementById('new-image-previews');
     const count = document.getElementById('upload-image-count');
     if (!picker || !input || !preview) return;
+    const form = document.querySelector('.manage-form');
+    const saveButton = document.getElementById('save-product-button');
+    const savingStatus = document.getElementById('upload-saving-status');
     let stagedFiles = [];
     let nextId = 0;
     let previewUrls = [];
-    let qualityWarningAccepted = false;
-    const inspectImage = file => new Promise(resolve => {
-      const url = URL.createObjectURL(file);
-      const image = new Image();
-      image.onload = () => { resolve({ width: image.naturalWidth, height: image.naturalHeight }); URL.revokeObjectURL(url); };
-      image.onerror = () => { resolve({ width: 0, height: 0 }); URL.revokeObjectURL(url); };
-      image.src = url;
-    });
     const syncSubmitFiles = () => {
       if (typeof DataTransfer === 'undefined') {
         count.textContent = 'Your browser cannot queue photo selections. Please use a current version of Chrome, Edge, Firefox or Safari.';
@@ -328,7 +330,6 @@
         remove.addEventListener('click', () => {
           const wasSelected = radio.checked;
           const oldValue = radio.value;
-          qualityWarningAccepted = false;
           stagedFiles = stagedFiles.filter(staged => staged.id !== item.id);
           syncSubmitFiles();
           renderStagedFiles(wasSelected ? '' : oldValue);
@@ -344,11 +345,9 @@
       const existingCount = document.querySelectorAll('.current-images:not(#new-image-previews) .image-choice').length;
       count.textContent = stagedFiles.length ? `${stagedFiles.length} new photo${stagedFiles.length === 1 ? '' : 's'} queued${existingCount ? ` · ${existingCount + stagedFiles.length} total after upload` : ''}.` : '';
     };
-    picker.addEventListener('change', async () => {
+    picker.addEventListener('change', () => {
       const newlySelected = [...(picker.files || [])].filter(file => file.type.startsWith('image/'));
-      if (newlySelected.length) qualityWarningAccepted = false;
-      const inspected = await Promise.all(newlySelected.map(async file => ({ file, dimensions: await inspectImage(file) })));
-      inspected.forEach(({ file, dimensions }) => {
+      newlySelected.forEach(file => {
         const duplicate = stagedFiles.some(item => item.originalName === file.name && item.file.size === file.size && item.file.lastModified === file.lastModified);
         if (duplicate) return;
         const originalName = file.name;
@@ -361,37 +360,21 @@
           uniqueName = `${stem} (${suffix++})${extension}`;
         }
         const queuedFile = uniqueName === originalName ? file : new File([file], uniqueName, { type: file.type, lastModified: file.lastModified });
-        stagedFiles.push({ id: nextId++, file: queuedFile, originalName, ...dimensions });
+        stagedFiles.push({ id: nextId++, file: queuedFile, originalName });
       });
       syncSubmitFiles();
       renderStagedFiles(document.querySelector('input[name="primary_image_choice"]:checked')?.value || '');
       picker.value = '';
     });
-    document.querySelector('.manage-form')?.addEventListener('submit', event => {
-      if (qualityWarningAccepted) return;
-      const lowResolution = stagedFiles.filter(item => item.width && item.height && (Math.min(item.width, item.height) < 450 || Math.max(item.width, item.height) < 900));
-      const selected = document.querySelector('input[name="primary_image_choice"]:checked');
-      const selectedStaged = stagedFiles.find(item => item.file.name === selected?.value);
-      let selectedDimensions = selectedStaged;
-      if (!selectedDimensions && selected) {
-        const image = selected.closest('.image-choice')?.querySelector('img');
-        if (image?.naturalWidth && image?.naturalHeight) selectedDimensions = { width: image.naturalWidth, height: image.naturalHeight };
+    form?.addEventListener('submit', () => {
+      if (saveButton) {
+        saveButton.disabled = true;
+        saveButton.textContent = 'Saving…';
       }
-      const ratio = selectedDimensions?.width && selectedDimensions?.height ? selectedDimensions.width / selectedDimensions.height : 0;
-      const coverShapeMismatch = ratio && (ratio < 0.38 || ratio > 0.68);
-      const selectedLowResolution = selectedDimensions?.width && selectedDimensions?.height && (Math.min(selectedDimensions.width, selectedDimensions.height) < 450 || Math.max(selectedDimensions.width, selectedDimensions.height) < 900);
-      if (!lowResolution.length && !coverShapeMismatch && !selectedLowResolution) return;
-      event.preventDefault();
-      const concerns = [];
-      const lowResolutionCount = lowResolution.length + (selectedLowResolution && !selectedStaged ? 1 : 0);
-      if (lowResolutionCount) concerns.push(`${lowResolutionCount} photo${lowResolutionCount === 1 ? ' is' : 's are'} low resolution and may look soft on the website`);
-      if (coverShapeMismatch) concerns.push('the selected card image is much wider or narrower than the tall tile format and may leave empty space inside the tile frame');
-      if (window.confirm(`${concerns.join('. ')}. The website will preserve image proportions and will not stretch, crop, or artificially sharpen it. You can improve/replace the photo, or continue anyway. Continue saving?`)) {
-        qualityWarningAccepted = true;
-        event.currentTarget.requestSubmit(event.submitter);
-      }
+      if (savingStatus) savingStatus.textContent = stagedFiles.length
+        ? `Saving product and optimizing ${stagedFiles.length} photo${stagedFiles.length === 1 ? '' : 's'}…`
+        : 'Saving product…';
     });
-    document.querySelectorAll('input[name="primary_image_choice"]').forEach(choice => choice.addEventListener('change', () => { qualityWarningAccepted = false; }));
   })();
   (() => {
     const tbody = document.getElementById('product-table-body');

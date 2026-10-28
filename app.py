@@ -197,6 +197,7 @@ SURFACE_DATA_FILE = os.path.join(app.static_folder, "data", "surface_products.js
 SURFACE_BRANDS_FILE = os.path.join(app.static_folder, "data", "surface_brands.json")
 TILE_SERIES_FILE = os.path.join(app.static_folder, "data", "tile_series.json")
 TILE_FACETS_FILE = os.path.join(app.static_folder, "data", "tile_facets.json")
+TILE_HOME_FEATURED_FILE = os.path.join(app.static_folder, "data", "tiles_home_featured.json")
 
 # Ensure folders exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -222,7 +223,7 @@ def home():
 @app.route('/tiles')
 def tiles_home():
     brands = [item for item in load_surface_brands() if item.get('active', True) and item.get('department') in {'bathware', 'both'}]
-    return render_template('tiles_home.html', surface_collections=surface_collections[:3], brands=brands)
+    return render_template('tiles_home.html', surface_collections=get_homepage_featured_series(), brands=brands)
 
 def get_bath_categories():
     bath_categories = [
@@ -479,6 +480,12 @@ def get_tile_category_groups():
                 card['image'] = cover_overrides[card['slug']]
                 card['thumbnail'] = card_image_path(card['image'])
             card['hero_image'] = hero_overrides.get(card['slug']) or card['default_image']
+            if group['slug'] == 'size':
+                matching_product = next((product for product in tile_products
+                    if card['slug'] in get_product_tile_tags(product)
+                    or card['slug'] in {tile_product_slug(size) for size in get_product_tile_sizes(product)}), None)
+                product_image = get_surface_product_cover(matching_product) if matching_product else ''
+                card['representative_image'] = card_image_path(product_image) if product_image else ''
     return groups
 
 def load_tile_facet_config():
@@ -624,6 +631,53 @@ def load_tile_series():
         json.dump(series, file, indent=2, ensure_ascii=False)
     return series
 
+def load_homepage_featured_series_slugs():
+    try:
+        with open(TILE_HOME_FEATURED_FILE, 'r', encoding='utf-8') as file:
+            value = json.load(file)
+        if isinstance(value, list):
+            return list(dict.fromkeys(str(slug).strip() for slug in value if str(slug).strip()))[:3]
+    except (OSError, json.JSONDecodeError):
+        pass
+    return []
+
+def save_homepage_featured_series_slugs(slugs):
+    os.makedirs(os.path.dirname(TILE_HOME_FEATURED_FILE), exist_ok=True)
+    with open(TILE_HOME_FEATURED_FILE, 'w', encoding='utf-8') as file:
+        json.dump(list(slugs)[:3], file, indent=2, ensure_ascii=False)
+
+def get_homepage_featured_series():
+    """Return the three tile series featured on the public tile homepage."""
+    series = [item for item in load_tile_series() if item.get('active', True)]
+    products = [item for item in load_surface_products()
+                if item.get('department', 'tiles') == 'tiles' and is_public_surface_product(item, 'tiles')]
+    series_by_slug = {item.get('slug'): item for item in series}
+    configured = [series_by_slug[slug] for slug in load_homepage_featured_series_slugs()
+                  if slug in series_by_slug]
+    if len(configured) < 3:
+        used = {item.get('slug') for item in configured}
+        with_products = [item for item in series if item.get('slug') not in used and any(
+            item.get('slug') in get_product_tile_tags(product) for product in products)]
+        configured.extend(with_products[:3 - len(configured)])
+    if len(configured) < 3:
+        used = {item.get('slug') for item in configured}
+        configured.extend([item for item in series if item.get('slug') not in used][:3 - len(configured)])
+
+    featured = []
+    for record in configured[:3]:
+        representative = next((get_surface_product_cover(product) for product in products
+                               if record.get('slug') in get_product_tile_tags(product)
+                               and get_surface_product_cover(product)), None)
+        image = record.get('card_image') or record.get('cover_image') or representative or record.get('image') or 'images/surfaces/catalog/double-charge-800-room.jpg'
+        featured.append({
+            **record,
+            'image': image,
+            'alt': f"{record.get('name', 'Tile')} series tile collection",
+            'description': record.get('description') or 'Explore the colours, formats and finishes in this tile series.',
+            'href': url_for('tiles_category_products', group_slug='collection', category_slug=record.get('slug'), series_slug=record.get('slug')),
+        })
+    return featured
+
 def clear_tile_series_cover_images(image_paths):
     removed = set(image_paths)
     if not removed:
@@ -693,8 +747,13 @@ def create_card_image(image_path):
         return ''
     thumbnail = card_image_disk_path(image_path)
     source_path = os.path.join(app.static_folder, image_path)
+    thumbnail_path = os.path.join(app.static_folder, thumbnail)
+    # Upload edits often revisit every gallery photo. Reuse existing card
+    # derivatives so unchanged images are not decoded and re-encoded each time.
+    if os.path.isfile(thumbnail_path):
+        return thumbnail
     if os.path.isfile(source_path):
-        process_image(source_path, os.path.join(app.static_folder, thumbnail), max_width=640, quality=78)
+        process_image(source_path, thumbnail_path, max_width=640, quality=78)
         return thumbnail
     return image_path
 
@@ -988,6 +1047,7 @@ def tiles_manage():
     all_brands = load_surface_brands()
     brands = [item for item in all_brands if item.get('active', True)]
     all_series = load_tile_series()
+    homepage_featured_slugs = [item.get('slug') for item in get_homepage_featured_series()]
     edit_brand = next((item for item in all_brands if item.get('slug') == request.args.get('edit_brand')), None)
     edit_series = next((item for item in all_series if item.get('slug') == request.args.get('edit_series')), None)
     series_image_options = []
@@ -1131,7 +1191,20 @@ def tiles_manage():
 
     if edit_product and edit_product.get('department', 'tiles') == 'tiles':
         edit_product = {**edit_product, 'tags': list(get_product_tile_tags(edit_product))}
-    return render_template("tiles_manage.html", products=products, edit_product=edit_product, tile_category_groups=tile_category_groups, bath_categories=bath_categories, brands=brands, all_brands=all_brands, edit_brand=edit_brand, all_series=all_series, edit_series=edit_series, series_image_options=series_image_options)
+    return render_template("tiles_manage.html", products=products, edit_product=edit_product, tile_category_groups=tile_category_groups, bath_categories=bath_categories, brands=brands, all_brands=all_brands, edit_brand=edit_brand, all_series=all_series, edit_series=edit_series, series_image_options=series_image_options, homepage_featured_slugs=homepage_featured_slugs)
+
+@app.route('/tiles/manage/homepage', methods=['POST'])
+def tiles_manage_homepage_featured():
+    if not session.get('admin_logged'):
+        return redirect(url_for('admin_login', next='tiles_manage'))
+    selected = [slug.strip() for slug in request.form.getlist('featured_series') if slug.strip()]
+    active_slugs = {item.get('slug') for item in load_tile_series() if item.get('active', True)}
+    if len(selected) != 3 or len(set(selected)) != 3 or any(slug not in active_slugs for slug in selected):
+        flash('Choose three different active tile series for the homepage.', 'danger')
+        return redirect(url_for('tiles_manage'))
+    save_homepage_featured_series_slugs(selected)
+    flash('Featured tile series updated on the homepage.', 'success')
+    return redirect(url_for('tiles_manage'))
 
 @app.route('/tiles/manage/series', methods=['POST'])
 def tiles_manage_series():
@@ -1194,6 +1267,10 @@ def tiles_manage_series():
 
     save_series_image('card', card_choice, card_file, record.get('cover_image', ''))
     save_series_image('hero', hero_choice, hero_file)
+    if old_slug and old_slug != slug:
+        configured_featured = load_homepage_featured_series_slugs()
+        if old_slug in configured_featured:
+            save_homepage_featured_series_slugs([slug if item == old_slug else item for item in configured_featured])
     # The old field remains as a fallback for existing data, but new edits use
     # card_image and hero_image independently. Retain files to avoid deleting an
     # image still used by the other slot or by a tile gallery.
@@ -1223,6 +1300,9 @@ def tiles_manage_series_remove(slug):
             if os.path.isfile(thumbnail_path):
                 os.remove(thumbnail_path)
     series = [item for item in series if item.get('slug') != slug]
+    configured_featured = [item for item in load_homepage_featured_series_slugs() if item != slug]
+    if configured_featured:
+        save_homepage_featured_series_slugs(configured_featured)
     products = load_surface_products()
     changed = False
     for product in products:

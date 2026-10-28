@@ -27,25 +27,26 @@
     <div class="section-heading-row">
       <div>
         <p class="eyebrow">TILE COLLECTIONS</p>
-        <h2>Explore by format and finish.</h2>
+        <h2>Explore our featured series.</h2>
       </div>
       <a href="{{ url_for('tiles_collections') }}" class="surface-text-link">View all collections <span aria-hidden="true">→</span></a>
     </div>
     <div class="row g-4">
       {% for collection in surface_collections %}
       <div class="col-md-4">
-        <a href="{{ url_for('tiles_collections') }}" class="surface-collection-card">
+        <a href="{{ collection.href }}" class="surface-collection-card">
           <div class="surface-collection-image-wrap">
-            <img src="{{ url_for('static', filename=collection.image) }}" alt="{{ collection.alt }}" loading="lazy">
+            <img src="{{ url_for('static', filename=collection.image) }}" alt="{{ collection.alt }}" loading="lazy" decoding="async">
             
           </div>
           <div class="surface-collection-copy">
             <h3>{{ collection.name }}</h3>
             <p>{{ collection.description }}</p>
+            <span class="surface-series-link">Explore series</span>
           </div>
         </a>
       </div>
-      {% endfor %}
+      {% else %}<div class="col-12"><p class="surface-series-empty">Tile series will appear here as they are added in the tile manager.</p></div>{% endfor %}
     </div>
   </div>
 </section>
@@ -119,6 +120,9 @@
   .surface-collection-copy { padding: 18px 0 6px; }
   .surface-collection-copy h3 { color: #2b302f; font-size: 1.08rem; font-weight: 500; margin: 0 0 8px; }
   .surface-collection-copy p { color: #777c79; font-size: .87rem; line-height: 1.65; margin: 0; max-width: 330px; }
+  .surface-series-link { display:inline-block; margin-top:14px; padding-bottom:4px; border-bottom:1px solid #b9bfba; color:#343938; font-size:.73rem; }
+  .surface-collection-card:hover .surface-series-link { border-color:#343938; }
+  .surface-series-empty { padding:18px 0; color:#777c79; }
   .surface-statement { background: #404645; color: #fff; padding: 60px 0 65px; }
   .surface-statement-inner { max-width: 920px; text-align: center; }
   .surface-statement .eyebrow { color: #c6cac7; }

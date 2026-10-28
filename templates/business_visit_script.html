@@ -1,0 +1,8 @@
+<script>
+(() => {
+  const currentBusiness = document.body.dataset.businessEntry;
+  const isFurnitureRoot = currentBusiness === 'furniture' && window.location.pathname === '/';
+  if (!currentBusiness || isFurnitureRoot) return;
+  try { localStorage.setItem('uniglobeBusinessLastVisited', currentBusiness); } catch (_) {}
+})();
+</script>

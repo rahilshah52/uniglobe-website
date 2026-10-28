@@ -537,5 +537,118 @@
       "barcelona-series"
     ],
     "demo": false
+  },
+  {
+    "code": "S00009",
+    "images": [
+      "uploads/surfaces/S00009/BARCELONA-BIANCO-R5.webp",
+      "uploads/surfaces/S00009/BARCELONA-BIANCO-R6.webp",
+      "uploads/surfaces/S00009/BARCELONA-BIANCO-R7.webp",
+      "uploads/surfaces/S00009/BARCELONA-BIANCO-R8.webp",
+      "uploads/surfaces/S00009/BARCELONA-BIANCO-R4.webp",
+      "uploads/surfaces/S00009/BARCELONA-BIANCO-R3.webp",
+      "uploads/surfaces/S00009/BARCELONA-BIANCO-R2.webp",
+      "uploads/surfaces/S00009/BARCELONA-BIANCO-R1.webp",
+      "uploads/surfaces/S00009/barcelona_bianco.webp"
+    ],
+    "card_image": "uploads/surfaces/S00009/barcelona_bianco.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Barcelona Bianco",
+    "description": "",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "600-1200-mm",
+      "barcelona-series"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00010",
+    "images": [
+      "uploads/surfaces/S00010/BARCELONA-FOSSIL-R8.webp",
+      "uploads/surfaces/S00010/BARCELONA-FOSSIL-R7.webp",
+      "uploads/surfaces/S00010/BARCELONA-FOSSIL-R6.webp",
+      "uploads/surfaces/S00010/BARCELONA-FOSSIL-R5.webp",
+      "uploads/surfaces/S00010/BARCELONA-FOSSIL-R4.webp",
+      "uploads/surfaces/S00010/BARCELONA-FOSSIL-R3.webp",
+      "uploads/surfaces/S00010/BARCELONA-FOSSIL-R2.webp",
+      "uploads/surfaces/S00010/BARCELONA-FOSSIL-R1.webp",
+      "uploads/surfaces/S00010/barcelona_fossil.webp"
+    ],
+    "card_image": "uploads/surfaces/S00010/barcelona_fossil.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Barcelona Fossil",
+    "description": "",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "barcelona-series"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00011",
+    "images": [
+      "uploads/surfaces/S00011/BARCELONA-NERO-R5.webp",
+      "uploads/surfaces/S00011/BARCELONA-NERO-R6.webp",
+      "uploads/surfaces/S00011/BARCELONA-NERO-R7.webp",
+      "uploads/surfaces/S00011/BARCELONA-NERO-R8.webp",
+      "uploads/surfaces/S00011/BARCELONA-NERO-R4.webp",
+      "uploads/surfaces/S00011/BARCELONA-NERO-R3.webp",
+      "uploads/surfaces/S00011/BARCELONA-NERO-R2.webp",
+      "uploads/surfaces/S00011/BARCELONA-NERO-R1.webp",
+      "uploads/surfaces/S00011/barcelona_nero.webp"
+    ],
+    "card_image": "uploads/surfaces/S00011/barcelona_nero.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Barcelona Nero",
+    "description": "",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "black",
+      "600-1200-mm",
+      "barcelona-series"
+    ],
+    "demo": false
   }
 ]

@@ -16,7 +16,7 @@
   <div class="furniture-refine-fields">
     <details class="furniture-facet"><summary><span>Room / category</span><b>{{ selected_categories|length if selected_categories else 'All categories' }}</b></summary><div class="furniture-facet-options">{% for category, cat_data in product_categories.items() %}<label><input type="checkbox" name="category" value="{{ category }}" {% if category in selected_categories %}checked{% endif %}><span>{{ cat_data.display_name }}</span></label>{% endfor %}</div></details>
     <details class="furniture-facet"><summary><span>Brand</span><b>{{ selected_brands|length if selected_brands else 'Every brand' }}</b></summary><div class="furniture-facet-options">{% for brand_name in product_brands %}<label><input type="checkbox" name="brand" value="{{ brand_name }}" {% if brand_name in selected_brands %}checked{% endif %}><span>{{ brand_name }}</span></label>{% else %}<p>Add product brands in /upload to see them here.</p>{% endfor %}</div></details>
-    <button type="submit">Show pieces <span aria-hidden="true">↗</span></button>
+    <button type="submit">Show pieces</button>
   </div>
   {% if selected_categories or selected_brands %}
   <div class="furniture-active-filters"><span>Showing your selection</span>{% for category in selected_categories %}{% for key, cat_data in product_categories.items() if key == category %}<b>{{ cat_data.display_name }}</b>{% endfor %}{% endfor %}{% for brand_name in selected_brands %}<b>{{ brand_name }}</b>{% endfor %}</div>

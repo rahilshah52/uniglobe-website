@@ -16,7 +16,7 @@
     <form class="bath-refine" method="get" action="{{ url_for('tiles_bath_category', slug=category.slug) }}" aria-label="Refine bathware by brand">
       <div><span>Refine this category</span><small>Choose one or more showroom brands.</small></div>
       <details class="bath-facet"><summary><span>Brand</span><b>{{ selected_brands|length if selected_brands else 'All brands' }}</b></summary><div class="bath-facet-options">{% for brand_name in brands %}<label><input type="checkbox" name="brand" value="{{ brand_name }}" {% if brand_name in selected_brands %}checked{% endif %}><span>{{ brand_name }}</span></label>{% endfor %}</div></details>
-      <button type="submit">Show {{ 'selection' if selected_brands else 'all' }} <span aria-hidden="true">↗</span></button>{% if selected_brands %}<a href="{{ url_for('tiles_bath_category', slug=category.slug) }}">Clear</a>{% endif %}
+      <button type="submit">Show {{ 'selection' if selected_brands else 'all' }} </button>{% if selected_brands %}<a href="{{ url_for('tiles_bath_category', slug=category.slug) }}">Clear</a>{% endif %}
     </form>
     <p class="bath-result-count">{{ items|length }} catalogue {{ 'image' if items|length == 1 else 'images' }}{% if selected_brands %} · {{ selected_brands|join(' + ') }}{% endif %}</p>
     <div class="bath-gallery">

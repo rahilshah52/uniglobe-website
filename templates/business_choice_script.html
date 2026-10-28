@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const selectedKey = 'uniglobeBusinessChoice';
   const selectedAtKey = 'uniglobeBusinessChoiceAt';
+  const lastVisitedKey = 'uniglobeBusinessLastVisited';
   const dismissedKey = 'uniglobeBusinessChoiceDismissed';
   const repeatAfter = 30 * 24 * 60 * 60 * 1000;
   const read = key => { try { return localStorage.getItem(key); } catch (_) { return null; } };
@@ -13,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const readSession = key => { try { return sessionStorage.getItem(key); } catch (_) { return null; } };
   const writeSession = (key, value) => { try { sessionStorage.setItem(key, value); } catch (_) {} };
   let preferred = read(selectedKey);
+  let lastVisited = read(lastVisitedKey) || preferred;
+  const currentBusiness = document.body.dataset.businessEntry;
   let lastChoiceAt = Number(read(selectedAtKey));
 
   // Existing visitors already have a saved choice from the previous version.
@@ -29,11 +32,18 @@ document.addEventListener('DOMContentLoaded', function () {
   let visitorMadeChoice = false;
 
   if (promptDue && !dismissedThisSession) {
+    if (currentBusiness === 'surfaces') {
+      lastVisited = 'surfaces';
+      write(lastVisitedKey, lastVisited);
+    }
     document.body.classList.add('business-choice-open');
     choiceModal.show();
-  } else if (document.body.dataset.businessEntry === 'furniture' && preferred === 'surfaces') {
+  } else if (currentBusiness === 'furniture' && lastVisited === 'surfaces') {
     window.location.replace('{{ url_for("tiles_home") }}');
     return;
+  } else {
+    lastVisited = currentBusiness;
+    write(lastVisitedKey, lastVisited);
   }
 
   modalElement.querySelectorAll('[data-business-choice]').forEach(function (choice) {
@@ -41,9 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const business = this.dataset.businessChoice;
       visitorMadeChoice = true;
       preferred = business;
+      lastVisited = business;
       lastChoiceAt = Date.now();
       write(selectedKey, business);
       write(selectedAtKey, String(lastChoiceAt));
+      write(lastVisitedKey, business);
       if (business === 'surfaces' && document.body.dataset.businessEntry !== 'surfaces') {
         window.location.href = '{{ url_for("tiles_home") }}';
       } else if (business === 'furniture' && document.body.dataset.businessEntry !== 'furniture') {
@@ -58,9 +70,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.classList.remove('business-choice-open');
     if (!visitorMadeChoice) {
       writeSession(dismissedKey, 'true');
-      if (preferred === 'surfaces' && document.body.dataset.businessEntry === 'furniture') {
+      const destination = currentBusiness === 'surfaces' ? 'surfaces' : (lastVisited || preferred || 'furniture');
+      write(lastVisitedKey, destination);
+      if (destination === 'surfaces' && currentBusiness === 'furniture') {
         window.location.replace('{{ url_for("tiles_home") }}');
-      } else if (preferred === 'furniture' && document.body.dataset.businessEntry === 'surfaces') {
+      } else if (destination === 'furniture' && currentBusiness === 'surfaces') {
         window.location.replace('/');
       }
     }
