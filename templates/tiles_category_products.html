@@ -3,7 +3,7 @@
 {% block meta_description %}Explore tile examples in {{ category|lower }}. Find related tile designs, room ideas, colours and collections from Uniglobe Surfaces.{% endblock %}
 {% block content %}
 <section class="tile-filter-hero">
-  <div class="tile-filter-hero-image{% if category_image_portrait %} is-portrait{% endif %}" style="background-image:url('{{ url_for('static', filename=category_image) }}')"></div><div class="tile-filter-hero-shade"></div>
+  <div class="tile-filter-hero-image{% if category_image_portrait %} is-portrait{% endif %}"><img src="{{ url_for('static', filename=category_image) }}" alt="" aria-hidden="true" fetchpriority="high"></div><div class="tile-filter-hero-shade"></div>
   <div class="container tile-filter-hero-copy">
     <a href="{% if selected_series and group.slug != 'collection' %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug or None) }}{% elif brand_slug %}{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges{% else %}{{ url_for('tiles_collections') }}#tile-ranges{% endif %}">← {% if selected_series and group.slug != 'collection' %}Back to {{ group.name|lower }} series{% elif brand %}All {{ brand }} categories{% else %}All tile categories{% endif %}</a>
     <p>{{ brand|upper ~ ' · ' if brand }}{% if selected_series %}{{ selected_series.name|upper }} SERIES{% else %}{{ group.name|upper }}{% endif %} · TILE DESIGNS</p>
@@ -49,8 +49,10 @@
 <style>
   .tile-filter-hero { position:relative; display:flex; align-items:end; min-height:clamp(430px,48vw,620px); overflow:hidden; color:#fff; background:#303633; }
   .tile-filter-hero-image,.tile-filter-hero-shade { position:absolute; inset:0; }
-  .tile-filter-hero-image { background-position:center 52%; background-size:cover; }
-  .tile-filter-hero-image.is-portrait { background-color:#343a37; background-repeat:no-repeat; background-position:right center; background-size:auto 100%; }
+  .tile-filter-hero-image { overflow:hidden; background:#303633; }
+  .tile-filter-hero-image img { display:block; width:100%; height:100%; object-fit:cover; object-position:center 52%; }
+  .tile-filter-hero-image.is-portrait { background-color:#343a37; }
+  .tile-filter-hero-image.is-portrait img { object-fit:contain; object-position:right center; }
   .tile-filter-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.74),rgba(24,29,27,.24) 66%,rgba(24,29,27,.1)),linear-gradient(0deg,rgba(20,24,23,.38),transparent 65%); }
   .tile-filter-hero-copy { position:relative; z-index:1; padding-top:75px; padding-bottom:clamp(47px,6vw,74px); }
   .tile-filter-hero a { display:inline-block; margin-bottom:34px; color:rgba(255,255,255,.8); font-size:.78rem; text-decoration:none; }
@@ -102,7 +104,7 @@
   .tile-filter-empty a { color:#303633; font-size:.85rem; }
   @media(max-width:991.98px) { .tile-refine-fields { grid-template-columns:repeat(3,minmax(0,1fr)); } }
   @media(max-width:767.98px) { .tile-brand-active { gap:7px; margin-top:14px; padding:8px 9px; } .tile-filter-hero .tile-brand-active a { margin-bottom:0; } }
-  @media(max-width:767.98px) { .tile-filter-hero { min-height:490px; } .tile-filter-hero-image { background-position:58% center; } .tile-filter-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.17)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .tile-filter-hero-copy { padding-top:68px; padding-bottom:47px; } .tile-filter-hero a { margin-bottom:25px; } .tile-filter-hero-copy > span { font-size:.82rem; } .tile-filter-results { padding:38px 0 60px; } .tile-filter-heading { align-items:flex-start; flex-direction:column; margin-bottom:20px; } .tile-filter-heading > a { width:100%; justify-content:space-between; } .tile-refine { padding:14px 12px 12px; margin-bottom:20px; } .tile-refine-fields { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .tile-facet > summary { min-height:42px; padding:7px 8px; font-size:.68rem; } .tile-facet-options { width:max(100%,190px); } .tile-facet:nth-child(even) .tile-facet-options { right:0; left:auto; } .tile-refine-fields button { grid-column:1/-1; width:100%; } .tile-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; } .tile-filter-photo { aspect-ratio:.78; } .tile-filter-photo img { padding:7px; } .tile-filter-copy { padding:12px 11px 14px; } .tile-filter-copy h3 { font-size:.91rem; } .tile-filter-copy > span { font-size:.68rem; } .tile-filter-photo > span { top:7px; left:7px; padding:5px 6px; font-size:.57rem; } }
+  @media(max-width:767.98px) { .tile-filter-hero { min-height:490px; } .tile-filter-hero-image:not(.is-portrait) img { object-position:58% center; } .tile-filter-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.17)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .tile-filter-hero-copy { padding-top:68px; padding-bottom:47px; } .tile-filter-hero a { margin-bottom:25px; } .tile-filter-hero-copy > span { font-size:.82rem; } .tile-filter-results { padding:38px 0 60px; } .tile-filter-heading { align-items:flex-start; flex-direction:column; margin-bottom:20px; } .tile-filter-heading > a { width:100%; justify-content:space-between; } .tile-refine { padding:14px 12px 12px; margin-bottom:20px; } .tile-refine-fields { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .tile-facet > summary { min-height:42px; padding:7px 8px; font-size:.68rem; } .tile-facet-options { width:max(100%,190px); } .tile-facet:nth-child(even) .tile-facet-options { right:0; left:auto; } .tile-refine-fields button { grid-column:1/-1; width:100%; } .tile-filter-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; } .tile-filter-photo { aspect-ratio:.78; } .tile-filter-photo img { padding:7px; } .tile-filter-copy { padding:12px 11px 14px; } .tile-filter-copy h3 { font-size:.91rem; } .tile-filter-copy > span { font-size:.68rem; } .tile-filter-photo > span { top:7px; left:7px; padding:5px 6px; font-size:.57rem; } }
   @media(max-width:390px) { .tile-filter-grid { grid-template-columns:1fr; } .tile-filter-photo { aspect-ratio:.78; } }
 </style>
 {% endblock %}
