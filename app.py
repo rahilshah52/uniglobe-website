@@ -458,9 +458,13 @@ def get_tile_category_groups():
         if group['slug'] != 'collection':
             settings = facet_config.get(group['slug'], {})
             removed = set(settings.get('removed', []))
-            group['items'] = [(name, image) for name, image in group['items']
-                              if tile_product_slug(name) not in removed]
-            existing = {tile_product_slug(name) for name, _ in group['items']}
+            renamed = {str(slug): str(name).strip() for slug, name in settings.get('renamed', {}).items()
+                       if str(slug).strip() and str(name).strip()}
+            stable_slug_by_name = {display_name: original_slug for original_slug, display_name in renamed.items()}
+            group['items'] = [(renamed.get(tile_product_slug(name), name), image)
+                              for name, image in group['items'] if tile_product_slug(name) not in removed]
+            existing = {stable_slug_by_name.get(tile_product_slug(name), tile_product_slug(name))
+                        for name, _ in group['items']}
             for option in settings.get('added', []):
                 option_name = str(option.get('name', '')).strip()
                 option_slug = tile_product_slug(option_name)
@@ -468,7 +472,8 @@ def get_tile_category_groups():
                     group['items'].append((option_name, option.get('image') or 'images/surfaces/catalog/double-charge-800-room.jpg'))
                     existing.add(option_slug)
         group['cards'] = [
-            {'name': name, 'image': image, 'default_image': image, 'thumbnail': card_image_path(image), 'slug': tile_product_slug(name)}
+            {'name': name, 'image': image, 'default_image': image, 'thumbnail': card_image_path(image),
+             'slug': stable_slug_by_name.get(name, tile_product_slug(name)) if group['slug'] != 'collection' else tile_product_slug(name)}
             for name, image in group['items']
         ]
         group_settings = facet_config.get(group['slug'], {})
@@ -524,18 +529,41 @@ def tiles_manage_facet():
         slug = tile_product_slug(name)
         group = next((item for item in get_tile_category_groups() if item['slug'] == group_slug), None)
         existing = {item['slug'] for item in group['cards']} if group else set()
+        duplicate_name = any(item['name'].casefold() == name.casefold() for item in group['cards']) if group else False
         settings['removed'] = [item for item in settings['removed'] if item != slug]
-        if slug not in existing:
+        if slug not in existing and not duplicate_name:
             settings['added'] = [item for item in settings['added'] if tile_product_slug(item.get('name', '')) != slug]
             settings['added'].append({'name': name, 'image': 'images/surfaces/catalog/double-charge-800-room.jpg'})
-        save_tile_facet_config(config)
-        flash(f'{name} added to {group_slug.replace("-", " ").title()}.', 'success')
+            save_tile_facet_config(config)
+            flash(f'{name} added to {group_slug.replace("-", " ").title()}.', 'success')
+        else:
+            flash('A category with that name already exists.', 'warning')
     elif action == 'remove' and option_slug:
         settings['added'] = [item for item in settings['added'] if tile_product_slug(item.get('name', '')) != option_slug]
+        settings.get('renamed', {}).pop(option_slug, None)
         if option_slug not in settings['removed']:
             settings['removed'].append(option_slug)
         save_tile_facet_config(config)
         flash('Category option removed. Existing product assignments are saved and can be restored by adding the same option again.', 'success')
+    elif action == 'rename' and option_slug:
+        if not name or len(name) > 80:
+            flash('Enter a category name of up to 80 characters.', 'warning')
+            return redirect(url_for('tiles_manage'))
+        group = next((item for item in get_tile_category_groups() if item['slug'] == group_slug), None)
+        target = next((item for item in group['cards'] if item['slug'] == option_slug), None) if group else None
+        if not target:
+            flash('That category option could not be found.', 'warning')
+            return redirect(url_for('tiles_manage'))
+        if any(item['slug'] != option_slug and item['name'].casefold() == name.casefold() for item in group['cards']):
+            flash('Another option already uses that category name.', 'warning')
+            return redirect(url_for('tiles_manage'))
+        renamed = settings.setdefault('renamed', {})
+        if tile_product_slug(name) == option_slug:
+            renamed.pop(option_slug, None)
+        else:
+            renamed[option_slug] = name
+        save_tile_facet_config(config)
+        flash(f'{target["name"]} renamed to {name}. Existing product assignments are preserved.', 'success')
     else:
         flash('That category change could not be applied.', 'warning')
     return redirect(url_for('tiles_manage'))

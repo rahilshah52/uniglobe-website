@@ -39,12 +39,12 @@
       </form>
     </section>
     <section class="facet-manager" aria-labelledby="facet-manager-title">
-      <div class="facet-manager-heading"><div><p class="eyebrow">FILTER OPTIONS</p><h2 id="facet-manager-title">Manage tile categories</h2><p>Add or remove the choices customers can browse by. Removed options stop appearing in the collection, while existing product assignments stay saved in case you add the option back.</p></div></div>
+      <div class="facet-manager-heading"><div><p class="eyebrow">FILTER OPTIONS</p><h2 id="facet-manager-title">Manage tile categories</h2><p>Add, rename or remove the choices customers can browse by. Renaming preserves the category assignments already saved on your products.</p></div></div>
       <div class="facet-manager-groups">
         {% for group in tile_category_groups if group.slug != 'collection' %}
         <details class="facet-category"><summary><span>{{ group.name }}</span><b>{{ group.cards|length }} options</b></summary>
           <form class="facet-add-form" method="post" action="{{ url_for('tiles_manage_facet') }}"><input type="hidden" name="group" value="{{ group.slug }}"><input type="hidden" name="action" value="add"><label class="visually-hidden" for="facet-new-{{ group.slug }}">Add a {{ group.name|lower }} option</label><input id="facet-new-{{ group.slug }}" name="name" maxlength="80" required placeholder="Add a {{ group.name|lower }} option"><button type="submit">Add option</button></form>
-          <div class="facet-option-list">{% for item in group.cards %}<div class="facet-option"><span>{{ item.name }}</span><form method="post" action="{{ url_for('tiles_manage_facet') }}" onsubmit="return confirm('Remove {{ item.name }} from {{ group.name|lower }} choices? Existing product assignments will be kept.')"><input type="hidden" name="group" value="{{ group.slug }}"><input type="hidden" name="action" value="remove"><input type="hidden" name="option_slug" value="{{ item.slug }}"><button type="submit" aria-label="Remove {{ item.name }}">Remove</button></form></div>{% else %}<p class="facet-empty">No options yet.</p>{% endfor %}</div>
+          <div class="facet-option-list">{% for item in group.cards %}<div class="facet-option"><span>{{ item.name }}</span><details class="facet-rename"><summary>Rename</summary><form method="post" action="{{ url_for('tiles_manage_facet') }}"><input type="hidden" name="group" value="{{ group.slug }}"><input type="hidden" name="action" value="rename"><input type="hidden" name="option_slug" value="{{ item.slug }}"><label class="visually-hidden" for="rename-{{ group.slug }}-{{ item.slug }}">New name for {{ item.name }}</label><input id="rename-{{ group.slug }}-{{ item.slug }}" name="name" maxlength="80" required value="{{ item.name }}"><button type="submit">Save</button></form></details><form method="post" action="{{ url_for('tiles_manage_facet') }}" onsubmit="return confirm('Remove {{ item.name }} from {{ group.name|lower }} choices? Existing product assignments will be kept.')"><input type="hidden" name="group" value="{{ group.slug }}"><input type="hidden" name="action" value="remove"><input type="hidden" name="option_slug" value="{{ item.slug }}"><button type="submit" aria-label="Remove {{ item.name }}">Remove</button></form></div>{% else %}<p class="facet-empty">No options yet.</p>{% endfor %}</div>
         </details>
         {% endfor %}
       </div>
@@ -98,6 +98,7 @@
           <div class="category-assignment-grid">
             {% for group in tile_category_groups %}
             <fieldset class="category-assignment-group"><legend>{{ group.name }}</legend>
+              {% if group.slug != 'collection' %}<div class="category-select-all-row"><label><input type="checkbox" data-select-all-categories="{{ group.slug }}"><span>Select all</span></label><small data-selected-count="{{ group.slug }}">0 selected</small></div>{% endif %}
               {% for item in group.cards if not (group.slug == 'collection' and item.slug == 'all-collections') %}
               <label class="category-check"><input type="{{ 'radio' if group.slug == 'collection' else 'checkbox' }}" name="{{ 'series' if group.slug == 'collection' else 'tags' }}" value="{{ item.slug }}" {% if edit_product and item.slug in edit_product.get('tags', []) %}checked{% endif %}><span>{{ item.name }}</span></label>
               {% endfor %}
@@ -165,6 +166,15 @@
   .facet-option > span { overflow-wrap:anywhere; }
   .facet-option form { flex:0 0 auto; margin:0; }
   .facet-option button { padding:2px 0; border:0; color:#7d5d56; background:none; font:inherit; font-size:.62rem; text-decoration:underline; text-underline-offset:2px; }
+  .facet-rename { position:relative; flex:0 0 auto; }
+  .facet-rename > summary { color:#53685e; font-size:.62rem; text-decoration:underline; text-underline-offset:2px; cursor:pointer; }
+  .facet-rename form { position:absolute; z-index:5; top:calc(100% + 5px); left:50%; display:flex; gap:5px; width:205px; padding:7px; border:1px solid #dfe2dc; background:#fff; box-shadow:0 8px 20px rgba(26,32,28,.13); transform:translateX(-50%); }
+  .facet-rename input { min-width:0; flex:1; padding:5px 6px; border:1px solid #dfe2dc; font:inherit; font-size:.68rem; }
+  .facet-rename button { padding:4px 7px; color:#fff; background:#343a38; text-decoration:none; }
+  .category-select-all-row { display:flex; flex:0 0 100%; justify-content:space-between; align-items:center; gap:8px; padding:0 0 7px; border-bottom:1px solid #e7e8e4; }
+  .category-select-all-row label { display:flex; align-items:center; gap:7px; margin:0; color:#505852; font-size:.69rem; font-weight:600; cursor:pointer; }
+  .category-select-all-row input { accent-color:#495a50; }
+  .category-select-all-row small { color:#858c87; font-size:.62rem; }
   .facet-empty { grid-column:1/-1; margin:0; padding:8px; color:#7c837e; font-size:.72rem; }
   .category-cover-manager { margin:0 0 22px; padding:clamp(20px,4vw,34px); border:1px solid #e4e6e2; background:#fff; }
   .category-cover-manager h2 { margin:0 0 8px; color:#303634; font-size:1.45rem; font-weight:500; }
@@ -249,6 +259,26 @@
   @media(max-width:390px) { .category-cover-grid { grid-template-columns:1fr; } }
   @media(max-width:575.98px) { .manage-page { padding: 42px 0 65px; } .product-list-heading { align-items: flex-start; gap: 10px; flex-direction: column; } .product-tools { grid-template-columns:1fr 1fr; padding:11px; gap:9px; } .product-search { grid-column:1/-1; } .product-pagination { align-items:flex-start; flex-direction:column; } .category-assignment-grid { grid-template-columns:1fr; } .category-assignment-group { gap:6px; padding:10px; } .category-check { font-size:.71rem; } .image-choice-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .facet-manager { padding:17px 13px; } .facet-option-list { grid-template-columns:1fr; } .facet-add-form { padding-inline:9px; } }
 </style>
+<script>
+  document.querySelectorAll('[data-select-all-categories]').forEach(toggle => {
+    const fieldset = toggle.closest('fieldset');
+    const options = [...fieldset.querySelectorAll('input[name="tags"]')];
+    const count = fieldset.querySelector(`[data-selected-count="${toggle.dataset.selectAllCategories}"]`);
+    const update = () => {
+      const selected = options.filter(option => option.checked).length;
+      toggle.checked = options.length > 0 && selected === options.length;
+      toggle.indeterminate = selected > 0 && selected < options.length;
+      toggle.setAttribute('aria-label', toggle.checked ? `Deselect all ${fieldset.querySelector('legend').textContent} options` : `Select all ${fieldset.querySelector('legend').textContent} options`);
+      if (count) count.textContent = `${selected} selected`;
+    };
+    toggle.addEventListener('change', () => {
+      options.forEach(option => { option.checked = toggle.checked; });
+      update();
+    });
+    options.forEach(option => option.addEventListener('change', update));
+    update();
+  });
+</script>
 <script>
   (() => {
     const department = document.getElementById('product-department');

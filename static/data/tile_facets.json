@@ -21,6 +21,18 @@
       {
         "name": "Ivory",
         "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+      },
+      {
+        "name": "Green",
+        "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+      },
+      {
+        "name": "Pink",
+        "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+      },
+      {
+        "name": "Blue",
+        "image": "images/surfaces/catalog/double-charge-800-room.jpg"
       }
     ],
     "removed": []

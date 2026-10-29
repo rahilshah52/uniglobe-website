@@ -1,285 +1,5 @@
 [
   {
-    "code": "DEMO001",
-    "brand": "Simpolo",
-    "title": "Preview tile · warm stone",
-    "category": "Demo preview",
-    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
-    "details": "Sample listing · confirm product format and finish",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/digital-fullbody-living.jpg",
-      "images/surfaces/catalog/products/urban-xl-grey-room.jpg"
-    ],
-    "tags": [
-      "living-room-tiles",
-      "balcony-tiles",
-      "concrete",
-      "stone",
-      "grey",
-      "glyphstone"
-    ]
-  },
-  {
-    "code": "DEMO002",
-    "brand": "Simpolo",
-    "title": "Preview tile · pale marble",
-    "category": "Demo preview",
-    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
-    "details": "Sample listing · confirm product format and finish",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/products/traver-grey-white-room.jpg",
-      "images/surfaces/catalog/products/traver-grey-white.jpg"
-    ],
-    "tags": [
-      "bathroom-tiles",
-      "marble",
-      "white",
-      "marmorica"
-    ]
-  },
-  {
-    "code": "DEMO003",
-    "brand": "Simpolo",
-    "title": "Preview tile · expressive finish",
-    "category": "Demo preview",
-    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
-    "details": "Sample listing · confirm product format and finish",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/carving-matt-bedroom.jpg",
-      "images/surfaces/catalog/radiant-shade-interior.jpg"
-    ],
-    "tags": [
-      "bedroom-tiles",
-      "decor",
-      "metallic",
-      "special",
-      "alchimia"
-    ]
-  },
-  {
-    "code": "DEMO004",
-    "brand": "Simpolo",
-    "title": "Preview tile · warm neutral",
-    "category": "Demo preview",
-    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
-    "details": "Sample listing · confirm product format and finish",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/regular-fullbody-interior.jpg",
-      "images/surfaces/catalog/products/urban-latte-room.jpg"
-    ],
-    "tags": [
-      "kitchen-tiles",
-      "countertop-tiles",
-      "wood",
-      "cream",
-      "ricco-2-0"
-    ]
-  },
-  {
-    "code": "DEMO005",
-    "brand": "Simpolo",
-    "title": "Preview tile · dark stone",
-    "category": "Demo preview",
-    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
-    "details": "Sample listing · confirm product format and finish",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/punch-matt-exterior.jpg",
-      "images/surfaces/catalog/products/bali-stone-black-room.jpg"
-    ],
-    "tags": [
-      "outdoor-tiles",
-      "elevation-tiles",
-      "rustic",
-      "stone",
-      "black",
-      "brown",
-      "basaltino"
-    ]
-  },
-  {
-    "code": "DEMO006",
-    "brand": "Simpolo",
-    "title": "Preview tile · architectural grey",
-    "category": "Demo preview",
-    "description": "A sample listing to demonstrate overlapping tile categories. Replace or edit this preview with your own product details.",
-    "details": "Sample listing · confirm product format and finish",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/fullbody-step-riser.jpg",
-      "images/surfaces/catalog/products/elite-ash-grey-room.jpg"
-    ],
-    "tags": [
-      "staircase-tiles",
-      "commercial-tiles",
-      "concrete",
-      "grey",
-      "sparko"
-    ]
-  },
-  {
-    "code": "DEMO007",
-    "brand": "Simpolo",
-    "title": "Preview tile · polished black",
-    "category": "Demo preview",
-    "description": "A sample listing to demonstrate one tile appearing in Kitchen, Black and Glossy results at the same time. Replace or edit this preview with your own product details.",
-    "details": "Sample listing · confirm product format and finish",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/products/bruno-black-room.jpg",
-      "images/surfaces/catalog/products/bruno-black.jpg"
-    ],
-    "tags": [
-      "kitchen-tiles",
-      "black",
-      "glossy",
-      "kitchdeck"
-    ]
-  },
-  {
-    "code": "DEMO008",
-    "department": "tiles",
-    "brand": "Simpolo",
-    "title": "Elite Mushroom",
-    "category": "Demo preview",
-    "description": "Preview design showing how a colour within a named tile series is presented. Replace with verified catalogue details.",
-    "details": "Preview example · 600 × 1200 mm · finish to confirm",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/products/elite-ash-grey-room.jpg",
-      "images/surfaces/catalog/products/elite-ash-grey.jpg"
-    ],
-    "tags": [
-      "elite",
-      "bathroom-tiles",
-      "marble",
-      "cream",
-      "600-1200-mm"
-    ]
-  },
-  {
-    "code": "DEMO009",
-    "department": "tiles",
-    "brand": "Simpolo",
-    "title": "Elite Celadon",
-    "category": "Demo preview",
-    "description": "Preview design showing another colour in the Elite series, with its own room and size assignments.",
-    "details": "Preview example · 600 × 1200 mm · finish to confirm",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/carving-matt-bedroom.jpg",
-      "images/surfaces/catalog/radiant-shade-interior.jpg"
-    ],
-    "tags": [
-      "elite",
-      "bedroom-tiles",
-      "decor",
-      "special",
-      "600-1200-mm"
-    ]
-  },
-  {
-    "code": "DEMO010",
-    "department": "tiles",
-    "brand": "Simpolo",
-    "title": "Prism Pearl",
-    "category": "Demo preview",
-    "description": "Preview design showing one colour in the Prism series. Replace with the matching product photos and details.",
-    "details": "Preview example · 600 × 1200 mm · finish to confirm",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/products/traver-grey-white-room.jpg",
-      "images/surfaces/catalog/products/traver-grey-white.jpg"
-    ],
-    "tags": [
-      "prism",
-      "bathroom-tiles",
-      "marble",
-      "white",
-      "600-1200-mm"
-    ]
-  },
-  {
-    "code": "DEMO011",
-    "department": "tiles",
-    "brand": "Simpolo",
-    "title": "Prism Ash",
-    "category": "Demo preview",
-    "description": "Preview design showing Prism in a second location and tone; individual tags determine where it appears.",
-    "details": "Preview example · 600 × 1200 mm · finish to confirm",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/products/urban-xl-grey-room.jpg",
-      "images/surfaces/catalog/products/urban-xl-grey.jpg"
-    ],
-    "tags": [
-      "prism",
-      "bedroom-tiles",
-      "concrete",
-      "grey",
-      "600-1200-mm"
-    ]
-  },
-  {
-    "code": "DEMO012",
-    "department": "tiles",
-    "brand": "Simpolo",
-    "title": "Spectra Sand",
-    "category": "Demo preview",
-    "description": "Preview design for the Spectra series. Replace with verified product details and catalogue photos.",
-    "details": "Preview example · 600 × 600 mm · finish to confirm",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/radiant-shade-interior.jpg",
-      "images/surfaces/catalog/carving-matt-bedroom.jpg"
-    ],
-    "tags": [
-      "spectra",
-      "bedroom-tiles",
-      "decor",
-      "cream",
-      "600-600-mm"
-    ]
-  },
-  {
-    "code": "DEMO013",
-    "department": "tiles",
-    "brand": "Simpolo",
-    "title": "Venitto Grey",
-    "category": "Demo preview",
-    "description": "Preview design for the Venitto series. Replace with verified product details and catalogue photos.",
-    "details": "Preview example · 600 × 1200 mm · finish to confirm",
-    "stock": 0,
-    "demo": true,
-    "images": [
-      "images/surfaces/catalog/products/urban-xl-grey-room.jpg",
-      "images/surfaces/catalog/products/urban-xl-grey.jpg"
-    ],
-    "tags": [
-      "venitto",
-      "commercial-tiles",
-      "concrete",
-      "grey",
-      "600-1200-mm"
-    ]
-  },
-  {
     "code": "S00002",
     "images": [
       "uploads/surfaces/S00002/Calcatta_Oro.webp",
@@ -852,6 +572,719 @@
       "ivory",
       "600-1200-mm",
       "tavertino-series"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00018",
+    "images": [
+      "uploads/surfaces/S00018/Elite_Ash_Grey.webp",
+      "uploads/surfaces/S00018/ELITE_ASH_GREY-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00018/Elite_Ash_Grey.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Ash Grey",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00019",
+    "images": [
+      "uploads/surfaces/S00019/ELITE_DOVE_GREY.webp",
+      "uploads/surfaces/S00019/ELITE_DOVE_GREY-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00019/ELITE_DOVE_GREY-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Dove Grey",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00020",
+    "images": [
+      "uploads/surfaces/S00020/ELITE_STEEL.webp",
+      "uploads/surfaces/S00020/ELITE_STEEL-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00020/ELITE_STEEL-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Steel",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "cream",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00021",
+    "images": [
+      "uploads/surfaces/S00021/ELITE_WARM.webp",
+      "uploads/surfaces/S00021/ELITE_WARM-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00021/ELITE_WARM-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Warm",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "cream",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00022",
+    "images": [
+      "uploads/surfaces/S00022/ELITE_SMOKE_GREY.webp",
+      "uploads/surfaces/S00022/ELITE_SMOKE_GREY-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00022/ELITE_SMOKE_GREY-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Smoke Grey",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00023",
+    "images": [
+      "uploads/surfaces/S00023/ELITE_GREY.webp",
+      "uploads/surfaces/S00023/ELITE_GREY-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00023/ELITE_GREY-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Grey",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00024",
+    "images": [
+      "uploads/surfaces/S00024/ELITE_OLIVE.webp",
+      "uploads/surfaces/S00024/ELITE_OLIVE-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00024/ELITE_OLIVE-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Olive",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "green",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00025",
+    "images": [
+      "uploads/surfaces/S00025/ELITE_PEACH.webp",
+      "uploads/surfaces/S00025/ELITE_PEACH-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00025/ELITE_PEACH-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Peach",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "pink",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00026",
+    "images": [
+      "uploads/surfaces/S00026/ELITE_SKY.webp",
+      "uploads/surfaces/S00026/ELITE_SKY-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00026/ELITE_SKY-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Sky",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "blue",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00027",
+    "images": [
+      "uploads/surfaces/S00027/ELITE_BLACK.webp",
+      "uploads/surfaces/S00027/ELITE_BLACK-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00027/ELITE_BLACK-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Black",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "black",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00028",
+    "images": [
+      "uploads/surfaces/S00028/ELITE_DARK_GREY.webp",
+      "uploads/surfaces/S00028/ELITE_DARK_GREY-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00028/ELITE_DARK_GREY-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Elite Dark Grey",
+    "description": "Explore our exquisite Elite Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "elite"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00029",
+    "images": [
+      "uploads/surfaces/S00029/BOTTLED_OLIVE.webp",
+      "uploads/surfaces/S00029/PRISM_BOTTLED_OLIVE.webp"
+    ],
+    "card_image": "uploads/surfaces/S00029/PRISM_BOTTLED_OLIVE.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Bottled Olive",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "green",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00030",
+    "images": [
+      "uploads/surfaces/S00030/MOSS_GREEN.webp",
+      "uploads/surfaces/S00030/MOSS_GREEN-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00030/MOSS_GREEN-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Moss Green",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "green",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00031",
+    "images": [
+      "uploads/surfaces/S00031/SOFT_PEACH.webp",
+      "uploads/surfaces/S00031/SOFT_PEACH-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00031/SOFT_PEACH-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Soft Peach",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "pink",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00032",
+    "images": [
+      "uploads/surfaces/S00032/COOL_BEIGE.webp",
+      "uploads/surfaces/S00032/PRISM_COOL_BIEGE.webp"
+    ],
+    "card_image": "uploads/surfaces/S00032/PRISM_COOL_BIEGE.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Cool Beige",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "beige",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00033",
+    "images": [
+      "uploads/surfaces/S00033/DARK_COBALT_BLUE.webp",
+      "uploads/surfaces/S00033/PRISM_DARK_COBALT_BLUE.webp"
+    ],
+    "card_image": "uploads/surfaces/S00033/PRISM_DARK_COBALT_BLUE.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Dark Cobalt Blue",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "blue",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00034",
+    "images": [
+      "uploads/surfaces/S00034/GOLDEN_BROWN.webp",
+      "uploads/surfaces/S00034/PRISM_GLODEN_BROWN.webp"
+    ],
+    "card_image": "uploads/surfaces/S00034/PRISM_GLODEN_BROWN.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Golden Brown",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "brown",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00035",
+    "images": [
+      "uploads/surfaces/S00035/OCEAN_BLUE.webp",
+      "uploads/surfaces/S00035/OCEAN_BLUE-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00035/OCEAN_BLUE-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Ocean Blue",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "green",
+      "blue",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00036",
+    "images": [
+      "uploads/surfaces/S00036/LIGNIN_BLACK.webp",
+      "uploads/surfaces/S00036/LIGNIN_BLACK-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00036/LIGNIN_BLACK-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Lightin Black",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "black",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00037",
+    "images": [
+      "uploads/surfaces/S00037/REED_GREEN.webp",
+      "uploads/surfaces/S00037/REED_GREEN-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00037/REED_GREEN-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Reed Green",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "green",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00038",
+    "images": [
+      "uploads/surfaces/S00038/RHINO_GREY.webp",
+      "uploads/surfaces/S00038/RHINO_GREY-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00038/RHINO_GREY-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Rhino Grey",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00039",
+    "images": [
+      "uploads/surfaces/S00039/SILVER_SPRING.webp",
+      "uploads/surfaces/S00039/SILVER_SPRING-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00039/SILVER_SPRING-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Silver Spring",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "prism"
+    ],
+    "demo": false
+  },
+  {
+    "code": "S00040",
+    "images": [
+      "uploads/surfaces/S00040/STEEL_GREY.webp",
+      "uploads/surfaces/S00040/STEEL_GREY-2.webp"
+    ],
+    "card_image": "uploads/surfaces/S00040/STEEL_GREY-2.webp",
+    "department": "tiles",
+    "brand": "Other / not specified",
+    "brand_removed": false,
+    "category": "Tile design",
+    "title": "Steel Grey",
+    "description": "Explore our exquisite Prism Series 600x1200mm with a 5mm thickness. Elevate your space with the perfect blend of style and durability. These tiles boast a contemporary design, offering a seamless and sophisticated look to any room.",
+    "details": "",
+    "tags": [
+      "living-room-tiles",
+      "bathroom-tiles",
+      "bedroom-tiles",
+      "kitchen-tiles",
+      "outdoor-tiles",
+      "balcony-tiles",
+      "elevation-tiles",
+      "commercial-tiles",
+      "countertop-tiles",
+      "rustic-matt",
+      "grey",
+      "600-1200-mm",
+      "prism"
     ],
     "demo": false
   }
