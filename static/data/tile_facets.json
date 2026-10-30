@@ -45,10 +45,12 @@
     "added": [],
     "removed": [],
     "card_images": {
-      "bathroom-tiles": "uploads/surfaces/categories/location/bathroom-tiles-card-20261028180318401828.webp"
+      "bathroom-tiles": "uploads/surfaces/categories/location/bathroom-tiles-card-20261028180318401828.webp",
+      "living-room-tiles": "uploads/surfaces/categories/location/living-room-tiles-card-20261030123529777781.webp"
     },
     "hero_images": {
-      "bathroom-tiles": "uploads/surfaces/categories/location/bathroom-tiles-hero-20261028180318608570.webp"
+      "bathroom-tiles": "uploads/surfaces/categories/location/bathroom-tiles-hero-20261028180318608570.webp",
+      "living-room-tiles": "uploads/surfaces/categories/location/living-room-tiles-hero-20261030123531291162.webp"
     }
   }
 }
