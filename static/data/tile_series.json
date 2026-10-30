@@ -103,5 +103,25 @@
     "hero_image": "uploads/surfaces/series/tavertino-series/hero-20261028195357535763.webp",
     "cover_image": "",
     "active": true
+  },
+  {
+    "slug": "alexa-series",
+    "name": "Alexa Series",
+    "description": "",
+    "image": "",
+    "card_image": "uploads/surfaces/series/alexa-series/card-20261030121042851720.webp",
+    "hero_image": "uploads/surfaces/series/alexa-series/hero-20261030121043503787.webp",
+    "cover_image": "",
+    "active": true
+  },
+  {
+    "slug": "conrete-series",
+    "name": "Conrete Series",
+    "description": "",
+    "image": "",
+    "card_image": "uploads/surfaces/series/conrete-series/card-20261030122450442019.webp",
+    "hero_image": "uploads/surfaces/series/conrete-series/hero-20261030122451071509.webp",
+    "cover_image": "",
+    "active": true
   }
 ]

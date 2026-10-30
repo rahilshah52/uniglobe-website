@@ -33,6 +33,10 @@
       {
         "name": "Blue",
         "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+      },
+      {
+        "name": "Red",
+        "image": "images/surfaces/catalog/double-charge-800-room.jpg"
       }
     ],
     "removed": []
