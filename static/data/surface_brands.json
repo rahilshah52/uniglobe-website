@@ -2,9 +2,10 @@
   {
     "slug": "simpolo",
     "name": "Simpolo",
-    "department": "tiles",
+    "department": "both",
     "description": "Explore tiles by location, look and feel, colour, or collection.",
-    "image": "images/surfaces/catalog/double-charge-800-room.jpg"
+    "image": "images/surfaces/catalog/double-charge-800-room.jpg",
+    "active": true
   },
   {
     "slug": "jaquar",
