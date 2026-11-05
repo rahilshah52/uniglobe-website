@@ -66,11 +66,6 @@
             </button>
             {% endfor %}
           </div>
-          <dl class="tp-box" id="tpBox"{% if not first_size.pieces %} hidden{% endif %}>
-            <div><dt>Tiles per box</dt><dd data-box="pieces">{{ first_size.pieces }}</dd></div>
-            <div><dt>Covers per box</dt><dd data-box="sqft">{{ first_size.box_sqft }} sq ft</dd></div>
-            <div><dt>In sq m</dt><dd data-box="sqm">{{ first_size.box_sqm }} m²</dd></div>
-          </dl>
         </div>
         {% elif product.details %}
         <div class="tp-block"><p class="tp-label">Size · finish · colour</p><p class="tp-plain">{{ product.details }}</p></div>
@@ -190,7 +185,8 @@
 <script>
 (function () {
   var views = {{ views|tojson }};
-  var sizes = {{ size_options|tojson }};
+  {% set public_sizes = [] %}{% for s in size_options %}{% set _ = public_sizes.append({'label': s.label, 'short': s.short, 'thickness': s.thickness}) %}{% endfor %}
+  var sizes = {{ public_sizes|tojson }};
   var productName = {{ product.name|tojson }}, seriesName = {{ (product.series_name or '')|tojson }};
   var contactUrl = {{ url_for('tiles_contact')|tojson }};
   var photo = 0, sizeIndex = 0;
