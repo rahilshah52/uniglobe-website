@@ -1669,7 +1669,7 @@ def sitemap_xml():
             if name.endswith('.html'):
                 add('blog_post', '0.5', slug=name[:-5])
     try:
-        with open(DATA_FILE, 'r') as file:
+        with open(DATA_FILE, 'r', encoding="utf-8") as file:
             furniture = json.load(file)
         for category, section in furniture.items():
             if category in categories:
@@ -2234,7 +2234,7 @@ FURNITURE_PAGE_SIZE = 24
 def load_furniture_data():
     def read():
         try:
-            with open(DATA_FILE, 'r') as file:
+            with open(DATA_FILE, 'r', encoding="utf-8") as file:
                 data = json.load(file)
         except (OSError, ValueError):
             return {}
@@ -2487,7 +2487,7 @@ def upload():
     # LOAD DATA
     # ---------------------------
     if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "r") as f:
+        with open(DATA_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
     else:
         data = {}
@@ -2649,7 +2649,7 @@ def upload():
             })
             flash(f"Product Uploaded Successfully — Code: {code}", "success")
 
-        with open(DATA_FILE, "w") as f:
+        with open(DATA_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)
 
         return redirect(url_for("upload"))
@@ -2675,7 +2675,7 @@ def delete_product(category, code):
     if not os.path.exists(DATA_FILE):
         return redirect(url_for("upload"))
 
-    with open(DATA_FILE, "r") as f:
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     category = category.lower()
@@ -2689,7 +2689,7 @@ def delete_product(category, code):
         if not data[category]["items"]:
             del data[category]
 
-    with open(DATA_FILE, "w") as f:
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
     # Delete folder
@@ -2708,7 +2708,7 @@ def reorder_images(category, code):
 
     new_order = request.json.get("images")
 
-    with open(DATA_FILE, "r") as f:
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     if category in data:
@@ -2717,7 +2717,7 @@ def reorder_images(category, code):
                 item["images"] = new_order
                 break
 
-    with open(DATA_FILE, "w") as f:
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
     return {"status": "success"}
@@ -2734,7 +2734,7 @@ def delete_image(category, code):
     if not image_path:
         return redirect(url_for("upload"))
 
-    with open(DATA_FILE, "r") as f:
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     if category in data:
@@ -2754,7 +2754,7 @@ def delete_image(category, code):
 
                 break
 
-    with open(DATA_FILE, "w") as f:
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4)
 
     flash("Image Deleted Successfully", "success")
