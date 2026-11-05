@@ -1,194 +1,148 @@
 {% extends "base.html" %}
-{% block title %}{{ product.title }}{% if product.get("brand") %} by {{ product.brand }}{% endif %} | Furniture from Foshan | Uniglobe Lifestyles{% endblock %}
-{% block meta_description %}{{ (product.get("description") or (product.title ~ " – furniture sourced from Foshan, China by Uniglobe Lifestyles, with customisation and delivery to India and worldwide."))|striptags|truncate(158) }}{% endblock %}
-{% block content %}
-
-<div class="container py-5">
-
-    <div class="mb-4">
-  <a href="{{ url_for('products') }}" class="text-decoration-none text-dark">
-    ← Back to Products
-  </a>
-</div>
-  <div class="row g-5">
-
-    <!-- IMAGE SECTION -->
-    <div class="col-lg-6">
-
-      <div class="main-image-wrapper">
-        {% if product.images %}
-        <img id="mainImage"
-        src="{{ url_for('static', filename=product.images[0]) }}"
-        class="img-fluid rounded shadow-sm main-image">
-        {% endif %}
-      </div>
-
-      <!-- THUMBNAILS -->
-      <div class="d-flex gap-2 mt-3 flex-wrap">
-        {% for img in product.images %}
-          <img src="{{ url_for('static', filename=product.image_thumbnails[loop.index0] if product.image_thumbnails else img) }}"
-               class="thumb-img"
-               data-full-image="{{ url_for('static', filename=img) }}"
-               loading="lazy"
-               decoding="async"
-               onclick="changeImage(this)">
-        {% endfor %}
-      </div>
-
-    </div>
-
-    <!-- PRODUCT INFO -->
-    <div class="col-lg-6">
-
-      <h1 class="fw-semibold mb-3 h2">{{ product.title }}</h1>
-      <button class="wishlist-toggle furniture-detail-wishlist" type="button" data-wishlist-toggle data-wishlist-kind="furniture" data-wishlist-id="{{ request.view_args.category }}:{{ product.code }}" data-wishlist-name="{{ product.title }}" data-wishlist-image="{{ url_for('static', filename=product.images[0]) if product.images else '' }}" data-wishlist-url="{{ request.path }}" data-wishlist-subtitle="{{ product.get('brand', 'Furniture') }}" aria-label="Save {{ product.title }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save to wishlist</span></button>
-
-      <p class="text-muted mb-4">
-        {{ product.description }}
-      </p>
-
-      {% if product.specs %}
-      <div class="mb-4">
-        <h6 class="fw-semibold mb-3">Specifications</h6>
-        <ul class="list-unstyled">
-          {% for key, value in product.specs.items() %}
-            <li class="mb-2">
-              <strong>{{ key }}:</strong> {{ value }}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %}
-
-      <a href="/contact" class="btn btn-dark px-4 py-2 rounded-pill">
-        Inquire Now
-      </a>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- FULLSCREEN MODAL -->
-<div id="imageModal" class="image-modal">
-  <span class="close-btn" onclick="closeModal()">&times;</span>
-  <img id="modalImage">
-</div>
-
-<style>
-
-.main-image-wrapper {
-  height: 500px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f8f8f8;
-  border-radius: 12px;
-  overflow: hidden;
-}
-.furniture-detail-wishlist { margin:-4px 0 20px; }
-
-.main-image {
-  max-height: 100%;
-  max-width: 100%;
-  object-fit: contain;
-  cursor: zoom-in;
-  transition: 0.3s ease;
-}
-
-.main-image:hover {
-  transform: scale(1.02);
-}
-
-.main-image:hover {
-  transform: scale(1.02);
-}
-
-.thumb-img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 1px solid #eee;
-  transition: 0.2s;
-}
-
-.thumb-img:hover {
-  border-color: black;
-}
-
-.image-modal {
-  display: none;
-  position: fixed;
-  z-index: 9999;
-  padding-top: 60px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.9);
-}
-
-.image-modal img {
-  display: block;
-  margin: auto;
-  max-width: 90%;
-  max-height: 85%;
-}
-
-.close-btn {
-  position: absolute;
-  top: 20px;
-  right: 35px;
-  font-size: 40px;
-  color: white;
-  cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  .thumb-img {
-    width: 60px;
-    height: 60px;
-  }
-   .main-image-wrapper {
-    height: 350px;
-  }
-}
-
-</style>
-
-<script>
-
-function changeImage(element) {
-  document.getElementById("mainImage").src = element.dataset.fullImage || element.src;
-
-  document.querySelectorAll(".thumb-img").forEach(img => {
-    img.style.borderColor = "#eee";
-  });
-
-  element.style.borderColor = "black";
-}
-
-const mainImg = document.getElementById("mainImage");
-
-if (mainImg) {
-  mainImg.onclick = function() {
-    document.getElementById("imageModal").style.display = "block";
-    document.getElementById("modalImage").src = this.src;
-  };
-}
-
-function closeModal() {
-  document.getElementById("imageModal").style.display = "none";
-}
-
-document.getElementById("imageModal").onclick = function(e) {
-  if (e.target.id === "imageModal") {
-    closeModal();
-  }
-};
+{% block title %}{{ product.title }}{% if product.get('model') %} ({{ product.model }}){% endif %} | {{ room_name|striptags }} Furniture from Foshan | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{{ (product.get('description') or (product.title ~ ', sourced from Foshan, China by Uniglobe Lifestyles.'))|striptags|truncate(120) }} Customisable, delivered to India and worldwide.{% endblock %}
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": product.title,
+  "description": (product.get('description') or product.title)|striptags,
+  "image": (views[:6]|map(attribute='src')|map('absolute_url')|list),
+  "category": product.get('type') or room_name|striptags,
+  "sku": product.get('model') or product.code,
+  "brand": {"@type": "Brand", "name": "Uniglobe Lifestyles"},
+  "url": request.base_url
+}|tojson }}
 </script>
-
+{% endblock %}
+{% block content %}
+<section class="fp-page">
+  <div class="container">
+    <nav class="fp-crumbs" aria-label="Breadcrumb"><a href="{{ url_for('products') }}">Furniture</a><span>/</span><a href="{{ url_for('products', category=category) }}">{{ room_name|safe }}</a>{% if product.get('type') %}<span>/</span><a href="{{ url_for('products', category=category, type=product.type) }}">{{ product.type }}</a>{% endif %}</nav>
+    <div class="fp-grid">
+      <section class="fp-gallery" aria-label="{{ product.title }} photos">
+        {% if has_room_and_cutout %}
+        <div class="fp-views" role="tablist" aria-label="Choose a view">
+          <button type="button" class="is-on" data-view-kind="room">In a room</button>
+          <button type="button" data-view-kind="cutout">Product shot</button>
+        </div>
+        {% endif %}
+        {% if views %}
+        <div class="fp-stage fp-stage--{{ views[0].kind }}" id="fpStage">
+          <img id="fpMain" src="{{ views[0].src }}" alt="{{ product.title }}" fetchpriority="high">
+          <button class="fp-nav fp-prev" type="button" aria-label="Previous photo">‹</button>
+          <button class="fp-nav fp-next" type="button" aria-label="Next photo">›</button>
+          <span class="fp-counter"></span>
+        </div>
+        <div class="fp-thumbs" id="fpThumbs"></div>
+        {% endif %}
+      </section>
+      <section class="fp-info">
+        <p class="fp-kicker">{{ product.get('type') or room_name|safe }}</p>
+        <h1>{{ product.title }}</h1>
+        {% if product.get('model') %}<p class="fp-model">Model {{ product.model }}</p>{% endif %}
+        <div class="fp-actions">
+          <a class="fp-whatsapp" href="https://wa.me/919821524678?text={{ ('Hi, I would like a quote for ' ~ product.title ~ (' (model ' ~ product.model ~ ')' if product.get('model') else '') ~ ' – ' ~ request.base_url)|urlencode }}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Get a quote on WhatsApp</a>
+          <a class="fp-enquire" href="{{ url_for('contact') }}?interest={{ (product.title ~ (' · ' ~ product.model if product.get('model') else ''))|urlencode }}">Send an enquiry</a>
+          <button class="wishlist-toggle fp-save" type="button" data-wishlist-toggle data-wishlist-kind="furniture" data-wishlist-id="{{ category }}:{{ product.code }}" data-wishlist-name="{{ product.title }}" data-wishlist-image="{{ views[0].src if views else '' }}" data-wishlist-url="{{ request.path }}" data-wishlist-subtitle="{{ product.get('type', '') }}{% if product.get('model') %} · {{ product.model }}{% endif %}" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Add to sourcing list</span></button>
+        </div>
+        <ul class="fp-promises">
+          <li>Sizes, fabrics, leathers and finishes can be customised</li>
+          <li>Sourced from verified factories in Foshan, China</li>
+          <li>Consolidated shipping to India and worldwide</li>
+        </ul>
+        {% if product.specs %}
+        <dl class="fp-specs">
+          {% for key, value in product.specs.items() if value %}<div><dt>{{ key }}</dt><dd>{{ value }}</dd></div>{% endfor %}
+        </dl>
+        {% endif %}
+        {% if product.description %}<div class="fp-about"><p class="fp-label">About this piece</p><p>{{ product.description }}</p></div>{% endif %}
+      </section>
+    </div>
+    {% if related_cards %}
+    <section class="fp-related">
+      <div class="fp-related-head"><div><p class="fp-kicker">YOU MAY ALSO LIKE</p><h2>More {{ (product.get('type') or 'pieces')|lower }}{{ 's' if product.get('type') and not product.type.endswith('s') else '' }}</h2></div><a href="{{ url_for('products', category=category, type=product.get('type') or None) }}">See all →</a></div>
+      <div class="fcards">{% for card in related_cards %}{% include '_furniture_card.html' %}{% endfor %}</div>
+    </section>
+    {% endif %}
+  </div>
+</section>
+{% include '_furniture_cards_assets.html' %}
+<style>
+  .fp-page { padding:26px 0 90px; }
+  .fp-crumbs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; color:#a29b93; font-size:.8rem; }
+  .fp-crumbs a { color:#6c655e; text-decoration:none; } .fp-crumbs a:hover { color:#2f2b27; }
+  .fp-grid { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr); align-items:start; gap:clamp(28px,5vw,68px); }
+  .fp-grid > * { min-width:0; }
+  .fp-gallery { position:sticky; top:20px; }
+  .fp-views { display:inline-flex; gap:3px; margin-bottom:10px; padding:3px; border:1px solid #e2ddd6; }
+  .fp-views button { min-height:36px; padding:0 14px; border:0; color:#5d564f; background:none; font:inherit; font-size:.8rem; }
+  .fp-views button.is-on { color:#fff; background:#37322d; }
+  .fp-stage { position:relative; aspect-ratio:4 / 3; overflow:hidden; background:#f1eee9; }
+  .fp-stage img { display:block; width:100%; height:100%; object-fit:cover; transition:opacity .18s ease; }
+  .fp-stage--cutout { background:#faf9f7; } .fp-stage--cutout img { padding:5%; object-fit:contain; }
+  .fp-stage img.is-fading { opacity:0; }
+  .fp-nav { position:absolute; top:50%; width:44px; height:44px; margin-top:-22px; border:0; border-radius:50%; color:#2f2b27; background:rgba(255,255,255,.92); box-shadow:0 3px 12px rgba(0,0,0,.14); font-size:1.5rem; line-height:1; opacity:0; transition:opacity .2s ease; }
+  .fp-stage:hover .fp-nav, .fp-nav:focus-visible { opacity:1; }
+  .fp-prev { left:14px; } .fp-next { right:14px; }
+  .fp-counter { position:absolute; right:12px; bottom:10px; padding:3px 8px; color:#fff; background:rgba(30,27,24,.55); font-size:.72rem; }
+  .fp-counter:empty { display:none; }
+  .fp-thumbs { display:flex; gap:8px; margin-top:10px; overflow-x:auto; padding-bottom:4px; }
+  .fp-thumb { flex:0 0 86px; aspect-ratio:4 / 3; padding:0; overflow:hidden; border:1px solid #e6e1da; background:#f1eee9; }
+  .fp-thumb img { display:block; width:100%; height:100%; object-fit:cover; }
+  .fp-thumb--cutout { padding:4px; background:#faf9f7; } .fp-thumb--cutout img { object-fit:contain; }
+  .fp-thumb.is-on { border-color:#37322d; box-shadow:inset 0 0 0 1px #37322d; }
+  .fp-kicker { margin:0 0 10px; color:#8b847c; font-size:.72rem; font-weight:600; letter-spacing:.13em; text-transform:uppercase; }
+  .fp-info h1 { margin:0 0 6px; color:#2f2b27; font-size:clamp(1.9rem,3.4vw,3rem); font-weight:400; letter-spacing:-.045em; line-height:1.08; }
+  .fp-model { margin:0 0 20px; color:#6c655e; font-size:.92rem; }
+  .fp-actions { display:flex; flex-wrap:wrap; gap:10px; }
+  .fp-whatsapp, .fp-enquire { display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:48px; padding:0 18px; font-size:.88rem; text-decoration:none; }
+  .fp-whatsapp { color:#fff; background:#1f8f4e; } .fp-whatsapp:hover { color:#fff; background:#187440; }
+  .fp-whatsapp i { font-size:1.15rem; }
+  .fp-enquire { color:#fff; background:#37322d; } .fp-enquire:hover { color:#fff; background:#221e1b; }
+  .fp-save { min-height:48px; }
+  .fp-promises { margin:18px 0 20px; padding:14px 16px; list-style:none; border:1px solid #ebe7e1; background:#faf9f7; }
+  .fp-promises li { position:relative; padding:4px 0 4px 20px; color:#5d564f; font-size:.86rem; }
+  .fp-promises li::before { position:absolute; left:0; top:4px; content:'✓'; color:#84735f; }
+  .fp-specs { display:grid; margin:0 0 20px; border-top:1px solid #ebe7e1; }
+  .fp-specs > div { display:grid; grid-template-columns:minmax(110px,.38fr) 1fr; gap:14px; padding:10px 0; border-bottom:1px solid #f0ece6; }
+  .fp-specs dt { color:#7a736c; font-size:.82rem; font-weight:400; }
+  .fp-specs dd { margin:0; color:#2f2b27; font-size:.88rem; line-height:1.55; white-space:pre-line; }
+  .fp-label { margin:0 0 8px; color:#7a736c; font-size:.72rem; font-weight:600; letter-spacing:.11em; text-transform:uppercase; }
+  .fp-about p:not(.fp-label) { margin:0; color:#5d564f; font-size:.92rem; line-height:1.8; }
+  .fp-related { margin-top:64px; }
+  .fp-related-head { display:flex; justify-content:space-between; align-items:end; gap:16px; margin-bottom:18px; }
+  .fp-related-head h2 { margin:0; color:#2f2b27; font-size:clamp(1.5rem,3vw,2.3rem); font-weight:400; letter-spacing:-.04em; }
+  .fp-related-head a { color:#37322d; font-size:.86rem; text-decoration:none; border-bottom:1px solid #c9c2b9; white-space:nowrap; }
+  @media(max-width:991.98px) { .fp-grid { grid-template-columns:minmax(0,1fr); gap:20px; } .fp-gallery { position:static; } }
+  @media(max-width:767.98px) { .fp-page { padding:14px 0 60px; } .fp-stage { margin:0 -12px; } .fp-nav { opacity:1; width:38px; height:38px; margin-top:-19px; } .fp-thumb { flex-basis:72px; } .fp-actions > a { flex:1 1 100%; } .fp-save { flex:1 1 100%; } }
+</style>
+<script>
+(function () {
+  var views = {{ views|tojson }};
+  if (!views.length) return;
+  var stage = document.getElementById('fpStage'), main = document.getElementById('fpMain'), thumbs = document.getElementById('fpThumbs');
+  var counter = stage.querySelector('.fp-counter'), photo = 0;
+  function show(i) {
+    photo = (i + views.length) % views.length; var v = views[photo];
+    main.classList.add('is-fading');
+    var next = new Image(); next.onload = next.onerror = function () { main.src = v.src; stage.className = 'fp-stage fp-stage--' + v.kind; main.classList.remove('is-fading'); }; next.src = v.src;
+    thumbs.querySelectorAll('.fp-thumb').forEach(function (t, k) { t.classList.toggle('is-on', k === photo); });
+    counter.textContent = views.length > 1 ? (photo + 1) + ' / ' + views.length : '';
+    document.querySelectorAll('[data-view-kind]').forEach(function (b) { b.classList.toggle('is-on', b.dataset.viewKind === v.kind); });
+  }
+  views.forEach(function (v, k) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'fp-thumb fp-thumb--' + v.kind; b.setAttribute('aria-label', 'Photo ' + (k + 1));
+    b.innerHTML = '<img loading="lazy" decoding="async" alt="">'; b.firstChild.src = v.thumb; b.addEventListener('click', function () { show(k); }); thumbs.appendChild(b);
+  });
+  thumbs.hidden = views.length < 2; stage.querySelectorAll('.fp-nav').forEach(function (b) { b.hidden = views.length < 2; });
+  stage.querySelector('.fp-prev').addEventListener('click', function () { show(photo - 1); });
+  stage.querySelector('.fp-next').addEventListener('click', function () { show(photo + 1); });
+  document.querySelectorAll('[data-view-kind]').forEach(function (b) { b.addEventListener('click', function () { var k = views.findIndex(function (v) { return v.kind === b.dataset.viewKind; }); if (k >= 0) show(k); }); });
+  var sx = null; stage.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', function (e) { if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) show(photo + (dx < 0 ? 1 : -1)); sx = null; });
+  show(0);
+})();
+</script>
 {% endblock %}

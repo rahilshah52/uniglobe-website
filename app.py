@@ -7,6 +7,8 @@ from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import os
 import json
+import collections
+import itertools
 import re
 from werkzeug.utils import secure_filename
 from PIL import Image, ImageOps
@@ -2218,62 +2220,115 @@ def about():
 
 import os
 
+FURNITURE_ROOMS = [
+    {'key': 'living', 'name': 'Living room', 'blurb': 'Sofas, lounge chairs, coffee and side tables.', 'image': 'images/living/living_room 19.webp'},
+    {'key': 'dining', 'name': 'Dining', 'blurb': 'Dining tables, chairs, bar stools and sideboards.', 'image': 'images/dining/tables_catalog_18_1.webp'},
+    {'key': 'bedroom', 'name': 'Bedroom', 'blurb': 'Beds, bedside tables and dressing tables.', 'image': 'images/bedroom/bed 15.webp'},
+    {'key': 'modular', 'name': 'Cabinets &amp; storage', 'blurb': 'Sideboards, TV units, cabinets and shelving.', 'image': 'images/modular/plywood_cabinet 17.webp'},
+    {'key': 'lighting', 'name': 'Lighting', 'blurb': 'Chandeliers, pendants and wall lights.', 'image': 'images/lighting/lighting 1.webp'},
+    {'key': 'premium', 'name': 'Signature collection', 'blurb': 'Statement pieces and complete luxury looks.', 'image': 'images/premium/baxter_2_128_5.webp'},
+]
+FURNITURE_PAGE_SIZE = 24
+
+
+def load_furniture_data():
+    def read():
+        try:
+            with open(DATA_FILE, 'r') as file:
+                data = json.load(file)
+        except (OSError, ValueError):
+            return {}
+        return {key: value for key, value in data.items() if key in categories}
+    return _request_memo('furniture_products', DATA_FILE, read) if os.path.exists(DATA_FILE) else {}
+
+
+def furniture_card(category, item):
+    images = item.get('images', [])
+    cover = item.get('card_image') if item.get('card_image') in images else (images[0] if images else '')
+    second = next((image for image in images if image != cover), '')
+    cutouts = set(item.get('cutouts', []))
+    return {
+        'category': category, 'code': item.get('code', ''), 'title': item.get('title', 'Furniture piece'),
+        'type': item.get('type', ''), 'model': item.get('model', ''),
+        'image': cover, 'thumbnail': card_image_path(cover), 'hover': card_image_path(second) if second else '',
+        'cutout': cover in cutouts, 'hover_cutout': second in cutouts,
+        'size': (item.get('specs') or {}).get('Size', ''),
+    }
+
+
+def furniture_matches(item, words):
+    if not words:
+        return True
+    haystack = ' '.join(str(value) for value in (item.get('title', ''), item.get('code', ''), item.get('model', ''), item.get('type', ''),
+                                                  item.get('description', ''), ' '.join(str(v) for v in (item.get('specs') or {}).values()))).lower()
+    return all(word in haystack for word in words)
+
+
 @app.route('/products')
 def products():
-    if not os.path.exists(DATA_FILE):
-        return render_template("products.html", product_data={}, product_categories={}, product_brands=[], selected_categories=[], selected_brands=[])
+    data = load_furniture_data()
+    selected_categories = [value for value in request.args.getlist('category') if value in data]
+    selected_types = [value for value in request.args.getlist('type') if value.strip()]
+    query = ' '.join(request.args.get('q', '').split())[:80]
+    words = [word for word in re.split(r'[^a-z0-9.]+', query.lower()) if word]
+    rooms = []
+    for room in FURNITURE_ROOMS:
+        section = data.get(room['key'], {})
+        count = len(section.get('items', []))
+        if count:
+            rooms.append({**room, 'count': count, 'thumbnail': card_image_path(room['image'])})
+    order = [room['key'] for room in FURNITURE_ROOMS if room['key'] in data] + [key for key in data if key not in {r['key'] for r in FURNITURE_ROOMS}]
+    groups = [[(category, item) for item in data[category].get('items', []) if item.get('images')]
+              for category in order if not selected_categories or category in selected_categories]
+    if len(groups) > 1 and not selected_types and not words:
+        # the whole collection: mix the rooms so the first screen shows a bit of everything
+        pool = [entry for row in itertools.zip_longest(*groups) for entry in row if entry]
+    else:
+        pool = [entry for group in groups for entry in group]
+    types = collections.Counter(item.get('type') for _, item in pool if item.get('type'))
+    type_options = sorted(types.items(), key=lambda pair: (-pair[1], pair[0]))
+    shown = [(category, item) for category, item in pool
+             if (not selected_types or item.get('type') in selected_types) and furniture_matches(item, words)]
+    try:
+        cards_from = max(int(request.args.get('cards_from', 0)), 0)
+    except ValueError:
+        cards_from = 0
+    page = shown[cards_from:cards_from + FURNITURE_PAGE_SIZE]
+    cards = [furniture_card(category, item) for category, item in page]
+    if cards_from:
+        return render_template('_furniture_cards_page.html', cards=cards)
+    room_lookup = {room['key']: room for room in FURNITURE_ROOMS}
+    heading = room_lookup[selected_categories[0]]['name'] if len(selected_categories) == 1 else 'The collection'
+    return render_template('products.html', rooms=rooms, cards=cards, total=len(shown), type_options=type_options,
+                           selected_categories=selected_categories, selected_types=selected_types, query=query,
+                           heading=heading, room_lookup=room_lookup, product_categories=data)
 
-    with open(DATA_FILE, "r") as f:
-        all_product_data = json.load(f)
-
-    # The general products file can also contain legacy surface records. Keep
-    # the furniture storefront scoped to the furniture categories above.
-    furniture_product_data = {key: value for key, value in all_product_data.items() if key in categories}
-    selected_categories = [value for value in request.args.getlist('category') if value in furniture_product_data]
-    selected_brands = list(dict.fromkeys(value.strip() for value in request.args.getlist('brand') if value.strip()))
-    product_brands = sorted({str(item.get('brand', '')).strip() for section in furniture_product_data.values()
-                              for item in section.get('items', []) if str(item.get('brand', '')).strip()}, key=str.lower)
-    product_data = {}
-    selected_brand_names = {value.lower() for value in selected_brands}
-    for category, section in furniture_product_data.items():
-        if selected_categories and category not in selected_categories:
-            continue
-        matching_items = [item for item in section.get('items', [])
-                          if not selected_brands or str(item.get('brand', '')).strip().lower() in selected_brand_names]
-        if matching_items:
-            product_data[category] = {**section, 'items': matching_items}
-
-    for section in product_data.values():
-        for item in section.get('items', []):
-            item['thumbnail'] = card_image_path(item.get('images', [''])[0] if item.get('images') else '')
-
-    return render_template("products.html", product_data=product_data, product_categories=furniture_product_data,
-                           product_brands=product_brands, selected_categories=selected_categories,
-                           selected_brands=selected_brands)
 
 @app.route("/products/<category>/<code>")
 def product_detail(category, code):
-
-    if not os.path.exists(DATA_FILE):
-        return "No products found."
-
-    with open(DATA_FILE, "r") as f:
-        data = json.load(f)
-
+    data = load_furniture_data()
     category = category.lower()
+    section = data.get(category)
+    product = next((item for item in (section or {}).get('items', []) if item.get('code') == code), None)
+    if product is None:
+        return redirect(url_for('products'))
+    product = dict(product)
+    product['image_thumbnails'] = [card_image_path(image) for image in product.get('images', [])]
+    cutouts = set(product.get('cutouts', []))
+    views = [{'src': url_for('static', filename=image), 'thumb': url_for('static', filename=card_image_path(image)),
+              'kind': 'cutout' if image in cutouts else 'room'} for image in product.get('images', [])]
+    rooms = [view for view in views if view['kind'] == 'room']
+    cuts = [view for view in views if view['kind'] == 'cutout']
+    views = rooms + cuts
+    same = [item for item in section['items'] if item is not None and item.get('code') != code and item.get('images')]
+    related = [item for item in same if product.get('collection') and item.get('collection') == product.get('collection')]
+    related += [item for item in same if item not in related and product.get('type') and item.get('type') == product.get('type')]
+    related_cards = [furniture_card(category, item) for item in related[:8]]
+    room = next((room for room in FURNITURE_ROOMS if room['key'] == category), None)
+    return render_template('product_detail.html', product=product, category=category, views=views,
+                           has_room_and_cutout=bool(rooms and cuts), related_cards=related_cards,
+                           room_name=room['name'] if room else (section.get('display_name') or category.title()))
 
-    if category not in data:
-        return "Category not found."
-
-    for product in data[category]["items"]:
-        if product["code"] == code:
-            product['image_thumbnails'] = [card_image_path(image) for image in product.get('images', [])]
-            return render_template(
-                "product_detail.html",
-                product=product
-            )
-
-    return "Product not found."
 
 @app.route('/services')
 def services():
