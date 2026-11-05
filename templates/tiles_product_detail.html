@@ -66,11 +66,6 @@
             </button>
             {% endfor %}
           </div>
-          <dl class="tp-box" id="tpBox"{% if not first_size.pieces %} hidden{% endif %}>
-            <div><dt>Tiles per box</dt><dd data-box="pieces">{{ first_size.pieces }}</dd></div>
-            <div><dt>Covers per box</dt><dd data-box="sqft">{{ first_size.box_sqft }} sq ft</dd></div>
-            <div><dt>In sq m</dt><dd data-box="sqm">{{ first_size.box_sqm }} m²</dd></div>
-          </dl>
         </div>
         {% elif product.details %}
         <div class="tp-block"><p class="tp-label">Size · finish · colour</p><p class="tp-plain">{{ product.details }}</p></div>
@@ -83,24 +78,6 @@
         </div>
         <p class="tp-note">{% if demo %}This is a preview example to show how a product listing works. Replace it with your own product details and images in the tile upload manager.{% else %}Photos show the design and how it looks in a space. Our team will confirm current stock, shade and the best match for your project.{% endif %}</p>
 
-        {% if size_options %}
-        <details class="tp-calc" id="tpCalc" open>
-          <summary><span>How many boxes do I need?</span><i aria-hidden="true"></i></summary>
-          <div class="tp-calc-body">
-            <div class="tp-calc-units" role="radiogroup" aria-label="Measurement unit">
-              <label><input type="radio" name="tpUnit" value="ft" checked> Feet</label>
-              <label><input type="radio" name="tpUnit" value="m"> Metres</label>
-            </div>
-            <div class="tp-calc-fields">
-              <label>Length<input type="number" inputmode="decimal" min="0" step="0.1" id="tpLen" placeholder="e.g. 12"></label>
-              <span aria-hidden="true">×</span>
-              <label>Width<input type="number" inputmode="decimal" min="0" step="0.1" id="tpWid" placeholder="e.g. 10"></label>
-            </div>
-            <label class="tp-calc-extra"><input type="checkbox" id="tpWaste" checked> Add 10% extra for cutting and breakage</label>
-            <output class="tp-calc-out" id="tpCalcOut" aria-live="polite"><span>Enter the room size to see how many {{ 'boxes' if first_size.pieces else 'tiles' }} you need.</span></output>
-          </div>
-        </details>
-        {% endif %}
 
         {% if specs %}
         <dl class="tp-specs">
@@ -178,22 +155,6 @@
   .tp-enquire { color:#fff; background:#303634; } .tp-enquire:hover { color:#fff; background:#1f2422; }
   .tp-save { min-height:48px; }
   .tp-note { margin:12px 0 18px; color:#6f7671; font-size:.78rem; line-height:1.65; }
-  .tp-calc { margin:0 0 18px; border:1px solid #e2e3dd; background:#fafaf8; }
-  .tp-calc summary { display:flex; justify-content:space-between; align-items:center; padding:14px 16px; color:#2f3532; font-size:.92rem; font-weight:500; list-style:none; cursor:pointer; }
-  .tp-calc summary::-webkit-details-marker { display:none; }
-  .tp-calc summary i::after { content:'+'; color:#7d847f; font-size:1.2rem; font-style:normal; }
-  .tp-calc[open] summary i::after { content:'−'; }
-  .tp-calc-body { padding:0 16px 16px; }
-  .tp-calc-units { display:flex; gap:16px; margin-bottom:10px; color:#4a514c; font-size:.82rem; }
-  .tp-calc-units input, .tp-calc-extra input { accent-color:#303634; }
-  .tp-calc-fields { display:grid; grid-template-columns:1fr auto 1fr; align-items:end; gap:10px; }
-  .tp-calc-fields > span { padding-bottom:12px; color:#9aa09b; }
-  .tp-calc-fields label { display:flex; flex-direction:column; gap:5px; color:#6f7671; font-size:.74rem; }
-  .tp-calc-fields input { width:100%; min-height:44px; padding:8px 10px; border:1px solid #d8dbd5; color:#2f3532; background:#fff; font:inherit; font-size:1rem; }
-  .tp-calc-fields input:focus { outline:2px solid #303634; outline-offset:-1px; }
-  .tp-calc-extra { display:flex; align-items:center; gap:8px; margin:10px 0 12px; color:#4a514c; font-size:.8rem; }
-  .tp-calc-out { display:block; padding:12px 14px; border-left:3px solid #8d806d; background:#fff; color:#4a514c; font-size:.84rem; line-height:1.6; }
-  .tp-calc-out strong { display:block; color:#2f3532; font-size:1.25rem; font-weight:500; }
   .tp-specs { display:grid; margin:0 0 20px; border-top:1px solid #e6e7e2; }
   .tp-specs > div { display:grid; grid-template-columns:minmax(110px,.4fr) 1fr; gap:14px; padding:10px 0; border-bottom:1px solid #eeefeb; }
   .tp-specs dt { color:#6f7671; font-size:.8rem; font-weight:400; }
@@ -224,7 +185,8 @@
 <script>
 (function () {
   var views = {{ views|tojson }};
-  var sizes = {{ size_options|tojson }};
+  {% set public_sizes = [] %}{% for s in size_options %}{% set _ = public_sizes.append({'label': s.label, 'short': s.short, 'thickness': s.thickness}) %}{% endfor %}
+  var sizes = {{ public_sizes|tojson }};
   var productName = {{ product.name|tojson }}, seriesName = {{ (product.series_name or '')|tojson }};
   var contactUrl = {{ url_for('tiles_contact')|tojson }};
   var photo = 0, sizeIndex = 0;

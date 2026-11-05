@@ -1,210 +1,90 @@
 {% extends "base.html" %}
-{% block title %}Furniture Collection – Bedroom, Living, Dining &amp; Lighting | Uniglobe Lifestyles{% endblock %}
-{% block meta_description %}Browse bedroom, living, dining, modular and lighting furniture sourced from Foshan, China by Uniglobe Lifestyles, with customisation and project delivery to India and worldwide.{% endblock %}
+{% block title %}{% if selected_categories|length == 1 %}{{ heading|safe }} Furniture – Imported from Foshan, China{% else %}Furniture Collection – Sofas, Dining, Bedroom, Storage &amp; Lighting{% endif %} | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{% if selected_categories|length == 1 %}{{ total }} {{ heading|striptags|lower }} pieces sourced from Foshan, China by Uniglobe Lifestyles: {{ room_lookup[selected_categories[0]].blurb|striptags|lower }} Customisable sizes, fabrics and finishes, delivered to India and worldwide.{% else %}Browse {{ total }} furniture pieces sourced from Foshan, China: sofas, lounge chairs, dining tables and chairs, beds, cabinets, lighting and signature pieces, customised and delivered to India and worldwide.{% endif %}{% endblock %}
 {% block content %}
-
-<div class="container py-5">
-
-  {% if not product_data %}
-    <p class="text-center text-muted">{% if selected_categories or selected_brands %}No pieces match this combination yet. <a href="{{ url_for('products') }}">Clear your filters</a>{% else %}No products available.{% endif %}</p>
-  {% endif %}
-<div class="text-center mb-5">
-  <h1 class="fw-light display-5">Our Collection</h1>
-  <p class="text-muted">{% if selected_categories or selected_brands %}A considered selection, shaped around your choices.{% else %}Crafted for refined spaces{% endif %}</p>
-</div>
-
-<form class="furniture-refine mb-5" method="get" action="{{ url_for('products') }}" aria-label="Refine furniture collection">
-  <div class="furniture-refine-head"><div><span>THE COLLECTION</span><strong>Find your fit</strong></div><a href="{{ url_for('products') }}">Clear choices</a></div>
-  <div class="furniture-refine-fields">
-    <details class="furniture-facet"><summary><span>Room / category</span><b>{{ selected_categories|length if selected_categories else 'All categories' }}</b></summary><div class="furniture-facet-options">{% for category, cat_data in product_categories.items() %}<label><input type="checkbox" name="category" value="{{ category }}" {% if category in selected_categories %}checked{% endif %}><span>{{ cat_data.display_name }}</span></label>{% endfor %}</div></details>
-    <details class="furniture-facet"><summary><span>Brand</span><b>{{ selected_brands|length if selected_brands else 'Every brand' }}</b></summary><div class="furniture-facet-options">{% for brand_name in product_brands %}<label><input type="checkbox" name="brand" value="{{ brand_name }}" {% if brand_name in selected_brands %}checked{% endif %}><span>{{ brand_name }}</span></label>{% else %}<p>Add product brands in /upload to see them here.</p>{% endfor %}</div></details>
-    <button type="submit">Show pieces</button>
+<section class="fc-hero">
+  <div class="container">
+    <p class="fc-kicker">UNIGLOBE LIFESTYLES · FURNITURE</p>
+    <h1>{{ heading|safe }}</h1>
+    <p class="fc-lead">{% if selected_categories|length == 1 %}{{ room_lookup[selected_categories[0]].blurb|safe }} {% endif %}Pieces sourced from verified factories in Foshan, China. Sizes, fabrics and finishes can be customised for your project.</p>
   </div>
-  {% if selected_categories or selected_brands %}
-  <div class="furniture-active-filters"><span>Showing your selection</span>{% for category in selected_categories %}{% for key, cat_data in product_categories.items() if key == category %}<b>{{ cat_data.display_name }}</b>{% endfor %}{% endfor %}{% for brand_name in selected_brands %}<b>{{ brand_name }}</b>{% endfor %}</div>
-  {% endif %}
-</form>
+</section>
 
-  {% for category, cat_data in product_data.items() %}
-
-    <div class="category-section" data-category="{{ category }}">
-
-     <div class="category-header mb-4">
-      <h2>{{ cat_data.display_name }}</h2>
-      <div class="category-line"></div>
+<section class="fc-rooms" aria-label="Shop by room">
+  <div class="container">
+    <div class="fc-rooms-strip">
+      <a class="fc-room{% if not selected_categories %} is-on{% endif %}" href="{{ url_for('products') }}"><span class="fc-room-all">All</span><b>Everything</b><small>{{ rooms|sum(attribute='count') }} pieces</small></a>
+      {% for room in rooms %}
+      <a class="fc-room{% if room.key in selected_categories and selected_categories|length == 1 %} is-on{% endif %}" href="{{ url_for('products', category=room.key) }}">
+        <span class="fc-room-image"><img src="{{ url_for('static', filename=room.thumbnail) }}" alt="" loading="lazy" decoding="async"></span>
+        <b>{{ room.name|safe }}</b><small>{{ room.count }} pieces</small>
+      </a>
+      {% endfor %}
     </div>
+  </div>
+</section>
 
-      <div class="row g-4">
-
-        {% for item in cat_data["items"] %}
-
-        <div class="col-6 col-md-6 col-lg-3">
-            <div class="card border-0 h-100 product-card furniture-product-card">
-              <button class="wishlist-toggle wishlist-toggle--overlay" type="button" data-wishlist-toggle data-wishlist-kind="furniture" data-wishlist-id="{{ category }}:{{ item.code }}" data-wishlist-name="{{ item.title }}" data-wishlist-image="{{ url_for('static', filename=item.get('thumbnail') or item.images[0]) if item.images else '' }}" data-wishlist-url="{{ url_for('product_detail', category=category, code=item.code) }}" data-wishlist-subtitle="{{ cat_data.display_name }}{{ ' · ' ~ item.brand if item.get('brand') }}" aria-label="Save {{ item.title }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save</span></button>
-              <a href="{{ url_for('product_detail', category=category, code=item.code) }}" class="text-decoration-none text-dark">
-
-              {% if item.images %}
-             <img src="{{ url_for('static', filename=item.get('thumbnail') or item.images[0]) }}"
-              class="product-image"
-              loading="lazy"
-              decoding="async"
-              width="600"
-              height="200"
-              alt="{{ item.title }}">
-              {% else %}
-              <div class="product-image d-flex align-items-center justify-content-center text-muted">
-               No Image
-              </div>
-              {% endif %}
-            
-
-              <div class="card-body text-center py-3">
-                <h6 class="fw-medium mb-1">{{ item.title }}</h6>
-                <small class="text-muted">{{ item.brand ~ ' · ' if item.get('brand') }}{{ item.code }}</small>
-              </div>
-
-              </a>
-            </div>
-
-        </div>
-
-        {% endfor %}
-
-      </div>
-
+<section class="fc-results">
+  <div class="container">
+    <form class="fc-tools" method="get" action="{{ url_for('products') }}" role="search">
+      {% for c in selected_categories %}<input type="hidden" name="category" value="{{ c }}">{% endfor %}
+      <label class="fc-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" name="q" value="{{ query }}" placeholder="Search by name, type or model number" aria-label="Search furniture"></label>
+      {% for t in selected_types %}<input type="hidden" name="type" value="{{ t }}">{% endfor %}
+      <button type="submit">Search</button>
+    </form>
+    {% if type_options|length > 1 %}
+    <div class="fc-types" aria-label="Filter by type">
+      {% set base_args = {'category': selected_categories, 'q': query or None} %}
+      <a class="fc-type{% if not selected_types %} is-on{% endif %}" href="{{ url_for('products', category=selected_categories, q=query or None) }}">All types</a>
+      {% for name, count in type_options %}
+      <a class="fc-type{% if name in selected_types %} is-on{% endif %}" href="{{ url_for('products', category=selected_categories, type=name, q=query or None) }}">{{ name }} <b>{{ count }}</b></a>
+      {% endfor %}
     </div>
-
-  {% endfor %}
-
-</div>
-
+    {% endif %}
+    <div class="fc-head"><h2>{{ total }} {{ 'piece' if total == 1 else 'pieces' }}</h2>{% if query or selected_types %}<a href="{{ url_for('products', category=selected_categories) }}">Clear search</a>{% endif %}</div>
+    {% if cards %}
+    <div class="fcards" data-fcards data-total="{{ total }}" data-more-target="#fcardsMore">{% for card in cards %}{% include '_furniture_card.html' %}{% endfor %}</div>
+    <div class="fcards-more" id="fcardsMore" hidden><p></p><button type="button">Show more pieces</button></div>
+    {% else %}
+    <div class="fc-empty"><h3>Nothing matches that yet.</h3><p>Try fewer words, or <a href="{{ url_for('products') }}">see the whole collection</a>. Our team can also source a specific piece for you on <a href="https://wa.me/919821524678" target="_blank" rel="noopener">WhatsApp</a>.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% include '_furniture_cards_assets.html' %}
 <style>
-.product-card {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #fff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-}
-
-
-.product-image {
-  width: 100%;
-  aspect-ratio: 3 / 1;
-  object-fit: contain;
-  background: #f5f5f5;
-  display: block;
-  transition: transform 0.4s ease;
-}
-
-.hover-img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0;
-}
-
-.product-card:hover .hover-img {
-  opacity: 1;
-}
-
-.product-card:hover .primary-img {
-  opacity: 0;
-}
-
-.product-card:hover .product-image {
-  transform: scale(1.05);
-}
-
-.view-btn {
-  font-size: 12px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #000;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.product-card:hover .view-btn {
-  opacity: 1;
-}
-
-.category-section {
-  margin-bottom: 100px;
-}
-
-.category-header h2 {
-  font-weight: 500;
-  letter-spacing: 1px;
-}
-
-.category-line {
-  width: 50px;
-  height: 2px;
-  background: #000;
-  margin-top: 8px;
-}
-.card-body {
-  margin-top: auto;
-}
-
-.category-nav {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.category-btn {
-  background: none;
-  border: none;
-  font-size: 14px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 6px 12px;
-  cursor: pointer;
-  color: #777;
-  transition: all 0.3s ease;
-}
-
-.category-btn:hover {
-  color: #000;
-}
-
-.category-btn.active {
-  color: #000;
-  border-bottom: 2px solid #000;
-}
-.furniture-refine { max-width:1000px; margin-right:auto; margin-left:auto; padding:19px 20px 16px; border:1px solid #e9e7e3; background:#fff; text-align:left; }
-.furniture-refine-head { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:13px; padding-bottom:12px; border-bottom:1px solid #efeeeb; }
-.furniture-refine-head > div { display:grid; gap:3px; }
-.furniture-refine-head span { color:#96918b; font-size:.58rem; letter-spacing:.15em; }
-.furniture-refine-head strong { color:#34312e; font-size:1.03rem; font-weight:500; }
-.furniture-refine-head > a { color:#78736d; font-size:.69rem; text-underline-offset:3px; }
-.furniture-refine-fields { display:grid; grid-template-columns:1fr 1fr auto; gap:11px; align-items:end; }
-.furniture-facet { position:relative; min-width:0; }
-.furniture-facet > summary { display:flex; justify-content:space-between; align-items:center; gap:9px; min-height:44px; padding:9px 12px; border:1px solid #e4e1dc; color:#45403b; background:#fbfaf8; font-size:.74rem; list-style:none; cursor:pointer; }
-.furniture-facet > summary::-webkit-details-marker { display:none; }
-.furniture-facet > summary::after { content:'⌄'; color:#8b847c; }
-.furniture-facet > summary b { max-width:140px; overflow:hidden; color:#89837c; font-size:.65rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
-.furniture-facet-options { position:absolute; z-index:5; top:calc(100% + 5px); left:0; width:max(100%,230px); max-height:260px; overflow:auto; padding:7px; border:1px solid #e4e1dc; background:#fff; box-shadow:0 12px 28px rgba(38,33,28,.13); }
-.furniture-facet-options label { display:flex; align-items:center; gap:9px; min-height:38px; padding:7px 9px; color:#514c46; font-size:.74rem; cursor:pointer; }
-.furniture-facet-options label:hover { background:#f6f4f1; }
-.furniture-facet-options input { width:15px; height:15px; accent-color:#776857; }
-.furniture-facet-options p { margin:0; padding:8px; color:#89837c; font-size:.7rem; }
-.furniture-refine-fields > button { min-height:44px; padding:0 17px; border:1px solid #37322d; color:#fff; background:#37322d; font-size:.72rem; white-space:nowrap; }
-.furniture-active-filters { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin-top:12px; padding-top:11px; border-top:1px solid #efeeeb; }
-.furniture-active-filters > span { margin-right:3px; color:#8c867f; font-size:.65rem; }
-.furniture-active-filters b { padding:5px 9px; border:1px solid #e6e2dc; color:#514b44; background:#f8f7f4; font-size:.65rem; font-weight:500; }
-@media(max-width:575.98px) { .furniture-refine { padding:15px 13px 13px; } .furniture-refine-fields { grid-template-columns:1fr 1fr; gap:8px; } .furniture-refine-fields > button { grid-column:1/-1; width:100%; } .furniture-facet-options { width:max(100%,205px); } .furniture-facet:nth-child(even) .furniture-facet-options { right:0; left:auto; } }
+  .fc-hero { padding:clamp(40px,6vw,72px) 0 26px; background:#faf9f7; }
+  .fc-kicker { margin:0 0 12px; color:#8b847c; font-size:.72rem; font-weight:600; letter-spacing:.16em; }
+  .fc-hero h1 { margin:0 0 12px; color:#2f2b27; font-size:clamp(2.3rem,5vw,4.2rem); font-weight:400; letter-spacing:-.05em; line-height:1.04; }
+  .fc-lead { max-width:640px; margin:0; color:#6c655e; font-size:.98rem; line-height:1.75; }
+  .fc-rooms { padding:0 0 10px; background:#faf9f7; }
+  .fc-rooms-strip { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(150px,1fr); gap:12px; overflow-x:auto; padding:18px 0 14px; scrollbar-width:thin; }
+  .fc-room { display:flex; flex-direction:column; color:inherit; text-decoration:none; }
+  .fc-room-image, .fc-room-all { display:block; aspect-ratio:4 / 3; overflow:hidden; border:2px solid transparent; background:#ebe6df; }
+  .fc-room-all { display:grid; place-items:center; color:#5d564f; font-size:1.5rem; font-weight:300; }
+  .fc-room-image img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
+  .fc-room:hover .fc-room-image img { transform:scale(1.05); }
+  .fc-room b { margin-top:8px; color:#37322d; font-size:.9rem; font-weight:500; }
+  .fc-room small { color:#8b847c; font-size:.74rem; }
+  .fc-room.is-on .fc-room-image, .fc-room.is-on .fc-room-all { border-color:#84735f; }
+  .fc-results { padding:28px 0 90px; }
+  .fc-tools { display:flex; max-width:720px; margin-bottom:16px; border:1px solid #d9d4cd; background:#fff; }
+  .fc-tools:focus-within { border-color:#37322d; }
+  .fc-search { display:flex; flex:1; align-items:center; gap:10px; padding:0 14px; }
+  .fc-search i { color:#8b847c; }
+  .fc-search input { flex:1; min-width:0; min-height:50px; border:0; outline:none; font:inherit; font-size:.95rem; background:none; }
+  .fc-tools button { padding:0 22px; border:0; color:#fff; background:#37322d; font:inherit; font-size:.86rem; }
+  .fc-types { display:flex; gap:7px; overflow-x:auto; padding-bottom:6px; margin-bottom:20px; scrollbar-width:thin; }
+  .fc-type { flex:0 0 auto; padding:8px 12px; border:1px solid #e2ddd6; color:#514b44; background:#fff; font-size:.8rem; text-decoration:none; white-space:nowrap; }
+  .fc-type b { margin-left:4px; color:#9a938b; font-weight:400; }
+  .fc-type:hover { border-color:#84735f; }
+  .fc-type.is-on { border-color:#37322d; color:#fff; background:#37322d; }
+  .fc-type.is-on b { color:#d6cfc6; }
+  .fc-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px; }
+  .fc-head h2 { margin:0; color:#37322d; font-size:1.5rem; font-weight:400; letter-spacing:-.03em; }
+  .fc-head a { color:#6c655e; font-size:.84rem; }
+  .fc-empty { padding:34px; border:1px solid #ebe7e1; background:#fff; }
+  .fc-empty h3 { color:#37322d; font-weight:400; }
+  .fc-empty p { margin:0; color:#6c655e; line-height:1.7; }
+  @media(max-width:767.98px) { .fc-rooms-strip { grid-auto-columns:42%; } .fc-search input { min-height:46px; font-size:.9rem; } .fc-tools button { padding:0 14px; } }
 </style>
-
 {% endblock %}

@@ -1,8 +1,8 @@
-name: Deploy website to cPanel
+name: Deploy website to cPanel (FTP)
 
-# Sends CODE changes (app.py, templates, CSS, design images) to the live server.
-# CONTENT (static/data and static/uploads: tiles, series, brands, photos) is never sent,
-# so a deploy can never overwrite or delete products added on the live site.
+# Sends CODE changes (app.py, templates, CSS, design images) to the live server over FTP.
+# Never sent: static/data and static/uploads (products and photos added on the live site),
+# and .htaccess (the server's own Passenger settings, which must not change).
 
 on:
   push:
@@ -23,63 +23,57 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_USER: ${{ secrets.SSH_USER }}
-      SSH_PORT: ${{ secrets.SSH_PORT || '22' }}
-      APP_DIR: ${{ vars.APP_DIR || '/home/cezarin/public_html/uniglobelifestyles.com' }}
+      HAS_FTP: ${{ secrets.FTP_PASSWORD != '' }}
       SITE_URL: ${{ vars.SITE_URL || 'https://uniglobelifestyles.com' }}
-      HAS_KEY: ${{ secrets.SSH_KEY != '' }}
       # Pushes only deploy once the repository variable DEPLOY_ON_PUSH is set to "true".
       MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || (vars.DEPLOY_ON_PUSH == 'true' && 'deploy' || 'skip') }}
     steps:
       - name: Explain why nothing happened
-        if: env.HAS_KEY != 'true' || env.MODE == 'skip'
+        if: env.HAS_FTP != 'true' || env.MODE == 'skip'
         run: |
           echo "Nothing was deployed."
-          echo "Either the SSH secrets are not set yet, or automatic deploys are off (repository variable DEPLOY_ON_PUSH is not 'true')."
+          echo "Either the FTP secrets are not set yet, or automatic deploys are off (repository variable DEPLOY_ON_PUSH is not 'true')."
           echo "See DEPLOY.md."
 
       - uses: actions/checkout@v4
-        if: env.HAS_KEY == 'true' && env.MODE != 'skip'
+        if: env.HAS_FTP == 'true' && env.MODE != 'skip'
 
-      - name: Set up SSH key
-        if: env.HAS_KEY == 'true' && env.MODE != 'skip'
-        env:
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-        run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
-          echo "SSH_CMD=ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o BatchMode=yes" >> "$GITHUB_ENV"
+      - name: Ask the server to restart the app after upload
+        if: env.HAS_FTP == 'true' && env.MODE == 'deploy'
+        run: mkdir -p tmp && date -u > tmp/restart.txt
 
-      - name: Check the connection and the app folder
-        if: env.HAS_KEY == 'true' && env.MODE != 'skip'
-        run: |
-          $SSH_CMD "$SSH_USER@$SSH_HOST" "echo 'Connected to server'; test -f '$APP_DIR/passenger_wsgi.py' && echo 'App folder found: $APP_DIR' || { echo 'App folder not found: $APP_DIR'; exit 1; }"
-
-      - name: Upload code (content folders are excluded)
-        if: env.HAS_KEY == 'true' && env.MODE != 'skip'
-        run: |
-          DRY=""; [ "$MODE" = "check" ] && DRY="--dry-run" && echo "CHECK MODE: listing what would change, nothing is uploaded."
-          rsync -rltz --itemize-changes $DRY \
-            --chmod=D755,F644 \
-            --exclude='.git/' --exclude='.github/' --exclude='.gitignore' \
-            --exclude='static/data/' --exclude='static/uploads/' \
-            --exclude='.well-known/' --exclude='tmp/' --exclude='__pycache__/' --exclude='*.pyc' \
-            --exclude='venv/' --exclude='.venv/' --exclude='DEPLOY.md' \
-            -e "$SSH_CMD" ./ "$SSH_USER@$SSH_HOST:$APP_DIR/"
-
-      - name: Restart the website
-        if: env.HAS_KEY == 'true' && env.MODE == 'deploy'
-        run: |
-          $SSH_CMD "$SSH_USER@$SSH_HOST" "mkdir -p '$APP_DIR/tmp' && touch '$APP_DIR/tmp/restart.txt' && echo 'Restart requested'"
+      - name: Upload code (content folders and .htaccess are never sent)
+        if: env.HAS_FTP == 'true' && env.MODE != 'skip'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || 21 }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          server-dir: ${{ vars.FTP_DIR || './' }}
+          dry-run: ${{ env.MODE == 'check' }}
+          log-level: standard
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            .htaccess
+            .well-known/**
+            static/data/**
+            static/uploads/**
+            **/__pycache__/**
+            **/*.pyc
+            venv/**
+            .venv/**
+            DEPLOY.md
 
       - name: Check the site responds
-        if: env.HAS_KEY == 'true' && env.MODE == 'deploy'
+        if: env.HAS_FTP == 'true' && env.MODE == 'deploy'
         run: |
-          sleep 15
-          for path in / /tiles; do
+          sleep 20
+          for path in / /tiles /products; do
             code=$(curl -sk -o /dev/null -w '%{http_code}' "$SITE_URL$path" || echo 000)
             echo "$SITE_URL$path -> $code"
-            [ "$code" = "200" ] || { echo "The site did not answer with 200 on $path. Check cPanel > Setup Python App > logs."; exit 1; }
+            [ "$code" = "200" ] || { echo "The site did not answer with 200 on $path. Check cPanel > Setup Python App and ~/logs/passenger.log."; exit 1; }
           done

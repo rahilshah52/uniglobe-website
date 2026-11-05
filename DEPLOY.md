@@ -11,7 +11,7 @@ The site has two parts, kept separate on purpose:
 ## Changing the code
 1. Edit the code on your PC.
 2. `git add .` then `git commit -m "what changed"` then `git push`.
-3. GitHub (Actions tab) uploads the changed code to cPanel and restarts the site in about a minute.
+3. GitHub (Actions tab) uploads the changed code to cPanel by FTP and restarts the site in about a minute.
    Content folders are never uploaded, so products and photos on the live site are never touched.
 
 ## Adding or editing products
@@ -21,10 +21,18 @@ Always do it on the live site (/tiles/manage, /upload). Never upload static/data
 Download static/data and static/uploads from the server (cPanel File Manager, or the latest backup in ~/backups)
 and put them in your local copy. They are ignored by Git, so they will not be pushed.
 
-## Deploy settings (GitHub > Settings > Secrets and variables > Actions)
-Secrets: SSH_HOST, SSH_USER, SSH_PORT, SSH_KEY (private key of a key authorised in cPanel > SSH Access).
-Variables: DEPLOY_ON_PUSH = true (turns on automatic deploys), APP_DIR and SITE_URL only if they change.
-Test anytime without changing anything: Actions > "Deploy website to cPanel" > Run workflow > mode "check".
+## Deploy settings (one-time, by FTP)
+1. cPanel > FTP Accounts > create an account (for example `deploy`) whose Directory is
+   `public_html/uniglobelifestyles.com` (the folder with app.py and passenger_wsgi.py).
+2. GitHub > Settings > Secrets and variables > Actions:
+   - Secrets: FTP_SERVER (e.g. ftp.uniglobelifestyles.com), FTP_USERNAME (e.g. deploy@uniglobelifestyles.com), FTP_PASSWORD.
+     Optional: FTP_PORT (default 21).
+   - Variables: DEPLOY_ON_PUSH = true (turns on automatic deploys).
+     Optional: FTP_PROTOCOL = ftp if the server refuses secure FTPS; FTP_DIR if the FTP account opens somewhere other than the app folder.
+3. Test anytime without changing anything: Actions > "Deploy website to cPanel (FTP)" > Run workflow > mode "check".
+
+Never sent by a deploy: static/data, static/uploads, .htaccess (the server's Passenger settings), .well-known.
+After each upload the deploy touches tmp/restart.txt, which makes the server restart the Python app.
 
 ## Backups
 A cPanel cron job saves static/data and static/uploads to ~/backups on the 1st and 16th of each month and keeps the last 4.

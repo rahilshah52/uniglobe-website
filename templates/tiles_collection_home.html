@@ -28,9 +28,10 @@
         {% for group in tile_category_groups %}
         <section class="tile-category-panel{% if loop.first %} is-active{% endif %}{% if group.slug == 'size' %} tile-category-panel-size{% endif %}" id="tile-panel-{{ group.slug }}" role="tabpanel" aria-labelledby="tile-tab-{{ group.slug }}"{% if not loop.first %} hidden{% endif %}>
           <div class="tile-category-panel-heading"><div><p class="tile-page-kicker">BROWSE BY {{ group.name|upper }}</p><h3>{{ group.name }}</h3></div><span>{{ '%02d'|format(group['items']|length) }} ideas</span></div>
+          {% if group.cards|length > 8 %}<label class="tile-panel-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" data-card-filter placeholder="Search {{ group.name|lower }}{% if group.slug == 'size' %} (e.g. 600 × 1200, 1200, 9 mm){% elif group.slug == 'collection' %} (e.g. Prozzo, Neo){% endif %}" aria-label="Search {{ group.name|lower }}" autocomplete="off"><span data-card-count></span></label><p class="tile-panel-empty" data-card-empty hidden>Nothing matches. Try fewer letters.</p>{% endif %}
           <div class="tile-category-grid">
             {% for item in group.cards %}
-            <a class="tile-category-card{% if group.slug == 'collection' and item.name == 'All collections' %} tile-category-card-all{% endif %}" href="{% if brand and group.slug == 'collection' and item.name == 'All collections' %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=item.slug, brand=brand_slug) }}{% elif group.slug == 'collection' and item.name == 'All collections' %}{{ url_for('tiles_catalogues') }}{% elif brand %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=item.slug, brand=brand_slug) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=item.slug) }}{% endif %}" aria-label="Browse tile size {{ item.name if group.slug == 'size' else 'in ' ~ item.name }}">
+            <a data-card-name="{{ item.name|lower }}" class="tile-category-card{% if group.slug == 'collection' and item.name == 'All collections' %} tile-category-card-all{% endif %}" href="{% if brand and group.slug == 'collection' and item.name == 'All collections' %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=item.slug, brand=brand_slug) }}{% elif group.slug == 'collection' and item.name == 'All collections' %}{{ url_for('tiles_catalogues') }}{% elif brand %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=item.slug, brand=brand_slug) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=item.slug) }}{% endif %}" aria-label="Browse tile size {{ item.name if group.slug == 'size' else 'in ' ~ item.name }}">
               {% if group.slug == 'size' %}<div class="tile-category-image tile-size-visual">{% if item.representative_image %}<img class="tile-size-product-image" src="{{ url_for('static', filename=item.representative_image) }}" alt="Tile design available in {{ item.name }} format" loading="lazy" decoding="async">{% else %}<span class="tile-size-diagram" aria-hidden="true"><i></i><i></i></span>{% endif %}<div class="tile-size-caption"><span>FORMAT · MILLIMETRES</span><strong>{{ item.name }}</strong></div></div><span class="tile-category-name">Explore this format</span>{% else %}<div class="tile-category-image"><img src="{{ url_for('static', filename=item.thumbnail) }}" alt="Tile inspiration for {{ item.name|lower }}" loading="lazy" decoding="async"></div><span class="tile-category-name">{{ item.name }}</span>{% endif %}
             </a>
             {% endfor %}
@@ -166,6 +167,14 @@
   @media(max-width:767.98px) { .tile-page-hero { min-height:490px; } .tile-page-hero-image { background-position:58% center; } .tile-page-hero-shade { background:linear-gradient(90deg,rgba(25,30,28,.69),rgba(25,30,28,.16)),linear-gradient(0deg,rgba(25,30,28,.45),transparent 68%); } .tile-page-hero-copy { padding-top:70px; padding-bottom:48px; } .tile-page-hero h1 { font-size:clamp(2.85rem,12vw,4.4rem); } .tile-page-hero-copy > p:not(.tile-page-eyebrow) { max-width:430px; font-size:.83rem; } .tile-range-heading { grid-template-columns:1fr; gap:12px; margin-bottom:24px; } .tile-range-heading > p { font-size:.78rem; } .tile-category-tabs { padding:0 7px; } .tile-category-tab { min-height:54px; padding:0 12px; font-size:.76rem; } .tile-category-panels { padding:23px 15px 25px; } .tile-category-panel-heading { align-items:start; } .tile-category-panel-heading > span { font-size:.68rem; white-space:nowrap; } .tile-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:19px 11px; } .tile-category-panel-size .tile-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 10px; } .tile-category-image { aspect-ratio:1.25; } .tile-category-image img { padding:5px; } .tile-size-visual { padding:9px; } .tile-size-visual::after { inset:8px; } .tile-size-caption { gap:5px; padding:27px 10px 10px; } .tile-size-caption > span { font-size:.66rem; letter-spacing:.12em; } .tile-size-caption > strong { font-size:clamp(.68rem,3vw,.91rem); } .tile-size-diagram { gap:4px; } .tile-category-name { align-items:start; padding-top:8px; font-size:.68rem; line-height:1.35; } .tile-brand-section-heading { grid-template-columns:1fr; gap:12px; margin-bottom:20px; } .tile-brand-card,.tile-brand-card-link { min-height:215px; } .tile-brand-picture,.tile-brand-picture img { min-height:215px; } .tile-brand-copy { padding:15px 12px; } .tile-brand-copy strong { margin:8px 0; font-size:1.55rem; } .tile-brand-description { min-height:0; margin-bottom:12px; font-size:.67rem; line-height:1.55; } .tile-brand-enquiry { gap:7px; font-size:.66rem; } .tile-page-footer-cta { padding:47px 0; } }
   @media(max-width:370px) { .tile-brand-card-link { grid-template-columns:1fr; } .tile-brand-picture,.tile-brand-picture img { height:190px; min-height:190px; } }
   @media(prefers-reduced-motion:reduce) { .tile-category-tab,.tile-category-image img { transition:none; } }
+  .tile-panel-search { position:relative; display:flex; align-items:center; gap:10px; max-width:520px; margin:-4px 0 22px; padding:0 14px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.06); }
+  .tile-panel-search:focus-within { border-color:#d8d0bd; background:rgba(255,255,255,.1); }
+  .tile-panel-search i { color:rgba(255,255,255,.6); font-size:.85rem; }
+  .tile-panel-search input { flex:1; min-width:0; min-height:46px; border:0; color:#fff; background:none; font:inherit; font-size:.92rem; outline:none; }
+  .tile-panel-search input::placeholder { color:rgba(255,255,255,.5); }
+  .tile-panel-search span { color:rgba(255,255,255,.55); font-size:.74rem; white-space:nowrap; }
+  .tile-panel-empty { color:rgba(255,255,255,.7); font-size:.86rem; }
+  .tile-category-card[hidden] { display:none !important; }
 </style>
 <script>
   (() => {
@@ -207,4 +216,22 @@
   })();
 </script>
 {% include '_recently_viewed.html' %}
+<script>
+(function () {
+  // Type to narrow the series, colour, size or room cards in each tab.
+  var norm = function (t) { return String(t || '').toLowerCase().replace(/[×x*]/g, ' ').replace(/\s+/g, ' ').trim(); };
+  document.querySelectorAll('[data-card-filter]').forEach(function (input) {
+    var panel = input.closest('.tile-category-panel');
+    var cards = Array.prototype.slice.call(panel.querySelectorAll('[data-card-name]'));
+    var count = panel.querySelector('[data-card-count]'), empty = panel.querySelector('[data-card-empty]');
+    function run() {
+      var words = norm(input.value).split(' ').filter(Boolean), shown = 0;
+      cards.forEach(function (card) { var name = norm(card.dataset.cardName); var ok = words.every(function (w) { return name.indexOf(w) > -1; }); card.hidden = !ok; if (ok) shown++; });
+      count.textContent = words.length ? shown + ' of ' + cards.length : '';
+      empty.hidden = shown > 0;
+    }
+    input.addEventListener('input', run);
+  });
+})();
+</script>
 {% endblock %}

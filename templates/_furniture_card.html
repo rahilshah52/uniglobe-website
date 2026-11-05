@@ -1,0 +1,15 @@
+{# One furniture card. Expects `card` (see furniture_card in app.py). #}
+<article class="fcard" data-fcard>
+  <a class="fcard-link" href="{{ url_for('product_detail', category=card.category, code=card.code) }}" aria-label="{{ card.title }}">
+    <div class="fcard-photo{% if card.cutout %} is-cutout{% endif %}">
+      {% if card.thumbnail %}<img class="fcard-main" src="{{ url_for('static', filename=card.thumbnail) }}" alt="{{ card.title }}" loading="lazy" decoding="async">{% endif %}
+      {% if card.hover %}<img class="fcard-hover{% if card.hover_cutout %} is-cutout{% endif %}" src="{{ url_for('static', filename=card.hover) }}" alt="" loading="lazy" decoding="async">{% endif %}
+    </div>
+    <div class="fcard-copy">
+      <small>{{ card.type or 'Furniture' }}</small>
+      <h3>{{ card.title }}</h3>
+      {% if card.size %}<span>{{ card.size|truncate(54) }}</span>{% endif %}
+    </div>
+  </a>
+  <button class="wishlist-toggle wishlist-toggle--overlay" type="button" data-wishlist-toggle data-wishlist-kind="furniture" data-wishlist-id="{{ card.category }}:{{ card.code }}" data-wishlist-name="{{ card.title }}" data-wishlist-image="{{ url_for('static', filename=card.image) }}" data-wishlist-url="{{ url_for('product_detail', category=card.category, code=card.code) }}" data-wishlist-subtitle="{{ card.type }}{% if card.model %} · {{ card.model }}{% endif %}" aria-label="Save {{ card.title }}" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save</span></button>
+</article>

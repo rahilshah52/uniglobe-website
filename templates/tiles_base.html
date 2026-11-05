@@ -151,9 +151,9 @@
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/about') or request.path.startswith('/tiles/services') else '' }}" href="{{ url_for('tiles_about') }}">About us</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/collections') or request.path.startswith('/tiles/catalogues') else '' }}" href="{{ url_for('tiles_collections') }}">Tiles</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/bath') else '' }}" href="{{ url_for('tiles_bath') }}">Bathware</a></li>
-        <li class="nav-item"><a class="nav-link tiles-nav-search {{ 'active' if request.path.startswith('/tiles/search') else '' }}" href="{{ url_for('tiles_search') }}" aria-label="Search tiles and bathware"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="d-xl-none"> Search</span></a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/wishlist') else '' }}" href="{{ url_for('tiles_wishlist') }}">Wishlist <span class="wishlist-nav-count" id="wishlistNavCount" hidden>0</span></a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/contact') else '' }}" href="{{ url_for('tiles_contact') }}">Contact us</a></li>
+        <li class="nav-item"><a class="nav-link tiles-nav-search {{ 'active' if request.path.startswith('/tiles/search') else '' }}" href="{{ url_for('tiles_search') }}" aria-label="Search tiles and bathware"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="d-xl-none"> Search</span></a></li>
       </ul>
     </div>
   </div>
@@ -205,8 +205,7 @@
     <div class="tiles-footer-inner">
       <span>© 2026 Uniglobe Lifestyles · Surfaces</span>
       <div class="d-flex align-items-center gap-4">
-        <a href="/">Furniture</a>
-        {% if session.get('admin_logged') %}<a href="{{ url_for('tiles_manage') }}">Manage products</a>{% endif %}
+        <a href="{{ url_for('tiles_manage') }}" rel="nofollow">Manage</a>
       </div>
     </div>
   </div>
