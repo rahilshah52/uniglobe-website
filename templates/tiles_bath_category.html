@@ -1,6 +1,6 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ category.title }} | Bath &amp; Sanitaryware | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}Explore {{ category.title|lower }} inspiration from Jaquar, KOHLER and Simpolo catalogue imagery, and enquire with Uniglobe about showroom options.{% endblock %}
+{% block title %}{{ category.title }} in Mumbai{% if brands %} – {{ brands|join(", ") }}{% endif %} | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{{ cards|length }} {{ category.title|lower }} from {{ brands|join(", ") }} at Uniglobe Lifestyles, Borivali West, Mumbai. Compare models, colours and finishes and ask us about availability.{% endblock %}
 {% block content %}
 <section class="bath-detail-hero" style="--bath-category-hero:url('{{ url_for('static', filename=category.hero_image) }}')">
   <div class="container">
@@ -12,13 +12,25 @@
 </section>
 <section class="bath-gallery-section">
   <div class="container">
-    <div class="bath-gallery-heading"><div><p class="bath-detail-kicker">CATALOGUE INSPIRATION</p><h2>Explore the details.</h2></div><p>These images are selected from brand catalogues to help you explore styles and possibilities. Ask our team about product details and availability.</p></div>
-    <form class="bath-refine" method="get" action="{{ url_for('tiles_bath_category', slug=category.slug) }}" aria-label="Refine bathware by brand">
-      <div><span>Refine this category</span><small>Choose one or more showroom brands.</small></div>
-      <details class="bath-facet"><summary><span>Brand</span><b>{{ selected_brands|length if selected_brands else 'All brands' }}</b></summary><div class="bath-facet-options">{% for brand_name in brands %}<label><input type="checkbox" name="brand" value="{{ brand_name }}" {% if brand_name in selected_brands %}checked{% endif %}><span>{{ brand_name }}</span></label>{% endfor %}</div></details>
-      <button type="submit">Show {{ 'selection' if selected_brands else 'all' }} </button>{% if selected_brands %}<a href="{{ url_for('tiles_bath_category', slug=category.slug) }}">Clear</a>{% endif %}
+    <div class="bath-gallery-heading"><div><p class="bath-detail-kicker">THE RANGE · {{ cards|length }} {{ 'PRODUCT' if cards|length == 1 else 'PRODUCTS' }}</p><h2>Choose your piece.</h2></div><p>Open any product to see every view, switch between its colours and finishes, and check its key details. Our team will confirm availability for your project.</p></div>
+    <form class="bath-refine" method="get" action="{{ url_for('tiles_bath_category', slug=category.slug) }}" aria-label="Refine {{ category.title|lower }}">
+      <div><span>Refine this category</span><small>Combine brands and product types.</small></div>
+      <details class="bath-facet"><summary><span>Brand</span><b>{{ selected_brands|join(', ') if selected_brands else 'All brands' }}</b></summary><div class="bath-facet-options">{% for brand_name in brands %}<label><input type="checkbox" name="brand" value="{{ brand_name }}" {% if brand_name in selected_brands %}checked{% endif %}><span>{{ brand_name }}</span></label>{% endfor %}</div></details>
+      {% if types %}<details class="bath-facet"><summary><span>Type</span><b>{{ selected_types|length ~ ' selected' if selected_types else 'All types' }}</b></summary><div class="bath-facet-options">{% for type_name in types %}<label><input type="checkbox" name="type" value="{{ type_name }}" {% if type_name in selected_types %}checked{% endif %}><span>{{ type_name }}</span></label>{% endfor %}</div></details>{% endif %}
+      <button type="submit">Show products</button>{% if selected_brands or selected_types %}<a href="{{ url_for('tiles_bath_category', slug=category.slug) }}">Clear</a>{% endif %}
     </form>
-    <p class="bath-result-count">{{ items|length }} catalogue {{ 'image' if items|length == 1 else 'images' }}{% if selected_brands %} · {{ selected_brands|join(' + ') }}{% endif %}</p>
+    {% if selected_brands or selected_types %}<div class="bath-chips">{% for b in selected_brands %}<span class="bath-chip">{{ b }}</span>{% endfor %}{% for t in selected_types %}<span class="bath-chip">{{ t }}</span>{% endfor %}</div>{% endif %}
+    {% if cards %}
+    <div class="bath-products" data-bath-products data-more-target="#bath-more">
+      {% for card in cards %}{% include "_bath_product_card.html" %}{% endfor %}
+    </div>
+    <div class="bath-more-wrap" id="bath-more" hidden><p></p><button class="bath-more" type="button">Show more products</button></div>
+    {% else %}
+    <p class="bath-empty">{% if selected_brands or selected_types %}No products match this selection yet. <a href="{{ url_for('tiles_bath_category', slug=category.slug) }}">Show everything in {{ category.title|lower }}</a>.{% else %}Products for this category are coming soon. Ask our team about current options.{% endif %}</p>
+    {% endif %}
+
+    {% if items %}
+    <div class="bath-gallery-heading bath-inspiration-heading"><div><p class="bath-detail-kicker">CATALOGUE INSPIRATION</p><h2>See it in a space.</h2></div><p>Selected brand imagery to help you picture the finished room.</p></div>
     <div class="bath-gallery">
       {% for item in items %}
       <article class="bath-gallery-card">
@@ -27,14 +39,16 @@
       </article>
       {% endfor %}
     </div>
+    {% endif %}
     <div class="bath-detail-cta"><div><p class="bath-detail-kicker">PROJECTS · MODELS · AVAILABILITY</p><h2>Let’s find the right fit.</h2></div><a href="{{ url_for('tiles_contact') }}?interest={{ category.title|urlencode }}">Enquire about {{ category.title|lower }}</a></div>
   </div>
 </section>
+{% include "_bath_products_assets.html" %}
 <style>
   .bath-detail-hero { position:relative; overflow:hidden; padding:clamp(48px,7vw,88px) 0 clamp(43px,6vw,68px); color:#fff; background:linear-gradient(90deg,rgba(26,31,29,.78),rgba(26,31,29,.35) 64%,rgba(26,31,29,.12)),var(--bath-category-hero) center 52%/cover no-repeat,#343a37; }
   .bath-back { display:inline-block; margin-bottom:clamp(36px,6vw,66px); color:rgba(255,255,255,.78); font-size:.72rem; text-decoration:none; }
   .bath-back:hover { color:#fff; }
-  .bath-detail-kicker { margin:0 0 10px; color:rgba(255,255,255,.74); font-size:.61rem; font-weight:600; letter-spacing:.16em; }
+  .bath-detail-kicker { margin:0 0 10px; color:rgba(255,255,255,.74); font-size:.68rem; font-weight:600; letter-spacing:.16em; }
   .bath-detail-hero h1 { margin:0 0 16px; color:#fff; font-size:clamp(3rem,7vw,6rem); font-weight:400; letter-spacing:-.07em; line-height:.98; }
   .bath-detail-hero .container > p:last-child { max-width:610px; margin:0; color:rgba(255,255,255,.84); font-size:.9rem; line-height:1.8; }
   .bath-gallery-section { padding:clamp(48px,7vw,84px) 0; }
@@ -45,30 +59,36 @@
   .bath-refine { display:grid; grid-template-columns:1fr minmax(180px,.52fr) auto auto; align-items:center; gap:12px; margin:0 0 10px; padding:15px 17px; border:1px solid #e5e6e1; background:#fafaf8; }
   .bath-refine > div { display:grid; gap:4px; }
   .bath-refine > div span { color:#454d48; font-size:.75rem; font-weight:600; }
-  .bath-refine small,.bath-refine label { color:#858b86; font-size:.62rem; }
+  .bath-refine small,.bath-refine label { color:#858b86; font-size:.68rem; }
   .bath-facet { position:relative; min-width:0; }
   .bath-facet > summary { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:41px; padding:8px 11px; border:1px solid #e0e2dc; color:#3d4540; background:#fff; font-size:.74rem; list-style:none; cursor:pointer; }
   .bath-facet > summary::-webkit-details-marker { display:none; }
   .bath-facet > summary::after { content:'⌄'; color:#858b86; }
-  .bath-facet > summary b { max-width:150px; overflow:hidden; color:#828981; font-size:.65rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
+  .bath-facet > summary b { max-width:150px; overflow:hidden; color:#828981; font-size:.68rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
   .bath-facet-options { position:absolute; z-index:5; top:calc(100% + 5px); left:0; width:max(100%,220px); max-height:230px; overflow:auto; padding:7px; border:1px solid #dedfd9; background:#fff; box-shadow:0 12px 30px rgba(37,43,39,.14); }
   .bath-facet-options label { display:flex; align-items:center; gap:9px; min-height:38px; padding:7px 9px; color:#505852; font-size:.73rem; cursor:pointer; }
   .bath-facet-options label:hover { background:#f4f4f0; }
   .bath-facet-options input { width:15px; height:15px; accent-color:#454d48; }
   .bath-refine button { min-height:41px; padding:0 14px; border:1px solid #343b37; color:#fff; background:#343b37; font:inherit; font-size:.69rem; white-space:nowrap; }
   .bath-refine > a { color:#727a74; font-size:.68rem; }
-  .bath-result-count { margin:0 0 13px; color:#8a908b; font-size:.65rem; }
+  .bath-result-count { margin:0 0 13px; color:#8a908b; font-size:.68rem; }
   .bath-gallery-card { min-width:0; background:#f5f5f2; }
   .bath-gallery-image { position:relative; aspect-ratio:1.08; overflow:hidden; background:#e8e9e5; }
   .bath-gallery-image img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
   .bath-gallery-card:hover img { transform:scale(1.025); }
   .bath-gallery-caption { padding:14px 15px 17px; }
-  .bath-gallery-caption span { color:#858b86; font-size:.52rem; letter-spacing:.12em; }
+  .bath-gallery-caption span { color:#858b86; font-size:.66rem; letter-spacing:.12em; }
   .bath-gallery-caption h3 { margin:6px 0 0; color:#353b37; font-size:.88rem; font-weight:500; }
   .bath-detail-cta { display:flex; justify-content:space-between; align-items:center; gap:22px; margin-top:48px; padding:27px 29px; background:#f1f1ed; }
   .bath-detail-cta .bath-detail-kicker { margin-bottom:6px; }
+  .bath-gallery-heading .bath-detail-kicker,.bath-detail-cta .bath-detail-kicker { color:#8a908b; }
+  .bath-inspiration-heading { margin-top:64px; }
+  @media(min-width:768px) {
+  .bath-refine { grid-template-columns:1fr minmax(160px,.42fr) minmax(160px,.42fr) auto auto; }
+  .bath-refine:not(:has(.bath-facet + .bath-facet)) { grid-template-columns:1fr minmax(180px,.52fr) auto auto; }
+  }
   .bath-detail-cta h2 { font-size:clamp(1.5rem,3vw,2.3rem); }
   .bath-detail-cta a { display:inline-flex; justify-content:space-between; gap:20px; padding:13px 15px; color:#fff; background:#303634; font-size:.7rem; text-decoration:none; }
-  @media(max-width:767.98px) { .bath-gallery-heading { grid-template-columns:1fr; gap:12px; } .bath-gallery-heading > p { font-size:.77rem; } .bath-refine { grid-template-columns:1fr auto; gap:8px; padding:13px 12px; } .bath-refine > div { grid-column:1/-1; } .bath-facet { grid-column:1/-1; } .bath-facet-options { width:100%; } .bath-refine button { grid-column:1/-1; width:100%; } .bath-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-gallery-image { aspect-ratio:.86; } .bath-gallery-caption { padding:11px 10px 13px; } .bath-gallery-caption h3 { font-size:.77rem; line-height:1.4; } .bath-gallery-caption span { font-size:.45rem; } .bath-detail-cta { align-items:flex-start; flex-direction:column; margin-top:30px; padding:20px 17px; } }
+  @media(max-width:767.98px) { .bath-gallery-heading { grid-template-columns:1fr; gap:12px; } .bath-gallery-heading > p { font-size:.77rem; } .bath-refine { grid-template-columns:1fr auto; gap:8px; padding:13px 12px; } .bath-refine > div { grid-column:1/-1; } .bath-facet { grid-column:1/-1; } .bath-facet-options { width:100%; } .bath-refine button { grid-column:1/-1; width:100%; } .bath-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-gallery-image { aspect-ratio:.86; } .bath-gallery-caption { padding:11px 10px 13px; } .bath-gallery-caption h3 { font-size:.77rem; line-height:1.4; } .bath-gallery-caption span { font-size:.66rem; } .bath-detail-cta { align-items:flex-start; flex-direction:column; margin-top:30px; padding:20px 17px; } }
 </style>
 {% endblock %}

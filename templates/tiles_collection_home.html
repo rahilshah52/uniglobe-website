@@ -1,6 +1,6 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ brand ~ ' Tile Collections' if brand else 'Tile Collections' }} | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}Explore {{ brand ~ ' tile ideas' if brand else 'tile ideas' }} by room, look and feel, colour, or collection.{% endblock %}
+{% block title %}{{ brand ~ ' Tiles' if brand else 'Tiles' }} by Room, Look, Colour &amp; Size | {{ brand ~ ' Dealer' if brand else 'Tile Showroom' }} in Mumbai | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{% if brand %}Explore {{ brand }} tiles at Uniglobe Lifestyles, Borivali, Mumbai{% else %}Explore tiles at Uniglobe Lifestyles, Borivali, Mumbai{% endif %}: living room, bathroom, kitchen, outdoor and wall tiles by look, colour, size and series.{% endblock %}
 {% block content %}
 <section class="tile-page-hero">
   <div class="tile-page-hero-image"></div><div class="tile-page-hero-shade"></div>
@@ -85,11 +85,11 @@
   .tile-page-hero-back { display:inline-block; margin-bottom:22px; color:rgba(255,255,255,.76); font-size:.75rem; text-decoration:none; }
   .tile-page-hero-back:hover { color:#fff; }
   .tile-brand-selection { display:inline-flex; align-items:center; gap:11px; margin-bottom:22px; padding:8px 11px; border:1px solid rgba(255,255,255,.4); background:rgba(20,24,22,.28); backdrop-filter:blur(8px); }
-  .tile-brand-selection span { color:rgba(255,255,255,.7); font-size:.53rem; font-weight:600; letter-spacing:.12em; }
+  .tile-brand-selection span { color:rgba(255,255,255,.7); font-size:.66rem; font-weight:600; letter-spacing:.12em; }
   .tile-brand-selection strong { color:#fff; font-size:.77rem; font-weight:500; }
-  .tile-brand-selection a { padding-left:10px; border-left:1px solid rgba(255,255,255,.35); color:#fff; font-size:.63rem; text-decoration:none; }
+  .tile-brand-selection a { padding-left:10px; border-left:1px solid rgba(255,255,255,.35); color:#fff; font-size:.68rem; text-decoration:none; }
   .tile-brand-selection a:hover { text-decoration:underline; text-underline-offset:3px; }
-  .tile-page-eyebrow,.tile-page-kicker { margin:0 0 12px; color:#90958f; font-size:.64rem; font-weight:600; letter-spacing:.17em; }
+  .tile-page-eyebrow,.tile-page-kicker { margin:0 0 12px; color:#90958f; font-size:.68rem; font-weight:600; letter-spacing:.17em; }
   .tile-page-eyebrow { color:rgba(255,255,255,.8); }
   .tile-page-hero h1 { margin:0 0 18px; font-size:clamp(3rem,7vw,6.2rem); font-weight:400; letter-spacing:-.068em; line-height:.98; }
   .tile-page-hero-copy > p:not(.tile-page-eyebrow) { max-width:535px; margin:0; color:rgba(255,255,255,.82); font-size:.91rem; line-height:1.8; }
@@ -106,7 +106,7 @@
   .tile-category-tab { display:grid; grid-template-columns:34px 1fr; align-items:center; gap:9px; width:100%; min-height:68px; padding:0 20px; border:0; border-left:2px solid transparent; color:rgba(255,255,255,.7); background:transparent; font:inherit; text-align:left; cursor:pointer; transition:color .2s ease,background .2s ease,border-color .2s ease; }
   .tile-category-tab:hover,.tile-category-tab.is-active { color:#fff; background:rgba(255,255,255,.055); }
   .tile-category-tab.is-active { border-left-color:#c5bda9; }
-  .tile-category-tab-index { color:#a8aaa3; font-size:.58rem; letter-spacing:.08em; }
+  .tile-category-tab-index { color:#a8aaa3; font-size:.66rem; letter-spacing:.08em; }
   .tile-category-panels { min-width:0; padding:30px clamp(20px,3vw,44px) 35px; }
   .tile-category-panel-heading { display:flex; justify-content:space-between; align-items:end; gap:20px; margin-bottom:21px; }
   .tile-category-panel-heading .tile-page-kicker { margin-bottom:8px; color:#c1c2bb; }
@@ -123,7 +123,7 @@
   .tile-size-diagram i { display:block; width:30%; height:72%; border:1px solid rgba(255,255,255,.48); background:linear-gradient(135deg,rgba(245,244,236,.32),rgba(205,204,194,.08)); box-shadow:0 12px 24px rgba(0,0,0,.2),inset 0 0 16px rgba(255,255,255,.1); transform:skewY(-5deg); }
   .tile-size-diagram i + i { height:62%; opacity:.48; transform:translateY(8px) skewY(-5deg); }
   .tile-size-caption { position:absolute; z-index:1; inset:auto 0 0; display:flex; flex-direction:column; gap:7px; padding:36px 15px 14px; background:linear-gradient(transparent,rgba(24,28,25,.86)); }
-  .tile-size-caption > span { color:rgba(255,255,255,.74); font-size:.51rem; font-weight:600; letter-spacing:.16em; }
+  .tile-size-caption > span { color:rgba(255,255,255,.74); font-size:.66rem; font-weight:600; letter-spacing:.16em; }
   .tile-size-caption > strong { display:block; max-width:100%; overflow-wrap:anywhere; color:#fff; font-size:clamp(.82rem,1.05vw,1.13rem); font-weight:400; letter-spacing:-.025em; line-height:1.2; }
   .tile-category-panel-size .tile-category-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px clamp(11px,1.6vw,22px); }
   .tile-category-image img { display:block; width:100%; height:100%; padding:7px; object-fit:contain; filter:drop-shadow(0 9px 12px rgba(26,31,27,.24)); }
@@ -151,7 +151,7 @@
   .tile-brand-picture img { display:block; width:100%; height:100%; min-height:300px; object-fit:cover; transition:transform .5s ease; }
   .tile-brand-card:hover .tile-brand-picture img { transform:scale(1.03); }
   .tile-brand-copy { display:flex; flex-direction:column; align-self:center; align-items:flex-start; padding:clamp(19px,2.4vw,38px); }
-  .tile-brand-copy > span:first-child { color:#858b86; font-size:.52rem; letter-spacing:.13em; }
+  .tile-brand-copy > span:first-child { color:#858b86; font-size:.66rem; letter-spacing:.13em; }
   .tile-brand-copy strong { margin:12px 0 9px; color:#2d3330; font-size:clamp(1.75rem,3vw,2.5rem); font-weight:400; letter-spacing:-.05em; }
   .tile-brand-description { min-height:64px; margin:0 0 16px; color:#707772; font-size:.74rem; line-height:1.7; }
   .tile-brand-enquiry { display:inline-flex; justify-content:space-between; gap:15px; padding-bottom:5px; border-bottom:1px solid #bdc2bd; color:#303634; font-size:.68rem; text-decoration:none; }
@@ -163,7 +163,7 @@
   @media(max-width:1100px) { .tile-category-explorer { grid-template-columns:minmax(165px,.28fr) 1fr; } }
   @media(max-width:991.98px) { .tile-category-explorer { grid-template-columns:1fr; } .tile-category-tabs { flex-direction:row; padding:0 12px; overflow-x:auto; scrollbar-width:thin; } .tile-category-tab { flex:0 0 auto; width:auto; grid-template-columns:auto 20px; gap:11px; min-height:58px; padding:0 16px; border-left:0; border-bottom:2px solid transparent; white-space:nowrap; } .tile-category-tab-index { display:none; } .tile-category-tab.is-active { border-bottom-color:#c5bda9; } .tile-category-panels { padding:25px 24px 30px; } .tile-category-panel-size .tile-category-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
   @media(max-width:991.98px) { .tile-brand-grid { grid-template-columns:1fr; } .tile-brand-card:last-child:nth-child(odd) { grid-column:auto; justify-self:stretch; width:auto; } }
-  @media(max-width:767.98px) { .tile-page-hero { min-height:490px; } .tile-page-hero-image { background-position:58% center; } .tile-page-hero-shade { background:linear-gradient(90deg,rgba(25,30,28,.69),rgba(25,30,28,.16)),linear-gradient(0deg,rgba(25,30,28,.45),transparent 68%); } .tile-page-hero-copy { padding-top:70px; padding-bottom:48px; } .tile-page-hero h1 { font-size:clamp(2.85rem,12vw,4.4rem); } .tile-page-hero-copy > p:not(.tile-page-eyebrow) { max-width:430px; font-size:.83rem; } .tile-range-heading { grid-template-columns:1fr; gap:12px; margin-bottom:24px; } .tile-range-heading > p { font-size:.78rem; } .tile-category-tabs { padding:0 7px; } .tile-category-tab { min-height:54px; padding:0 12px; font-size:.76rem; } .tile-category-panels { padding:23px 15px 25px; } .tile-category-panel-heading { align-items:start; } .tile-category-panel-heading > span { font-size:.6rem; white-space:nowrap; } .tile-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:19px 11px; } .tile-category-panel-size .tile-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 10px; } .tile-category-image { aspect-ratio:1.25; } .tile-category-image img { padding:5px; } .tile-size-visual { padding:9px; } .tile-size-visual::after { inset:8px; } .tile-size-caption { gap:5px; padding:27px 10px 10px; } .tile-size-caption > span { font-size:.43rem; letter-spacing:.12em; } .tile-size-caption > strong { font-size:clamp(.68rem,3vw,.91rem); } .tile-size-diagram { gap:4px; } .tile-category-name { align-items:start; padding-top:8px; font-size:.68rem; line-height:1.35; } .tile-brand-section-heading { grid-template-columns:1fr; gap:12px; margin-bottom:20px; } .tile-brand-card,.tile-brand-card-link { min-height:215px; } .tile-brand-picture,.tile-brand-picture img { min-height:215px; } .tile-brand-copy { padding:15px 12px; } .tile-brand-copy strong { margin:8px 0; font-size:1.55rem; } .tile-brand-description { min-height:0; margin-bottom:12px; font-size:.67rem; line-height:1.55; } .tile-brand-enquiry { gap:7px; font-size:.59rem; } .tile-page-footer-cta { padding:47px 0; } }
+  @media(max-width:767.98px) { .tile-page-hero { min-height:490px; } .tile-page-hero-image { background-position:58% center; } .tile-page-hero-shade { background:linear-gradient(90deg,rgba(25,30,28,.69),rgba(25,30,28,.16)),linear-gradient(0deg,rgba(25,30,28,.45),transparent 68%); } .tile-page-hero-copy { padding-top:70px; padding-bottom:48px; } .tile-page-hero h1 { font-size:clamp(2.85rem,12vw,4.4rem); } .tile-page-hero-copy > p:not(.tile-page-eyebrow) { max-width:430px; font-size:.83rem; } .tile-range-heading { grid-template-columns:1fr; gap:12px; margin-bottom:24px; } .tile-range-heading > p { font-size:.78rem; } .tile-category-tabs { padding:0 7px; } .tile-category-tab { min-height:54px; padding:0 12px; font-size:.76rem; } .tile-category-panels { padding:23px 15px 25px; } .tile-category-panel-heading { align-items:start; } .tile-category-panel-heading > span { font-size:.68rem; white-space:nowrap; } .tile-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:19px 11px; } .tile-category-panel-size .tile-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px 10px; } .tile-category-image { aspect-ratio:1.25; } .tile-category-image img { padding:5px; } .tile-size-visual { padding:9px; } .tile-size-visual::after { inset:8px; } .tile-size-caption { gap:5px; padding:27px 10px 10px; } .tile-size-caption > span { font-size:.66rem; letter-spacing:.12em; } .tile-size-caption > strong { font-size:clamp(.68rem,3vw,.91rem); } .tile-size-diagram { gap:4px; } .tile-category-name { align-items:start; padding-top:8px; font-size:.68rem; line-height:1.35; } .tile-brand-section-heading { grid-template-columns:1fr; gap:12px; margin-bottom:20px; } .tile-brand-card,.tile-brand-card-link { min-height:215px; } .tile-brand-picture,.tile-brand-picture img { min-height:215px; } .tile-brand-copy { padding:15px 12px; } .tile-brand-copy strong { margin:8px 0; font-size:1.55rem; } .tile-brand-description { min-height:0; margin-bottom:12px; font-size:.67rem; line-height:1.55; } .tile-brand-enquiry { gap:7px; font-size:.66rem; } .tile-page-footer-cta { padding:47px 0; } }
   @media(max-width:370px) { .tile-brand-card-link { grid-template-columns:1fr; } .tile-brand-picture,.tile-brand-picture img { height:190px; min-height:190px; } }
   @media(prefers-reduced-motion:reduce) { .tile-category-tab,.tile-category-image img { transition:none; } }
 </style>
@@ -206,4 +206,5 @@
     }
   })();
 </script>
+{% include '_recently_viewed.html' %}
 {% endblock %}

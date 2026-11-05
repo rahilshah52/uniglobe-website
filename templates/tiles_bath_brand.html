@@ -1,30 +1,43 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ brand }} Bathware | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}Browse bath and sanitaryware catalogue selections from {{ brand }} shown by Uniglobe Surfaces, and enquire about showroom options.{% endblock %}
+{% block title %}{{ brand }} Bathware Dealer in Borivali, Mumbai | Toilets, Basins &amp; Faucets | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{{ cards|length }} {{ brand }} bathware products at Uniglobe Lifestyles, Borivali, Mumbai: toilets, basins, faucets, showers and more, with every colour and finish. Visit or WhatsApp us.{% endblock %}
 {% block content %}
-<section class="bath-brand-hero"><div class="container bath-brand-hero-inner"><div class="bath-brand-hero-copy"><a href="{{ url_for('tiles_bath') }}">← Bath &amp; sanitaryware</a><p>SHOWROOM BRAND · BATH &amp; SANITARYWARE</p><h1>{{ brand }}</h1><span>Browse catalogue selections across our bathware categories.</span></div><div class="bath-brand-hero-image"><img src="{{ url_for('static', filename=brand_image) }}" alt="{{ brand }} bathroom collection inspiration"></div></div></section>
+<section class="bath-brand-hero"><div class="container bath-brand-hero-inner"><div class="bath-brand-hero-copy"><a href="{{ url_for('tiles_bath') }}">← Bath &amp; sanitaryware</a><p>SHOWROOM BRAND · BATH &amp; SANITARYWARE</p><h1>{{ brand }}</h1><span>Browse every model we can source, with colours, finishes and key details.</span></div><div class="bath-brand-hero-image"><img src="{{ url_for('static', filename=brand_image) }}" alt="{{ brand }} bathroom collection inspiration"></div></div></section>
 <section class="bath-brand-results"><div class="container">
-  <div class="bath-brand-results-heading"><div><p>THE COLLECTION</p><h2>{{ brand }} catalogue selections.</h2></div><p>Images shown here are grouped across the Bath &amp; Sanitaryware section. Contact us to confirm the specific product, range and availability.</p></div>
-  <form class="bath-brand-refine" method="get" action="{{ url_for('tiles_bath_brand', brand_slug=brand_slug) }}" aria-label="Refine {{ brand }} bathware by category">
-    <div><span>Browse {{ brand }} by product type</span><small>Select any combination of categories.</small></div>
-    <details class="bath-brand-facet"><summary><span>Product type</span><b>{{ selected_categories|length if selected_categories else 'All bathware' }}</b></summary><div class="bath-brand-facet-options">{% for title, slug in categories %}<label><input type="checkbox" name="category" value="{{ slug }}" {% if slug in selected_categories %}checked{% endif %}><span>{{ title }}</span></label>{% endfor %}</div></details>
-    <button type="submit">Show selection </button>{% if selected_categories %}<a href="{{ url_for('tiles_bath_brand', brand_slug=brand_slug) }}">Clear</a>{% endif %}
+  <div class="bath-brand-results-heading"><div><p>THE COLLECTION · {{ cards|length }} {{ 'PRODUCT' if cards|length == 1 else 'PRODUCTS' }}</p><h2>{{ brand }} at Uniglobe.</h2></div><p>Open any product for every view, its colours and finishes, and key details. Contact us to confirm the model and availability for your project.</p></div>
+  {% if categories %}<div class="bath-chips">{% for title, slug in categories %}<a class="bath-chip" href="{{ url_for('tiles_bath_brand', brand_slug=brand_slug, category=slug) }}">{{ title }}</a>{% endfor %}</div>{% endif %}
+  <form class="bath-brand-refine" method="get" action="{{ url_for('tiles_bath_brand', brand_slug=brand_slug) }}" aria-label="Refine {{ brand }} bathware">
+    <div><span>Browse {{ brand }}</span><small>Combine categories and product types.</small></div>
+    <details class="bath-brand-facet"><summary><span>Category</span><b>{{ selected_category_names|join(', ') if selected_category_names else 'All bathware' }}</b></summary><div class="bath-brand-facet-options">{% for title, slug in categories %}<label><input type="checkbox" name="category" value="{{ slug }}" {% if slug in selected_categories %}checked{% endif %}><span>{{ title }}</span></label>{% endfor %}</div></details>
+    {% if types %}<details class="bath-brand-facet"><summary><span>Type</span><b>{{ selected_types|length ~ ' selected' if selected_types else 'All types' }}</b></summary><div class="bath-brand-facet-options">{% for type_name in types %}<label><input type="checkbox" name="type" value="{{ type_name }}" {% if type_name in selected_types %}checked{% endif %}><span>{{ type_name }}</span></label>{% endfor %}</div></details>{% endif %}
+    <button type="submit">Show products</button>{% if selected_categories or selected_types %}<a href="{{ url_for('tiles_bath_brand', brand_slug=brand_slug) }}">Clear</a>{% endif %}
   </form>
-  <p class="bath-brand-count">{{ products|length }} catalogue {{ 'image' if products|length == 1 else 'images' }}{% if selected_category_names %} · {{ selected_category_names|join(' + ') }}{% endif %}</p>
-  <div class="bath-brand-products">
-    {% for product in products %}
-    <article class="bath-brand-product"><div class="bath-brand-product-image"><img src="{{ url_for('static', filename=product.thumbnail or product.image) }}" alt="{{ brand }} {{ product.category|lower }} — {{ product.caption }}" loading="lazy" decoding="async"><button class="wishlist-toggle wishlist-toggle--overlay" type="button" data-wishlist-toggle data-wishlist-kind="bathware" data-wishlist-id="{{ product.product_code or (brand ~ '|' ~ product.category ~ '|' ~ product.caption ~ '|' ~ product.image) }}" data-wishlist-name="{{ product.caption }}" data-wishlist-image="{{ url_for('static', filename=product.image) }}" data-wishlist-url="{{ request.full_path.rstrip('?') }}" data-wishlist-subtitle="{{ brand }} · {{ product.category }}" aria-label="Save {{ product.caption }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save</span></button></div><div class="bath-brand-product-copy"><small>{{ product.category }}</small><h3>{{ product.caption }}</h3></div></article>
+  {% if cards %}
+  <div class="bath-products" data-bath-products data-more-target="#bath-more">
+    {% for card in cards %}{% include "_bath_product_card.html" %}{% endfor %}
+  </div>
+  <div class="bath-more-wrap" id="bath-more" hidden><p></p><button class="bath-more" type="button">Show more products</button></div>
+  {% else %}
+  <p class="bath-empty">{% if selected_categories or selected_types %}No {{ brand }} products match this selection. <a href="{{ url_for('tiles_bath_brand', brand_slug=brand_slug) }}">Show all {{ brand }} products</a>.{% else %}{{ brand }} products are coming soon. Ask our team about current options.{% endif %}</p>
+  {% endif %}
+  {% if inspiration %}
+  <div class="bath-brand-results-heading bath-brand-inspiration"><div><p>CATALOGUE INSPIRATION</p><h2>{{ brand }} in a space.</h2></div><p>Selected brand imagery to help you picture the finished room.</p></div>
+  <div class="bath-brand-products bath-brand-gallery">
+    {% for product in inspiration %}
+    <article class="bath-brand-product"><div class="bath-brand-product-image"><img src="{{ url_for('static', filename=product.thumbnail or product.image) }}" alt="{{ brand }} {{ product.category|lower }} — {{ product.caption }}" loading="lazy" decoding="async"></div><div class="bath-brand-product-copy"><small>{{ product.category }}</small><h3>{{ product.caption }}</h3></div></article>
     {% endfor %}
   </div>
+  {% endif %}
   <div class="bath-brand-contact"><p>PROJECTS · MODELS · AVAILABILITY</p><h2>Enquire about {{ brand }}.</h2><a href="{{ url_for('tiles_contact') }}?interest={{ brand|urlencode }}">Talk to our team </a></div>
 </div></section>
+{% include "_bath_products_assets.html" %}
 <style>
   .bath-brand-hero { padding:clamp(38px,5vw,60px) 0; background:#f1f1ed; }
   .bath-brand-hero-inner { display:grid; grid-template-columns:1fr minmax(380px,.86fr); align-items:center; gap:clamp(36px,7vw,100px); }
   .bath-brand-hero-image { aspect-ratio:1.38; overflow:hidden; background:#e2e4df; }
   .bath-brand-hero-image img { display:block; width:100%; height:100%; object-fit:cover; }
   .bath-brand-hero .container > a { display:inline-block; margin-bottom:clamp(34px,5vw,58px); color:#646b66; font-size:.72rem; text-decoration:none; }
-  .bath-brand-hero .container > p,.bath-brand-results-heading > div > p,.bath-brand-contact > p { margin:0 0 10px; color:#8a908b; font-size:.59rem; font-weight:600; letter-spacing:.16em; }
+  .bath-brand-hero .container > p,.bath-brand-results-heading > div > p,.bath-brand-contact > p { margin:0 0 10px; color:#8a908b; font-size:.66rem; font-weight:600; letter-spacing:.16em; }
   .bath-brand-hero h1 { margin:0 0 12px; color:#2d3330; font-size:clamp(3.3rem,8vw,6.8rem); font-weight:400; letter-spacing:-.075em; line-height:.96; }
   .bath-brand-hero span { color:#6d746f; font-size:.9rem; line-height:1.7; }
   .bath-brand-results { padding:clamp(48px,7vw,82px) 0; }
@@ -34,31 +47,36 @@
   .bath-brand-refine { display:grid; grid-template-columns:1fr minmax(220px,.5fr) auto auto; align-items:center; gap:12px; margin:0 0 10px; padding:15px 17px; border:1px solid #e5e6e1; background:#fafaf8; }
   .bath-brand-refine > div { display:grid; gap:4px; }
   .bath-brand-refine > div span { color:#454d48; font-size:.75rem; font-weight:600; }
-  .bath-brand-refine small,.bath-brand-refine label { color:#858b86; font-size:.62rem; }
+  .bath-brand-refine small,.bath-brand-refine label { color:#858b86; font-size:.68rem; }
   .bath-brand-facet { position:relative; min-width:0; }
   .bath-brand-facet > summary { display:flex; justify-content:space-between; align-items:center; gap:8px; min-height:41px; padding:8px 11px; border:1px solid #e0e2dc; color:#3d4540; background:#fff; font-size:.74rem; list-style:none; cursor:pointer; }
   .bath-brand-facet > summary::-webkit-details-marker { display:none; }
   .bath-brand-facet > summary::after { content:'⌄'; color:#858b86; }
-  .bath-brand-facet > summary b { max-width:150px; overflow:hidden; color:#828981; font-size:.65rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
+  .bath-brand-facet > summary b { max-width:150px; overflow:hidden; color:#828981; font-size:.68rem; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
   .bath-brand-facet-options { position:absolute; z-index:5; top:calc(100% + 5px); left:0; width:max(100%,240px); max-height:230px; overflow:auto; padding:7px; border:1px solid #dedfd9; background:#fff; box-shadow:0 12px 30px rgba(37,43,39,.14); }
   .bath-brand-facet-options label { display:flex; align-items:center; gap:9px; min-height:38px; padding:7px 9px; color:#505852; font-size:.73rem; cursor:pointer; }
   .bath-brand-facet-options label:hover { background:#f4f4f0; }
   .bath-brand-facet-options input { width:15px; height:15px; accent-color:#454d48; }
   .bath-brand-refine button { min-height:41px; padding:0 14px; border:1px solid #343b37; color:#fff; background:#343b37; font:inherit; font-size:.69rem; white-space:nowrap; }
   .bath-brand-refine > a { color:#727a74; font-size:.68rem; }
-  .bath-brand-count { margin:0 0 13px; color:#8a908b; font-size:.65rem; }
+  .bath-brand-inspiration { margin-top:64px; }
+  @media(min-width:768px) {
+  .bath-brand-refine { grid-template-columns:1fr minmax(170px,.42fr) minmax(170px,.42fr) auto auto; }
+  .bath-brand-refine:not(:has(.bath-brand-facet + .bath-brand-facet)) { grid-template-columns:1fr minmax(220px,.5fr) auto auto; }
+  }
+  .bath-brand-count { margin:0 0 13px; color:#8a908b; font-size:.68rem; }
   .bath-brand-products { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px; }
   .bath-brand-product { min-width:0; background:#f4f4f1; }
   .bath-brand-product-image { position:relative; aspect-ratio:1.05; overflow:hidden; background:#e7e8e4; }
   .bath-brand-product-image img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .45s ease; }
   .bath-brand-product:hover img { transform:scale(1.025); }
   .bath-brand-product-copy { padding:13px 15px 16px; }
-  .bath-brand-product-copy small { color:#868c87; font-size:.5rem; letter-spacing:.12em; text-transform:uppercase; }
+  .bath-brand-product-copy small { color:#868c87; font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; }
   .bath-brand-product-copy h3 { margin:6px 0 0; color:#353b37; font-size:.86rem; font-weight:500; }
   .bath-brand-contact { margin-top:50px; padding:27px; text-align:center; background:#f1f1ed; }
   .bath-brand-contact h2 { margin:0 0 18px; color:#303634; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:400; letter-spacing:-.05em; }
   .bath-brand-contact a { display:inline-flex; justify-content:space-between; gap:24px; padding:13px 16px; color:#fff; background:#303634; font-size:.7rem; text-decoration:none; }
   @media(max-width:991.98px) { .bath-brand-hero-inner { grid-template-columns:1fr .85fr; gap:25px; } .bath-brand-hero-image { aspect-ratio:1.05; } }
-  @media(max-width:767.98px) { .bath-brand-hero-inner { grid-template-columns:1fr; gap:23px; } .bath-brand-hero-image { aspect-ratio:1.5; } .bath-brand-hero .container > a { margin-bottom:26px; } .bath-brand-results-heading { grid-template-columns:1fr; gap:11px; } .bath-brand-results-heading > p { font-size:.75rem; } .bath-brand-refine { grid-template-columns:1fr auto; gap:8px; padding:13px 12px; } .bath-brand-refine > div,.bath-brand-facet,.bath-brand-refine button { grid-column:1/-1; } .bath-brand-facet-options { width:100%; } .bath-brand-refine button { width:100%; } .bath-brand-products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-brand-product-image { aspect-ratio:.86; } .bath-brand-product-copy { padding:10px 10px 12px; } .bath-brand-product-copy h3 { font-size:.74rem; line-height:1.4; } .bath-brand-product-copy small { font-size:.43rem; } .bath-brand-contact { margin-top:30px; padding:21px 14px; } }
+  @media(max-width:767.98px) { .bath-brand-hero-inner { grid-template-columns:1fr; gap:23px; } .bath-brand-hero-image { aspect-ratio:1.5; } .bath-brand-hero .container > a { margin-bottom:26px; } .bath-brand-results-heading { grid-template-columns:1fr; gap:11px; } .bath-brand-results-heading > p { font-size:.75rem; } .bath-brand-refine { grid-template-columns:1fr auto; gap:8px; padding:13px 12px; } .bath-brand-refine > div,.bath-brand-facet,.bath-brand-refine button { grid-column:1/-1; } .bath-brand-facet-options { width:100%; } .bath-brand-refine button { width:100%; } .bath-brand-products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .bath-brand-product-image { aspect-ratio:.86; } .bath-brand-product-copy { padding:10px 10px 12px; } .bath-brand-product-copy h3 { font-size:.74rem; line-height:1.4; } .bath-brand-product-copy small { font-size:.66rem; } .bath-brand-contact { margin-top:30px; padding:21px 14px; } }
 </style>
 {% endblock %}

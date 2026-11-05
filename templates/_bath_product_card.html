@@ -1,0 +1,19 @@
+{# One bathware product card. Expects `card` (see bath_product_card in app.py). #}
+<article class="bath-card" data-bath-card>
+  <a class="bath-card-link" href="{{ url_for('tiles_bath_product', code=card.code) }}" aria-label="{{ card.brand }} {{ card.title }}">
+    <div class="bath-card-image"><img src="{{ url_for('static', filename=card.thumbnail) }}" data-default-src="{{ url_for('static', filename=card.thumbnail) }}" alt="{{ card.brand }} {{ card.title }}" loading="lazy" decoding="async"></div>
+    <div class="bath-card-copy">
+      <small>{{ card.brand }}{% if card.collection %} · {{ card.collection }}{% endif %}</small>
+      <h3>{{ card.title }}</h3>
+      <span class="bath-card-type">{{ card.type }}</span>
+    </div>
+  </a>
+  {% if card.variants|length > 1 %}
+  <div class="bath-card-swatches" aria-label="Available colours">
+    {% for v in card.variants[:7] %}<button type="button" class="bath-swatch bath-swatch--sm" style="{{ v.style }}" data-swatch-src="{{ url_for('static', filename=v.thumbnail) }}" aria-label="{{ v.name }}" title="{{ v.name }}"></button>{% endfor %}
+    {% if card.variants|length > 7 %}<span class="bath-card-more">+{{ card.variants|length - 7 }}</span>{% endif %}
+    <span class="bath-card-colours">{{ card.variants|length }} colours</span>
+  </div>
+  {% endif %}
+  <button class="wishlist-toggle wishlist-toggle--overlay" type="button" data-wishlist-toggle data-wishlist-kind="bathware" data-wishlist-id="{{ card.code }}" data-wishlist-name="{{ card.title }}" data-wishlist-image="{{ url_for('static', filename=card.image) }}" data-wishlist-url="{{ url_for('tiles_bath_product', code=card.code) }}" data-wishlist-subtitle="{{ card.brand }} · {{ card.type }}" aria-label="Save {{ card.title }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save</span></button>
+</article>

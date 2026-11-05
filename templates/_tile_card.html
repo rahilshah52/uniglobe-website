@@ -1,0 +1,22 @@
+{# One tile design card. Expects `card` (see tile_card in app.py) and optional `card_url`. #}
+<article class="tcard" data-tile-card>
+  <a class="tcard-link" href="{{ card_url or url_for('tiles_uploaded_product_detail', code=card.code) }}" aria-label="{{ card.title }}{% if card.series %}, {{ card.series }} series{% endif %}">
+    <div class="tcard-photo tcard-photo--{{ card.kind }}">
+      {% if card.thumbnail %}<img src="{{ url_for('static', filename=card.thumbnail) }}" alt="{{ card.title }} {{ 'in a room setting' if card.kind == 'room' else 'tile' }}" loading="lazy" decoding="async">{% endif %}
+      {% if card.face %}<span class="tcard-face" aria-hidden="true"><img src="{{ url_for('static', filename=card.face) }}" alt="" loading="lazy" decoding="async"></span>{% endif %}
+      {% if card.demo %}<span class="tcard-flag">Preview example</span>{% endif %}
+    </div>
+    <div class="tcard-copy">
+      <small>{{ card.series or card.brand or 'Tile design' }}</small>
+      <h3>{{ card.title }}</h3>
+      {% if card.sizes or card.finishes %}
+      <div class="tcard-meta">
+        {% for size in card.sizes[:2] %}<span class="tcard-chip">{{ size }}</span>{% endfor %}
+        {% if card.sizes|length > 2 %}<span class="tcard-chip tcard-chip--more">+{{ card.sizes|length - 2 }}</span>{% endif %}
+        {% if card.finishes %}<span class="tcard-finish">{{ card.finishes[:2]|join(' · ') }}</span>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </a>
+  <button class="wishlist-toggle wishlist-toggle--overlay" type="button" data-wishlist-toggle data-wishlist-kind="tile" data-wishlist-id="{{ card.code }}" data-wishlist-name="{{ card.title }}" data-wishlist-image="{{ url_for('static', filename=card.image) }}" data-wishlist-url="{{ url_for('tiles_uploaded_product_detail', code=card.code) }}" data-wishlist-subtitle="{{ card.series or card.brand or 'Tile design' }}{% if card.sizes %} · {{ card.sizes|join(', ') }} mm{% endif %}" aria-label="Save {{ card.title }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save</span></button>
+</article>

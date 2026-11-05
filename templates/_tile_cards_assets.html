@@ -1,0 +1,70 @@
+{# Shared styles and paging for tile design grids. #}
+<style>
+  .tcards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; }
+  .tcard { position:relative; display:flex; flex-direction:column; min-width:0; background:#fff; border:1px solid #ecece7; transition:border-color .25s ease, box-shadow .25s ease; }
+  .tcard:hover { border-color:#d9dad3; box-shadow:0 14px 34px rgba(37,43,39,.09); }
+  .tcard[hidden] { display:none; }
+  .tcard-link { display:flex; flex:1; flex-direction:column; color:inherit; text-decoration:none; }
+  .tcard-photo { position:relative; aspect-ratio:4 / 3; overflow:hidden; background:#eeefeb; }
+  .tcard-photo > img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .6s ease; }
+  .tcard:hover .tcard-photo > img { transform:scale(1.045); }
+  .tcard-photo--face { display:grid; place-items:center; padding:7%; background:radial-gradient(ellipse at center,#fff 0,#f4f5f1 66%,#e4e6e1 100%); }
+  .tcard-photo--face > img { width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 9px 11px rgba(31,37,33,.24)); }
+  .tcard:hover .tcard-photo--face > img { transform:scale(1.03); }
+  .tcard-face { position:absolute; left:10px; bottom:10px; display:grid; place-items:center; width:25%; aspect-ratio:1; padding:4px; background:rgba(255,255,255,.94); box-shadow:0 5px 14px rgba(25,30,27,.22); }
+  .tcard-face img { display:block; max-width:100%; max-height:100%; object-fit:contain; }
+  .tcard-flag { position:absolute; top:10px; left:10px; padding:5px 8px; color:#4d4a3f; background:rgba(248,245,233,.94); font-size:.68rem; }
+  .tcard-copy { padding:13px 14px 15px; }
+  .tcard-copy small { display:block; overflow:hidden; color:#7d847f; font-size:.66rem; font-weight:600; letter-spacing:.1em; text-overflow:ellipsis; text-transform:uppercase; white-space:nowrap; }
+  .tcard-copy h3 { display:-webkit-box; margin:6px 0 9px; overflow:hidden; color:#2f3532; font-size:.95rem; font-weight:500; line-height:1.35; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+  .tcard-meta { display:flex; flex-wrap:wrap; align-items:center; gap:5px; }
+  .tcard-chip { padding:3px 7px; border:1px solid #e2e4de; color:#4a514c; background:#f8f8f5; font-size:.7rem; white-space:nowrap; }
+  .tcard-chip--more { color:#7d847f; }
+  .tcard-finish { margin-left:2px; color:#6f7671; font-size:.72rem; }
+  .tcard > .wishlist-toggle { position:absolute; top:10px; right:10px; width:36px; min-height:36px; }
+  .tcards-more { display:flex; flex-direction:column; align-items:center; gap:9px; margin-top:30px; }
+  .tcards-more p { margin:0; color:#7d847f; font-size:.78rem; }
+  .tcards-more button { min-height:46px; padding:0 24px; border:1px solid #343b37; color:#343b37; background:#fff; font:inherit; font-size:.82rem; cursor:pointer; transition:background .2s ease,color .2s ease; }
+  .tcards-more button:hover { color:#fff; background:#343b37; }
+  @media(max-width:1199.98px) { .tcards { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media(max-width:767.98px) {
+    .tcards { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .tcard-copy { padding:10px 10px 12px; }
+    .tcard-copy small { font-size:.62rem; letter-spacing:.07em; }
+    .tcard-copy h3 { margin:4px 0 7px; font-size:.86rem; }
+    .tcard-chip { padding:2px 5px; font-size:.66rem; }
+    .tcard-finish { flex-basis:100%; margin:1px 0 0; font-size:.68rem; }
+    .tcard-face { left:7px; bottom:7px; width:30%; padding:3px; }
+    .tcard > .wishlist-toggle { top:7px; right:7px; width:32px; min-height:32px; }
+  }
+</style>
+<script>
+(function () {
+  // Designs load 24 at a time; "Show more" fetches the next set from the server.
+  document.querySelectorAll('[data-tile-cards]').forEach(function (grid) {
+    var wrap = document.querySelector(grid.dataset.moreTarget);
+    if (!wrap) return;
+    var total = parseInt(grid.dataset.total || '0', 10), button = wrap.querySelector('button'), note = wrap.querySelector('p');
+    function count() { return grid.querySelectorAll('[data-tile-card]').length; }
+    function update() {
+      var shown = count();
+      note.textContent = 'Showing ' + shown + ' of ' + total + ' designs';
+      wrap.hidden = total <= shown && shown <= 24; button.hidden = shown >= total;
+    }
+    button.addEventListener('click', function () {
+      var url = new URL(window.location.href);
+      url.searchParams.set('cards_from', count());
+      button.disabled = true; button.textContent = 'Loading…';
+      fetch(url.toString(), { headers: { 'X-Requested-With': 'fetch' } })
+        .then(function (r) { return r.ok ? r.text() : ''; })
+        .then(function (html) {
+          var holder = document.createElement('div'); holder.innerHTML = html;
+          Array.prototype.slice.call(holder.children).forEach(function (el) { grid.appendChild(el); });
+          if (window.UniglobeWishlist) window.UniglobeWishlist.refresh();
+        })
+        .finally(function () { button.disabled = false; button.textContent = 'Show more designs'; update(); });
+    });
+    update();
+  });
+})();
+</script>
