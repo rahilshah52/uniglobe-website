@@ -1,1 +1,11 @@
+# Content lives on the live server and is managed through /tiles/manage and /upload.
+# It is never stored in Git or sent by a deploy (see DEPLOY.md).
+static/data/
+static/uploads/
+
+# Local / generated files
 __pycache__/
+*.pyc
+venv/
+.venv/
+tmp/

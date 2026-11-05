@@ -1,0 +1,79 @@
+name: Deploy website to cPanel (FTP)
+
+# Sends CODE changes (app.py, templates, CSS, design images) to the live server over FTP.
+# Never sent: static/data and static/uploads (products and photos added on the live site),
+# and .htaccess (the server's own Passenger settings, which must not change).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check = test the connection and list what would change (changes nothing). deploy = upload now."
+        type: choice
+        options: [check, deploy]
+        default: check
+
+concurrency:
+  group: deploy-live
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_FTP: ${{ secrets.FTP_PASSWORD != '' }}
+      SITE_URL: ${{ vars.SITE_URL || 'https://uniglobelifestyles.com' }}
+      # Pushes only deploy once the repository variable DEPLOY_ON_PUSH is set to "true".
+      MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || (vars.DEPLOY_ON_PUSH == 'true' && 'deploy' || 'skip') }}
+    steps:
+      - name: Explain why nothing happened
+        if: env.HAS_FTP != 'true' || env.MODE == 'skip'
+        run: |
+          echo "Nothing was deployed."
+          echo "Either the FTP secrets are not set yet, or automatic deploys are off (repository variable DEPLOY_ON_PUSH is not 'true')."
+          echo "See DEPLOY.md."
+
+      - uses: actions/checkout@v4
+        if: env.HAS_FTP == 'true' && env.MODE != 'skip'
+
+      - name: Ask the server to restart the app after upload
+        if: env.HAS_FTP == 'true' && env.MODE == 'deploy'
+        run: mkdir -p tmp && date -u > tmp/restart.txt
+
+      - name: Upload code (content folders and .htaccess are never sent)
+        if: env.HAS_FTP == 'true' && env.MODE != 'skip'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || 21 }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          server-dir: ${{ vars.FTP_DIR || './' }}
+          dry-run: ${{ env.MODE == 'check' }}
+          log-level: standard
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            .htaccess
+            .well-known/**
+            static/data/**
+            static/uploads/**
+            **/__pycache__/**
+            **/*.pyc
+            venv/**
+            .venv/**
+            DEPLOY.md
+
+      - name: Check the site responds
+        if: env.HAS_FTP == 'true' && env.MODE == 'deploy'
+        run: |
+          sleep 20
+          for path in / /tiles /products; do
+            code=$(curl -sk -o /dev/null -w '%{http_code}' "$SITE_URL$path" || echo 000)
+            echo "$SITE_URL$path -> $code"
+            [ "$code" = "200" ] || { echo "The site did not answer with 200 on $path. Check cPanel > Setup Python App and ~/logs/passenger.log."; exit 1; }
+          done
