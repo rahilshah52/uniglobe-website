@@ -1,0 +1,42 @@
+{# Search boxes for long lists: filter dropdowns (sizes, colours, series…) and series card grids. #}
+<style>
+  .list-search { display:flex; align-items:center; gap:8px; margin:0 0 6px; padding:0 10px; border:1px solid #dfe1db; background:#fff; }
+  .list-search:focus-within { border-color:#303634; }
+  .list-search i { color:#8a908b; font-size:.8rem; }
+  .list-search input { flex:1; min-width:0; min-height:40px; border:0 !important; padding:0 !important; background:none; font:inherit; font-size:.86rem; outline:none; width:auto !important; height:auto !important; accent-color:auto; }
+  .list-search-grid { max-width:460px; margin:0 0 20px; }
+  .list-search-grid input { min-height:46px; font-size:.92rem; }
+  .list-search-none { margin:4px 0 0; padding:8px; color:#6f7671; font-size:.8rem; }
+  [data-list-item][hidden] { display:none !important; }
+</style>
+<script>
+(function () {
+  var norm = function (t) { return String(t || '').toLowerCase().replace(/[×x*]/g, ' ').replace(/\s+/g, ' ').trim(); };
+  function attach(box, items, before, placeholder, grid) {
+    if (items.length <= 8) return;
+    var wrap = document.createElement('label'); wrap.className = 'list-search' + (grid ? ' list-search-grid' : '');
+    wrap.innerHTML = '<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" autocomplete="off">';
+    var input = wrap.querySelector('input'); input.placeholder = placeholder; input.setAttribute('aria-label', placeholder);
+    var none = document.createElement('p'); none.className = 'list-search-none'; none.textContent = 'Nothing matches. Try fewer letters.'; none.hidden = true;
+    box.insertBefore(wrap, before); (grid ? box.insertBefore(none, before) : box.appendChild(none));
+    items.forEach(function (el) { el.setAttribute('data-list-item', ''); });
+    input.addEventListener('input', function () {
+      var words = norm(input.value).split(' ').filter(Boolean), shown = 0;
+      items.forEach(function (el) { var ok = words.every(function (w) { return norm(el.textContent).indexOf(w) > -1; }); el.hidden = !ok; if (ok) shown++; });
+      none.hidden = shown > 0;
+    });
+    // Typing in the box must not submit the filter form.
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+    return input;
+  }
+  document.querySelectorAll('.tile-facet').forEach(function (facet) {
+    var opts = facet.querySelector('.tile-facet-options'); if (!opts) return;
+    var name = (facet.querySelector('summary span') || {}).textContent || 'options';
+    var input = attach(opts, Array.prototype.slice.call(opts.querySelectorAll('label')), opts.firstChild, 'Search ' + name.toLowerCase(), false);
+    if (input) facet.addEventListener('toggle', function () { if (facet.open) setTimeout(function () { input.focus(); }, 30); });
+  });
+  document.querySelectorAll('.tile-series-grid').forEach(function (grid) {
+    attach(grid.parentNode, Array.prototype.slice.call(grid.querySelectorAll('.tile-series-card')), grid, 'Search series (e.g. Prozzo, Neo)', true);
+  });
+})();
+</script>
