@@ -1,6 +1,6 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ brand }} Bathware | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}Browse bath and sanitaryware catalogue selections from {{ brand }} shown by Uniglobe Surfaces, and enquire about showroom options.{% endblock %}
+{% block title %}{{ brand }} Bathware Dealer in Borivali, Mumbai | Toilets, Basins &amp; Faucets | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{{ cards|length }} {{ brand }} bathware products at Uniglobe Lifestyles, Borivali, Mumbai: toilets, basins, faucets, showers and more, with every colour and finish. Visit or WhatsApp us.{% endblock %}
 {% block content %}
 <section class="bath-brand-hero"><div class="container bath-brand-hero-inner"><div class="bath-brand-hero-copy"><a href="{{ url_for('tiles_bath') }}">← Bath &amp; sanitaryware</a><p>SHOWROOM BRAND · BATH &amp; SANITARYWARE</p><h1>{{ brand }}</h1><span>Browse every model we can source, with colours, finishes and key details.</span></div><div class="bath-brand-hero-image"><img src="{{ url_for('static', filename=brand_image) }}" alt="{{ brand }} bathroom collection inspiration"></div></div></section>
 <section class="bath-brand-results"><div class="container">

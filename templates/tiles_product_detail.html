@@ -1,6 +1,34 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ product.name }}{% if product.series_name %} · {{ product.series_name }}{% endif %} | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}{{ (product.description or (product.name ~ ' tile from Uniglobe Surfaces'))|striptags|truncate(155) }}{% endblock %}
+{% block title %}{{ product.name }}{% if size_options %} {{ size_options[0].short }}{% endif %} Tile{% if product.series_name %} – {{ product.series_name }}{% endif %}{% if brand_name %} | {{ brand_name }}{% endif %} | Uniglobe Lifestyles Mumbai{% endblock %}
+{% block meta_description %}{{ product.name }}{% if brand_name %} by {{ brand_name }}{% endif %}{% if product.series_name %}, {{ product.series_name }}{% endif %}{% if size_options %}, {{ size_options|map(attribute='short')|join(', ') }}{% endif %}{% if finishes %}, {{ finishes|join('/')|lower }} finish{% endif %}. See it at our Borivali, Mumbai showroom or ask on WhatsApp.{% endblock %}
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "name": product.name,
+      "description": (product.description or product.name ~ ' tile')|striptags,
+      "image": (views[:6]|map(attribute='src')|map('absolute_url')|list),
+      "category": "Tiles",
+      "brand": {"@type": "Brand", "name": brand_name or "Uniglobe Lifestyles"},
+      "size": size_options|map(attribute='label')|join(', '),
+      "additionalProperty": specs|map('spec_property')|list,
+      "url": request.base_url
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Tiles", "item": url_for('tiles_home', _external=True)},
+        {"@type": "ListItem", "position": 2, "name": "Collections", "item": url_for('tiles_collections', _external=True)}
+      ] + ([{"@type": "ListItem", "position": 3, "name": product.series_name, "item": url_for('tiles_category_products', group_slug='collection', category_slug=series_slug, series_slug=series_slug, _external=True)}] if series_slug else [])
+        + [{"@type": "ListItem", "position": 4 if series_slug else 3, "name": product.name}]
+    }
+  ]
+}|tojson }}
+</script>
+{% endblock %}
 {% block content %}
 {% set first_size = size_options[0] if size_options else None %}
 <section class="tp-page">
@@ -197,7 +225,7 @@
 (function () {
   var views = {{ views|tojson }};
   var sizes = {{ size_options|tojson }};
-  var productName = {{ product.name|tojson }}, seriesName = {{ product.series_name|tojson }};
+  var productName = {{ product.name|tojson }}, seriesName = {{ (product.series_name or '')|tojson }};
   var contactUrl = {{ url_for('tiles_contact')|tojson }};
   var photo = 0, sizeIndex = 0;
   var stage = document.getElementById('tpStage'), main = document.getElementById('tpMain'), thumbs = document.getElementById('tpThumbs');

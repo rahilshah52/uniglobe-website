@@ -1,6 +1,7 @@
 import code
 from unicodedata import category
 
+from markupsafe import Markup
 from flask import Flask, render_template, request, redirect, flash, url_for, session, g, has_request_context
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta
@@ -215,6 +216,20 @@ app.config.update(
 )
 
 mail = Mail(app)
+
+
+class _HttpsBehindProxy:
+    """Keep links and canonical URLs on https when the host forwards secure requests."""
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        if environ.get('HTTP_X_FORWARDED_PROTO', '').lower() == 'https' or environ.get('HTTPS', '').lower() == 'on':
+            environ['wsgi.url_scheme'] = 'https'
+        return self.wsgi_app(environ, start_response)
+
+
+app.wsgi_app = _HttpsBehindProxy(app.wsgi_app)
 
 @app.route('/')
 def home():
@@ -1057,6 +1072,53 @@ def series_title(name):
 app.add_template_filter(series_title, 'series_title')
 
 
+def absolute_url(path):
+    """Full https URL for a site path (used in structured data)."""
+    path = str(path or '')
+    if path.startswith(('http://', 'https://')):
+        return path
+    return request.url_root.rstrip('/') + '/' + path.lstrip('/')
+
+
+def spec_property(pair):
+    return {'@type': 'PropertyValue', 'name': pair[0], 'value': pair[1]}
+
+
+app.add_template_filter(absolute_url, 'absolute_url')
+app.add_template_filter(spec_property, 'spec_property')
+
+
+def manager_option_set(options):
+    """Register a list of image choices once per page; the manager fills the dropdown when it is opened."""
+    store = g.setdefault('_option_sets', {'images': [], 'index': {}, 'sets': {}, 'keys': {}})
+    signature = tuple(option.get('image', '') for option in options)
+    key = store['keys'].get(signature)
+    if key is None:
+        indexes = []
+        for option in options:
+            image = option.get('image', '')
+            label = f"{option.get('title', '')} · {image.split('/')[-1]}"
+            position = store['index'].get((image, label))
+            if position is None:
+                position = len(store['images'])
+                store['images'].append([image, label])
+                store['index'][(image, label)] = position
+            indexes.append(position)
+        key = f"s{len(store['sets'])}"
+        store['sets'][key] = indexes
+        store['keys'][signature] = key
+    return key
+
+
+def manager_option_sets_json():
+    store = g.get('_option_sets') or {'images': [], 'sets': {}}
+    return Markup(json.dumps({'images': store['images'], 'sets': store['sets']}, ensure_ascii=False).replace('</', '<\\/'))
+
+
+app.add_template_filter(manager_option_set, 'manager_option_set')
+app.add_template_global(manager_option_sets_json, 'manager_option_sets_json')
+
+
 def tile_series_for(product, series_by_slug):
     return next((series_by_slug[tag] for tag in sorted(get_product_tile_tags(product)) if tag in series_by_slug), None)
 
@@ -1429,9 +1491,20 @@ def tiles_product_detail(slug):
         if inspiration and (len(gallery) == 1 or product['group'].startswith('5 mm')):
             gallery.append({'src': inspiration, 'label': 'Collection inspiration'})
     product['wishlist_id'] = slug
+    views = []
+    for view in gallery:
+        is_room = 'room' in view['src'] or view['label'] in {'Installed collection view', 'Collection inspiration'}
+        views.append({'src': url_for('static', filename=view['src']), 'thumb': url_for('static', filename=card_image_path(view['src'])),
+                      'kind': 'room' if is_room else 'face'})
+    room_views = [view for view in views if view['kind'] == 'room']
+    face_views = [view for view in views if view['kind'] == 'face']
+    specs = [('Collection', product.get('group', ''))] + ([('Formats', product['details'])] if product.get('details') else [])
     return render_template('tiles_product_detail.html', product=product, gallery=gallery,
                            wishlist_image=url_for('static', filename=gallery[0]['src']),
-                           wishlist_url=request.full_path.rstrip('?'))
+                           wishlist_url=request.full_path.rstrip('?'),
+                           views=room_views + face_views, has_room_and_face=bool(room_views and face_views),
+                           size_options=[], specs=specs, features=[], brand_name='', finishes=[],
+                           related_cards=[], related_label='', related_url=None, related_total=0, series_slug=None)
 
 @app.route('/tiles/product-uploaded/<code>')
 def tiles_uploaded_product_detail(code):
@@ -1552,9 +1625,126 @@ def tiles_uploaded_product_detail(code):
                            related_label=related_label, related_url=related_url, related_total=len(related),
                            series_slug=series_slug)
 
+# ---------------------------------------------------------------------------
+# Search engines: robots.txt and an always up-to-date sitemap.xml
+# ---------------------------------------------------------------------------
+@app.route('/robots.txt')
+def robots_txt():
+    lines = [
+        'User-agent: *',
+        'Disallow: /tiles/manage',
+        'Disallow: /tiles/search',
+        'Disallow: /tiles/wishlist',
+        'Disallow: /wishlist',
+        'Disallow: /admin-login',
+        'Disallow: /admin-logout',
+        'Disallow: /upload',
+        'Disallow: /*?cards_from=',
+        '',
+        f"Sitemap: {url_for('sitemap_xml', _external=True)}",
+    ]
+    return app.response_class('\n'.join(lines) + '\n', mimetype='text/plain')
+
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    from xml.sax.saxutils import escape
+    urls = []
+
+    def add(endpoint, priority='0.6', **values):
+        try:
+            urls.append((url_for(endpoint, _external=True, **values), priority))
+        except Exception:
+            pass
+
+    # Furniture
+    for endpoint, priority in (('home', '1.0'), ('about', '0.7'), ('products', '0.9'), ('services', '0.8'),
+                               ('projects', '0.6'), ('showroom', '0.7'), ('catalogs', '0.6'), ('blog', '0.5'), ('contact', '0.7')):
+        add(endpoint, priority)
+    blog_folder = os.path.join(app.template_folder, 'blog')
+    if os.path.isdir(blog_folder):
+        for name in sorted(os.listdir(blog_folder)):
+            if name.endswith('.html'):
+                add('blog_post', '0.5', slug=name[:-5])
+    try:
+        with open(DATA_FILE, 'r') as file:
+            furniture = json.load(file)
+        for category, section in furniture.items():
+            if category in categories:
+                for item in section.get('items', []):
+                    if item.get('code'):
+                        add('product_detail', '0.6', category=category, code=item['code'])
+    except (OSError, ValueError, NameError):
+        pass
+    # Tiles and bathware
+    for endpoint, priority in (('tiles_home', '1.0'), ('tiles_collections', '0.9'), ('tiles_catalogues', '0.8'),
+                               ('tiles_bath', '0.9'), ('tiles_about', '0.7'), ('tiles_contact', '0.8')):
+        add(endpoint, priority)
+    for brand in load_surface_brands():
+        if brand.get('active', True):
+            if brand.get('department') in {'tiles', 'both'}:
+                add('tiles_collection_brand', '0.8', slug=brand['slug'])
+            if brand.get('department') in {'bathware', 'both'}:
+                add('tiles_bath_brand', '0.8', brand_slug=brand['slug'])
+    for group in get_tile_category_groups():
+        for card in group['cards']:
+            if group['slug'] == 'collection':
+                add('tiles_category_products', '0.8', group_slug='collection', category_slug=card['slug'], series_slug=card['slug'])
+            else:
+                add('tiles_category_products', '0.7', group_slug=group['slug'], category_slug=card['slug'])
+    for product in load_surface_products():
+        if product.get('department', 'tiles') == 'tiles' and product.get('images') and is_public_surface_product(product, 'tiles'):
+            add('tiles_uploaded_product_detail', '0.6', code=product['code'])
+    for category in get_all_bath_categories():
+        add('tiles_bath_category', '0.7', slug=category['slug'])
+    for product in get_public_bath_products():
+        add('tiles_bath_product', '0.5', code=product['code'])
+    for item in tile_lookbook_products:
+        add('tiles_product_detail', '0.5', slug=tile_product_slug(item['name']))
+    seen, body = set(), []
+    for loc, priority in urls:
+        if loc in seen:
+            continue
+        seen.add(loc)
+        body.append(f'  <url><loc>{escape(loc)}</loc><priority>{priority}</priority></url>')
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + '\n'.join(body) + '\n</urlset>\n'
+    return app.response_class(xml, mimetype='application/xml')
+
+
 @app.route('/tiles/about')
 def tiles_about():
-    return render_template('tiles_about.html')
+    tiles = [item for item in load_surface_products()
+             if item.get('department', 'tiles') == 'tiles' and item.get('images') and is_public_surface_product(item, 'tiles')]
+    bath = get_public_bath_products()
+    series_groups, _, _ = get_series_brand_groups(tiles)
+    series_total = sum(len(group['series']) for group in series_groups)
+    # Brands in the showroom, with what we carry from each
+    brands = []
+    for record in load_surface_brands():
+        if not record.get('active', True):
+            continue
+        name = record.get('name', '')
+        tile_count = sum(1 for item in tiles if str(item.get('brand', '')).lower() == name.lower())
+        bath_count = sum(1 for item in bath if str(item.get('brand', '')).lower() == name.lower())
+        if not (tile_count or bath_count or record.get('department') in {'bathware', 'both'}):
+            continue
+        view = bath_brand_view(record) if not tile_count else record
+        image = view.get('image') or record.get('image', '')
+        if tile_count:
+            url = url_for('tiles_collection_brand', slug=record['slug'])
+        else:
+            url = url_for('tiles_bath_brand', brand_slug=record['slug'])
+        brands.append({'name': name, 'image': card_image_path(image), 'tiles': tile_count, 'bath': bath_count, 'url': url})
+    brands.sort(key=lambda brand: -(brand['tiles'] + brand['bath']))
+    # A few room photos from the series covers for the gallery
+    gallery = []
+    for group in series_groups:
+        for series in sorted(group['series'], key=lambda item: -item['count']):
+            if (series.get('image') and len(gallery) < 6 and os.path.isfile(os.path.join(app.static_folder, series['image']))
+                    and not is_portrait_surface_image(series['image'])):
+                gallery.append(series)
+    return render_template('tiles_about.html', tile_count=len(tiles), bath_count=len(bath), series_total=series_total,
+                           brands=brands, gallery=gallery)
 
 def _request_memo(key, path, loader):
     """Read a data file once per page view (GET requests only); saves always read fresh."""

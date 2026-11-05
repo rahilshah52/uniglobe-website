@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
-{% block title %}Uniglobe Livings{% endblock %}
+{% block title %}China Furniture Sourcing &amp; Project Procurement | Uniglobe Lifestyles{% endblock %}
 </title>
 
 <meta name="description" content="{% block meta_description %}Uniglobe Lifestyles Pvt Ltd is a global furniture sourcing and procurement company specializing in guided China factory visits, project-based sourcing, and consolidated international delivery for developers and architects worldwide.{% endblock %}">
 
-<meta name="robots" content="index, follow">
+<meta name="robots" content="{% block robots %}index, follow, max-image-preview:large{% endblock %}">
 
 <link rel="canonical" href="{{ request.url_root.rstrip('/') }}{{ request.path }}">
 
 <meta property="og:site_name" content="Uniglobe Lifestyles">
-<meta property="og:title" content="{% block og_title %}Uniglobe Lifestyles | Furniture, Tiles &amp; Surfaces{% endblock %}">
-<meta property="og:description" content="{% block og_description %}Explore furniture, tiles, surface finishes and bathware for residential and commercial projects. Discover both sides of Uniglobe Lifestyles and speak with our team for product and project guidance.{% endblock %}">
+<meta property="og:title" content="{% block og_title %}{{ self.title()|trim }}{% endblock %}">
+<meta property="og:description" content="{% block og_description %}{{ self.meta_description()|trim }}{% endblock %}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ request.url }}">
 <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/share-uniglobe.jpg', _external=True) }}{% endblock %}">
@@ -257,9 +257,13 @@
   "url": "https://uniglobelifestyles.com",
   "logo": "https://uniglobelifestyles.com/static/images/Black.webp",
   "description": "Uniglobe Lifestyles Pvt Ltd is a global furniture sourcing and China procurement company offering guided factory visits and consolidated international project delivery.",
-  "areaServed": "Worldwide"
+  "areaServed": "Worldwide",
+  "email": "uniglobelifestyles@gmail.com",
+  "contactPoint": [{"@type": "ContactPoint", "contactType": "sales", "telephone": "+91-9821524678", "email": "uniglobelifestyles@gmail.com", "areaServed": "Worldwide", "availableLanguage": ["English", "Hindi"]}],
+  "knowsAbout": ["Furniture sourcing from China", "Foshan furniture market", "Hotel and project furniture procurement", "Custom furniture manufacturing", "Lighting and decor sourcing"]
 }
 </script>
+{% block structured_data %}{% endblock %}
 </head>
 
 

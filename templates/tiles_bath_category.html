@@ -1,6 +1,6 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ category.title }} | Bath &amp; Sanitaryware | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}Explore {{ category.title|lower }} from {{ brands|join(', ') }} — compare models, colours and finishes, and enquire with Uniglobe about showroom options.{% endblock %}
+{% block title %}{{ category.title }} in Mumbai{% if brands %} – {{ brands|join(", ") }}{% endif %} | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{{ cards|length }} {{ category.title|lower }} from {{ brands|join(", ") }} at Uniglobe Lifestyles, Borivali West, Mumbai. Compare models, colours and finishes and ask us about availability.{% endblock %}
 {% block content %}
 <section class="bath-detail-hero" style="--bath-category-hero:url('{{ url_for('static', filename=category.hero_image) }}')">
   <div class="container">

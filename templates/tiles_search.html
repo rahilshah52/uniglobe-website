@@ -1,9 +1,10 @@
 {% extends "tiles_base.html" %}
-{% block title %}{% if query %}“{{ query }}” · {% endif %}Search | Uniglobe Surfaces{% endblock %}
+{% block title %}{% if query %}“{{ query }}” · {% endif %}Search Tiles &amp; Bathware | Uniglobe Lifestyles{% endblock %}
+{% block robots %}noindex, follow{% endblock %}
 {% block content %}
 <section class="ts-page">
   <div class="container">
-    <p class="ts-kicker">SEARCH TILES &amp; BATHWARE</p>
+    <h1 class="ts-kicker">SEARCH TILES &amp; BATHWARE</h1>
     <form class="ts-form" action="{{ url_for('tiles_search') }}" method="get" role="search">
       <label class="visually-hidden" for="tsQuery">Search</label>
       <input id="tsQuery" name="q" type="search" value="{{ query }}" placeholder="Try “Prozzo”, “white marble”, “basin” or a design name" autocomplete="off" {% if not query %}autofocus{% endif %}>

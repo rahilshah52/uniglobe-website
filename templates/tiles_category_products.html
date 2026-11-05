@@ -1,6 +1,6 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ category }} Tiles | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}Explore tile examples in {{ category|lower }}. Find related tile designs, room ideas, colours and collections from Uniglobe Surfaces.{% endblock %}
+{% block title %}{% if selected_series %}{{ selected_series.name|series_title }} Tiles{% if cards and cards[0].brand %} by {{ cards[0].brand }}{% endif %} – Sizes &amp; Finishes{% else %}{{ category|replace(' tiles','')|replace(' Tiles','') }} Tiles{% endif %} | Mumbai | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{% if selected_series %}{{ selected_series.name|series_title }}{% if cards and cards[0].brand %} by {{ cards[0].brand }}{% endif %}: {{ card_total }} tile designs{% if series_summary and series_summary.sizes %} in {{ series_summary.sizes|map(attribute='label')|join(', ') }}{% endif %}. See them at Uniglobe Lifestyles, Borivali, Mumbai.{% else %}{{ card_total }} {{ category|lower }} tile designs at Uniglobe Lifestyles, Borivali, Mumbai. Filter by brand, room, finish, colour and size.{% endif %}{% endblock %}
 {% block content %}
 <section class="tile-filter-hero">
   <div class="tile-filter-hero-image{% if category_image_portrait %} is-portrait{% endif %}"><img src="{{ url_for('static', filename=category_image) }}" alt="" aria-hidden="true" fetchpriority="high"></div><div class="tile-filter-hero-shade"></div>

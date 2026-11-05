@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Uniglobe Surfaces{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}Explore Uniglobe Lifestyles Ceramics tile collections, including full-body, double-charge, GVT, PGVT, step and riser, and textured finishes.{% endblock %}">
-  <meta name="robots" content="index, follow">
+  <title>{% block title %}Tiles &amp; Bathware Showroom in Borivali, Mumbai | Uniglobe Lifestyles{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Uniglobe Lifestyles, Borivali West, Mumbai: Simpolo tiles, 5 mm slim tiles, GVT, PGVT and full-body tiles, plus KOHLER and Simpolo bathware. Call +91 84339 88032.{% endblock %}">
+  <meta name="robots" content="{% block robots %}index, follow, max-image-preview:large{% endblock %}">
   <link rel="canonical" href="{{ request.url_root.rstrip('/') }}{{ request.path }}">
   <meta property="og:site_name" content="Uniglobe Lifestyles">
-  <meta property="og:title" content="{% block og_title %}Uniglobe Lifestyles | Furniture, Tiles &amp; Surfaces{% endblock %}">
-  <meta property="og:description" content="{% block og_description %}Explore furniture, tiles, surface finishes and bathware for residential and commercial projects. Discover both sides of Uniglobe Lifestyles and speak with our team for product and project guidance.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ request.url }}">
   <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/share-uniglobe.jpg', _external=True) }}{% endblock %}">
@@ -95,6 +96,38 @@
       .tiles-footer-inner { align-items: flex-start; flex-direction: column; gap: 8px; }
     }
   </style>
+  <script type="application/ld+json">
+  {{ {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "HomeGoodsStore",
+        "@id": request.url_root ~ "tiles#store",
+        "name": "Uniglobe Lifestyles – Tiles & Bathware",
+        "alternateName": ["Uniglobe Lifestyles Ceramics", "Uniglobe Surfaces"],
+        "description": "Tile and bathware showroom in Borivali West, Mumbai. Authorised dealer for Simpolo tiles and sanitaryware and KOHLER bathware.",
+        "url": request.url_root ~ "tiles",
+        "image": url_for('static', filename='images/share-uniglobe.jpg', _external=True),
+        "logo": url_for('static', filename='images/Black.webp', _external=True),
+        "telephone": "+91-8433988032",
+        "email": "uniglobelifestyles@gmail.com",
+        "address": {"@type": "PostalAddress", "streetAddress": "Shop 13, Soni Tower CHSL, Haridas Nagar, Borivali (West)", "addressLocality": "Mumbai", "addressRegion": "Maharashtra", "postalCode": "400092", "addressCountry": "IN"},
+        "areaServed": ["Mumbai", "Thane", "Navi Mumbai", "Maharashtra", "India"],
+        "brand": [{"@type": "Brand", "name": "Simpolo"}, {"@type": "Brand", "name": "KOHLER"}, {"@type": "Brand", "name": "Jaquar"}],
+        "keywords": "tiles showroom Borivali, tiles shop Mumbai, Simpolo tiles dealer Mumbai, KOHLER bathware Borivali, vitrified tiles, 5 mm slim tiles, bathroom tiles, floor tiles, wall tiles",
+        "parentOrganization": {"@type": "Organization", "name": "Uniglobe Lifestyles Pvt Ltd", "url": request.url_root}
+      },
+      {
+        "@type": "WebSite",
+        "@id": request.url_root ~ "#website",
+        "name": "Uniglobe Lifestyles",
+        "url": request.url_root,
+        "potentialAction": {"@type": "SearchAction", "target": request.url_root ~ "tiles/search?q={search_term_string}", "query-input": "required name=search_term_string"}
+      }
+    ]
+  }|tojson }}
+  </script>
+  {% block structured_data %}{% endblock %}
 </head>
 <body data-business-entry="surfaces">
 <nav class="navbar navbar-expand-xl tiles-navbar">

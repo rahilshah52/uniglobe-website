@@ -1,6 +1,33 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ product.title }} · {{ product.brand }} | Bath &amp; Sanitaryware | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}{{ (product.get('summary') or product.description or (product.brand ~ ' ' ~ product.title))|striptags|truncate(155) }}{% endblock %}
+{% block title %}{{ product.brand }} {{ product.title }}{% if product.get("sku") %} ({{ product.sku }}){% endif %} | {{ product.get("type") or category_title }} | Uniglobe Lifestyles Mumbai{% endblock %}
+{% block meta_description %}{{ ((product.brand ~ ' ' ~ product.title ~ ', ' ~ (product.get('type') or category_title)|lower ~ ('. Available in ' ~ variants|length ~ ' colours' if variants|length > 1 else '') ~ '. ' ~ ((product.get('summary') or product.description or '')|striptags|truncate(80, True, '…') ~ ' ' if ((product.get('summary') or product.description or '')|striptags|length) > 60 else '') ~ 'See it at Uniglobe Lifestyles, Borivali, Mumbai.'))|truncate(300) }}{% endblock %}
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "name": product.brand ~ " " ~ product.title,
+      "description": (product.get('summary') or product.description or (product.brand ~ ' ' ~ product.title))|striptags|truncate(500),
+      "image": (variants[0].images[:6]|map(attribute='src')|map('absolute_url')|list),
+      "category": product.get('type') or category_title,
+      "brand": {"@type": "Brand", "name": product.brand},
+      "sku": product.get('sku') or product.code,
+      "url": request.base_url
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Bathware", "item": url_for('tiles_bath', _external=True)},
+        {"@type": "ListItem", "position": 2, "name": category_title, "item": url_for('tiles_bath_category', slug=category_slug, _external=True)},
+        {"@type": "ListItem", "position": 3, "name": product.title}
+      ]
+    }
+  ]
+}|tojson }}
+</script>
+{% endblock %}
 {% block content %}
 {% set active = variants[active_index] %}
 <section class="bp-page">

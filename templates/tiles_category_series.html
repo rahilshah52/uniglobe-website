@@ -1,6 +1,6 @@
 {% extends "tiles_base.html" %}
-{% block title %}{{ category }} Tile Series | Uniglobe Surfaces{% endblock %}
-{% block meta_description %}Browse tile series for {{ category|lower }}. Open a series to explore its available colours, sizes and individual tile designs.{% endblock %}
+{% block title %}{{ brand ~ ' ' if brand }}{{ category|replace(' tiles','')|replace(' Tiles','') }} Tiles – Browse by Series | Mumbai | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}Find {{ brand ~ ' ' if brand }}{{ category|lower }} tiles by series at Uniglobe Lifestyles, Borivali, Mumbai. Compare sizes, finishes and colours, then visit or WhatsApp us.{% endblock %}
 {% block content %}
 <section class="tile-filter-hero">
   <div class="tile-filter-hero-image{% if category_image_portrait %} is-portrait{% endif %}" style="background-image:url('{{ url_for('static', filename=category_image) }}')"></div><div class="tile-filter-hero-shade"></div>

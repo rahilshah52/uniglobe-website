@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% block title %}{{ product.title }}{% if product.get("brand") %} by {{ product.brand }}{% endif %} | Furniture from Foshan | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}{{ (product.get("description") or (product.title ~ " – furniture sourced from Foshan, China by Uniglobe Lifestyles, with customisation and delivery to India and worldwide."))|striptags|truncate(158) }}{% endblock %}
 {% block content %}
 
 <div class="container py-5">
@@ -38,7 +40,7 @@
     <!-- PRODUCT INFO -->
     <div class="col-lg-6">
 
-      <h2 class="fw-semibold mb-3">{{ product.title }}</h2>
+      <h1 class="fw-semibold mb-3 h2">{{ product.title }}</h1>
       <button class="wishlist-toggle furniture-detail-wishlist" type="button" data-wishlist-toggle data-wishlist-kind="furniture" data-wishlist-id="{{ request.view_args.category }}:{{ product.code }}" data-wishlist-name="{{ product.title }}" data-wishlist-image="{{ url_for('static', filename=product.images[0]) if product.images else '' }}" data-wishlist-url="{{ request.path }}" data-wishlist-subtitle="{{ product.get('brand', 'Furniture') }}" aria-label="Save {{ product.title }} to wishlist" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save to wishlist</span></button>
 
       <p class="text-muted mb-4">

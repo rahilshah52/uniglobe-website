@@ -1,5 +1,6 @@
 {% extends "tiles_base.html" %}
 {% block title %}Manage Surfaces Products | Uniglobe Lifestyles{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
 {% block content %}
 <section class="manage-page">
   <div class="container">
@@ -23,9 +24,9 @@
         {% if edit_series %}<input type="hidden" name="slug" value="{{ edit_series.slug }}">{% endif %}
         <label>Series name<input name="name" required value="{{ edit_series.name if edit_series else '' }}" placeholder="For example, Elite"></label>
         <label>Short description<input name="description" value="{{ edit_series.description if edit_series else '' }}" placeholder="Optional line shown with the series"></label>
-        <label>Series card image<select name="card_image_choice"><option value="">Use a tile's selected cover image</option>{% if edit_series and (edit_series.card_image or edit_series.cover_image) and not (series_image_options|selectattr('image', 'equalto', edit_series.card_image or edit_series.cover_image)|list) %}<option value="keep-current" selected>Keep current card image</option>{% endif %}{% for option in series_image_options %}<option value="{{ option.image }}" {% if edit_series and (edit_series.card_image or edit_series.cover_image) == option.image %}selected{% endif %}>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select><small>Shown on series cards. Choose a photo already assigned to the series.</small></label>
+        <label>Series card image<select name="card_image_choice" data-option-set="{{ series_image_options|manager_option_set }}"><option value="">Use a tile's selected cover image</option>{% if edit_series and (edit_series.card_image or edit_series.cover_image) and not (series_image_options|selectattr('image', 'equalto', edit_series.card_image or edit_series.cover_image)|list) %}<option value="keep-current" selected>Keep current card image</option>{% endif %}{% for option in series_image_options if edit_series and (edit_series.card_image or edit_series.cover_image) == option.image %}<option value="{{ option.image }}" selected>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select><small>Shown on series cards. Choose a photo already assigned to the series.</small></label>
         <label>Upload a dedicated card image<input type="file" name="card_image" accept="image/*"></label>
-        <label>Series hero image<select name="hero_image_choice"><option value="">Use the category image</option>{% if edit_series and edit_series.hero_image and not (series_image_options|selectattr('image', 'equalto', edit_series.hero_image)|list) %}<option value="keep-current" selected>Keep current hero image</option>{% endif %}{% for option in series_image_options %}<option value="{{ option.image }}" {% if edit_series and edit_series.hero_image == option.image %}selected{% endif %}>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select><small>Shown in the large banner after someone opens this series.</small></label>
+        <label>Series hero image<select name="hero_image_choice" data-option-set="{{ series_image_options|manager_option_set }}"><option value="">Use the category image</option>{% if edit_series and edit_series.hero_image and not (series_image_options|selectattr('image', 'equalto', edit_series.hero_image)|list) %}<option value="keep-current" selected>Keep current hero image</option>{% endif %}{% for option in series_image_options if edit_series and edit_series.hero_image == option.image %}<option value="{{ option.image }}" selected>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select><small>Shown in the large banner after someone opens this series.</small></label>
         <label>Upload a dedicated hero image<input type="file" name="hero_image" accept="image/*"></label>
         {% if edit_series and (edit_series.card_image or edit_series.cover_image or edit_series.hero_image) %}<div class="series-cover-preview">{% if edit_series.card_image or edit_series.cover_image %}<img src="{{ url_for('static', filename=edit_series.card_image or edit_series.cover_image) }}" alt="Current {{ edit_series.name }} card image"><span>Card image</span>{% endif %}{% if edit_series.hero_image %}<img src="{{ url_for('static', filename=edit_series.hero_image) }}" alt="Current {{ edit_series.name }} hero image"><span>Hero image</span>{% endif %}</div>{% endif %}
         <button class="manage-button" type="submit">{{ 'Save series changes' if edit_series else 'Add tile series' }}</button>{% if edit_series %}<a class="brand-cancel" href="{{ url_for('tiles_manage') }}">Cancel editing</a>{% endif %}
@@ -59,9 +60,9 @@
             <img src="{{ url_for('static', filename=item.thumbnail) }}" alt="{{ item.name }} cover preview" loading="lazy" decoding="async">
             <strong>{{ item.name }}</strong>
             <small class="image-slot-note">Card image preview · hero uses its own selection below</small>
-            <label>Card image · existing photo<select name="card_image_choice"><option value="default" {% if item.image not in item.cover_options|map(attribute='image')|list and not item.image.startswith('uploads/surfaces/categories/') %}selected{% endif %}>Use default inspiration</option>{% if item.image.startswith('uploads/surfaces/categories/') and item.image not in item.cover_options|map(attribute='image')|list %}<option value="{{ item.image }}" selected>Keep current uploaded image</option>{% endif %}{% for option in item.cover_options %}<option value="{{ option.image }}" {% if item.image == option.image %}selected{% endif %}>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select></label>
+            <label>Card image · existing photo<select name="card_image_choice" data-option-set="{{ item.cover_options|manager_option_set }}"><option value="default" {% if item.image not in item.cover_options|map(attribute='image')|list and not item.image.startswith('uploads/surfaces/categories/') %}selected{% endif %}>Use default inspiration</option>{% if item.image.startswith('uploads/surfaces/categories/') and item.image not in item.cover_options|map(attribute='image')|list %}<option value="{{ item.image }}" selected>Keep current uploaded image</option>{% endif %}{% for option in item.cover_options if item.image == option.image %}<option value="{{ option.image }}" selected>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select></label>
             <label>Card image · upload<input type="file" name="card_image" accept="image/*"></label>
-            <label>Hero image · existing photo<select name="hero_image_choice"><option value="default" {% if item.hero_image not in item.cover_options|map(attribute='image')|list and not item.hero_image.startswith('uploads/surfaces/categories/') %}selected{% endif %}>Use card image</option>{% if item.hero_image.startswith('uploads/surfaces/categories/') and item.hero_image not in item.cover_options|map(attribute='image')|list %}<option value="{{ item.hero_image }}" selected>Keep current uploaded image</option>{% endif %}{% for option in item.cover_options %}<option value="{{ option.image }}" {% if item.hero_image == option.image %}selected{% endif %}>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select></label>
+            <label>Hero image · existing photo<select name="hero_image_choice" data-option-set="{{ item.cover_options|manager_option_set }}"><option value="default" {% if item.hero_image not in item.cover_options|map(attribute='image')|list and not item.hero_image.startswith('uploads/surfaces/categories/') %}selected{% endif %}>Use card image</option>{% if item.hero_image.startswith('uploads/surfaces/categories/') and item.hero_image not in item.cover_options|map(attribute='image')|list %}<option value="{{ item.hero_image }}" selected>Keep current uploaded image</option>{% endif %}{% for option in item.cover_options if item.hero_image == option.image %}<option value="{{ option.image }}" selected>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select></label>
             <label>Hero image · upload<input type="file" name="hero_image" accept="image/*"></label>
             <button type="submit" class="manage-button">Save cover</button>
           </form>
@@ -75,9 +76,9 @@
             <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.title }} cover preview" loading="lazy" decoding="async">
             <strong>{{ item.title }}</strong>
             <small class="image-slot-note">Card image preview · hero uses its own selection below</small>
-            <label>Card image · existing photo<select name="card_image_choice"><option value="default" {% if item.image not in item.cover_options|map(attribute='image')|list and not item.image.startswith('uploads/surfaces/categories/') %}selected{% endif %}>Use default inspiration</option>{% if item.image.startswith('uploads/surfaces/categories/') and item.image not in item.cover_options|map(attribute='image')|list %}<option value="{{ item.image }}" selected>Keep current uploaded image</option>{% endif %}{% for option in item.cover_options %}<option value="{{ option.image }}" {% if item.image == option.image %}selected{% endif %}>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select></label>
+            <label>Card image · existing photo<select name="card_image_choice" data-option-set="{{ item.cover_options|manager_option_set }}"><option value="default" {% if item.image not in item.cover_options|map(attribute='image')|list and not item.image.startswith('uploads/surfaces/categories/') %}selected{% endif %}>Use default inspiration</option>{% if item.image.startswith('uploads/surfaces/categories/') and item.image not in item.cover_options|map(attribute='image')|list %}<option value="{{ item.image }}" selected>Keep current uploaded image</option>{% endif %}{% for option in item.cover_options if item.image == option.image %}<option value="{{ option.image }}" selected>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select></label>
             <label>Card image · upload<input type="file" name="card_image" accept="image/*"></label>
-            <label>Hero image · existing photo<select name="hero_image_choice"><option value="default" {% if item.hero_image not in item.cover_options|map(attribute='image')|list and not item.hero_image.startswith('uploads/surfaces/categories/') %}selected{% endif %}>Use card image</option>{% if item.hero_image.startswith('uploads/surfaces/categories/') and item.hero_image not in item.cover_options|map(attribute='image')|list %}<option value="{{ item.hero_image }}" selected>Keep current uploaded image</option>{% endif %}{% for option in item.cover_options %}<option value="{{ option.image }}" {% if item.hero_image == option.image %}selected{% endif %}>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select></label>
+            <label>Hero image · existing photo<select name="hero_image_choice" data-option-set="{{ item.cover_options|manager_option_set }}"><option value="default" {% if item.hero_image not in item.cover_options|map(attribute='image')|list and not item.hero_image.startswith('uploads/surfaces/categories/') %}selected{% endif %}>Use card image</option>{% if item.hero_image.startswith('uploads/surfaces/categories/') and item.hero_image not in item.cover_options|map(attribute='image')|list %}<option value="{{ item.hero_image }}" selected>Keep current uploaded image</option>{% endif %}{% for option in item.cover_options if item.hero_image == option.image %}<option value="{{ option.image }}" selected>{{ option.title }} · {{ option.image.split('/')[-1] }}</option>{% endfor %}</select></label>
             <label>Hero image · upload<input type="file" name="hero_image" accept="image/*"></label>
             <button type="submit" class="manage-button">Save cover</button>
           </form>
@@ -441,5 +442,24 @@
     document.getElementById('clear-product-filters').addEventListener('click', () => { search.value = ''; department.value = ''; brand.value = ''; page = 0; update(); search.focus(); });
     update();
   })();
+</script>
+<script type="application/json" id="managerOptionSets">{{ manager_option_sets_json() }}</script>
+<script>
+(function () {
+  // The long photo lists are filled in only when a dropdown is opened, so the manager opens quickly.
+  var data = null;
+  function load() { if (!data) { try { data = JSON.parse(document.getElementById('managerOptionSets').textContent); } catch (e) { data = { images: [], sets: {} }; } } return data; }
+  function fill(select) {
+    if (select.dataset.filled) return; select.dataset.filled = '1';
+    var d = load(), set = d.sets[select.dataset.optionSet] || [], have = {};
+    Array.prototype.forEach.call(select.options, function (o) { have[o.value] = true; });
+    var frag = document.createDocumentFragment();
+    set.forEach(function (i) { var item = d.images[i]; if (!item || have[item[0]]) return; var o = document.createElement('option'); o.value = item[0]; o.textContent = item[1]; frag.appendChild(o); });
+    select.appendChild(frag);
+  }
+  document.querySelectorAll('select[data-option-set]').forEach(function (select) {
+    ['focus', 'mousedown', 'touchstart', 'keydown'].forEach(function (ev) { select.addEventListener(ev, function () { fill(select); }, { passive: true }); });
+  });
+})();
 </script>
 {% endblock %}
