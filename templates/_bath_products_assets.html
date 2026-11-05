@@ -1,0 +1,67 @@
+{# Shared styles and behaviour for bathware product grids (category and brand pages). #}
+<style>
+  .bath-products { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; }
+  .bath-card { position:relative; display:flex; flex-direction:column; min-width:0; background:#fff; border:1px solid #ecece7; transition:border-color .25s ease, box-shadow .25s ease; }
+  .bath-card:hover { border-color:#d9dad3; box-shadow:0 14px 34px rgba(37,43,39,.08); }
+  .bath-card[hidden] { display:none; }
+  .bath-card-link { display:flex; flex:1; flex-direction:column; color:inherit; text-decoration:none; }
+  .bath-card-image { display:grid; place-items:center; aspect-ratio:1; padding:9%; background:radial-gradient(ellipse at 50% 45%,#fff 0,#f7f7f4 62%,#efefea 100%); overflow:hidden; }
+  .bath-card-image img { display:block; width:100%; height:100%; object-fit:contain; mix-blend-mode:multiply; transition:transform .5s ease, opacity .2s ease; }
+  .bath-card:hover .bath-card-image img { transform:scale(1.04); }
+  .bath-card-copy { padding:14px 15px 6px; }
+  .bath-card-copy small { display:block; overflow:hidden; color:#8a908b; font-size:.66rem; font-weight:600; letter-spacing:.13em; text-overflow:ellipsis; text-transform:uppercase; white-space:nowrap; }
+  .bath-card-copy h3 { display:-webkit-box; margin:7px 0 5px; overflow:hidden; color:#303634; font-size:.88rem; font-weight:500; line-height:1.4; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+  .bath-card-type { color:#7c837e; font-size:.68rem; }
+  .bath-card-swatches { display:flex; align-items:center; flex-wrap:wrap; gap:6px; padding:6px 15px 15px; }
+  .bath-card-more,.bath-card-colours { color:#8a908b; font-size:.68rem; }
+  .bath-card-colours { margin-left:auto; }
+  .bath-card > .wishlist-toggle { position:absolute; top:10px; right:10px; }
+  .bath-card:not(:has(.bath-card-swatches)) .bath-card-copy { padding-bottom:16px; }
+  .bath-swatch { display:inline-block; width:22px; height:22px; padding:0; border:1px solid rgba(0,0,0,.14); border-radius:50%; background:#ddd center/cover no-repeat; box-shadow:inset 0 0 0 2px #fff; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; }
+  .bath-swatch--sm { width:16px; height:16px; box-shadow:inset 0 0 0 1.5px #fff; }
+  .bath-swatch:hover { transform:scale(1.12); }
+  .bath-swatch.is-active { box-shadow:inset 0 0 0 2px #fff, 0 0 0 1.5px #303634; }
+  .bath-more-wrap { display:flex; flex-direction:column; align-items:center; gap:9px; margin-top:30px; }
+  .bath-more-wrap p { margin:0; color:#8a908b; font-size:.66rem; }
+  .bath-more { min-height:44px; padding:0 22px; border:1px solid #343b37; color:#343b37; background:#fff; font:inherit; font-size:.72rem; cursor:pointer; transition:background .2s ease,color .2s ease; }
+  .bath-more:hover { color:#fff; background:#343b37; }
+  .bath-empty { padding:46px 20px; border:1px dashed #d8d9d3; color:#737a75; text-align:center; font-size:.82rem; }
+  .bath-chips { display:flex; flex-wrap:wrap; gap:7px; margin:0 0 14px; }
+  .bath-chip { display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border:1px solid #e0e2dc; color:#4a514c; background:#fff; font-size:.66rem; text-decoration:none; }
+  .bath-chip:hover { border-color:#343b37; color:#303634; }
+  .bath-chip b { color:#9aa09b; font-weight:400; }
+  @media(max-width:1199.98px) { .bath-products { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media(max-width:767.98px) { .bath-products { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .bath-card-copy { padding:11px 10px 4px; } .bath-card-copy h3 { font-size:.78rem; } .bath-card-copy small { font-size:.66rem; } .bath-card-type { font-size:.68rem; } .bath-card-swatches { gap:5px; padding:5px 10px 12px; } .bath-card-colours { display:none; } }
+</style>
+<script>
+(function () {
+  // Hovering or tapping a colour dot previews that colour on the card.
+  document.querySelectorAll('[data-bath-card]').forEach(function (card) {
+    var img = card.querySelector('.bath-card-image img');
+    card.querySelectorAll('[data-swatch-src]').forEach(function (dot) {
+      dot.addEventListener('mouseenter', function () { img.src = dot.dataset.swatchSrc; });
+      dot.addEventListener('focus', function () { img.src = dot.dataset.swatchSrc; });
+      dot.addEventListener('click', function () {
+        card.querySelectorAll('[data-swatch-src]').forEach(function (d) { d.classList.remove('is-active'); });
+        dot.classList.add('is-active'); img.src = dot.dataset.swatchSrc; img.dataset.defaultSrc = dot.dataset.swatchSrc;
+      });
+    });
+    var wrap = card.querySelector('.bath-card-swatches');
+    if (wrap) wrap.addEventListener('mouseleave', function () { img.src = img.dataset.defaultSrc; });
+  });
+  // Show products in pages of 24 so long lists stay quick and tidy.
+  document.querySelectorAll('[data-bath-products]').forEach(function (grid) {
+    var page = 24, cards = Array.prototype.slice.call(grid.querySelectorAll('[data-bath-card]'));
+    var wrap = document.querySelector(grid.dataset.moreTarget);
+    if (!wrap || cards.length <= page) { if (wrap) wrap.hidden = true; return; }
+    var shown = page, button = wrap.querySelector('button'), note = wrap.querySelector('p');
+    function update() {
+      cards.forEach(function (c, i) { c.hidden = i >= shown; });
+      note.textContent = 'Showing ' + Math.min(shown, cards.length) + ' of ' + cards.length;
+      wrap.hidden = false; button.hidden = shown >= cards.length;
+    }
+    button.addEventListener('click', function () { shown += page; update(); });
+    update();
+  });
+})();
+</script>

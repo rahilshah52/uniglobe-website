@@ -17,13 +17,13 @@
   <div class="container">
     <div class="bath-section-heading">
       <div><p class="bath-kicker">01 · BROWSE BY CATEGORY</p><h2>Start with what<br>your space needs.</h2></div>
-      <p>Choose a category to view a curated set of catalogue images. Ask us about brand options, product details and current availability.</p>
+      <p>Choose a category to compare models, colours and finishes across our showroom brands. Ask us about details and current availability.</p>
     </div>
     <div class="bath-category-grid">
       {% for category in bath_categories %}
       <a class="bath-category-card{% if category.image_is_portrait %} has-portrait-cover{% endif %}" href="{{ url_for('tiles_bath_category', slug=category.slug) }}">
         <img src="{{ url_for('static', filename=category.thumbnail) }}" alt="{{ category.title }} category cover" loading="lazy" decoding="async">
-        <span class="bath-category-count">{{ category.number }} · BATHROOM</span>
+        <span class="bath-category-count">{{ category.number }} · {% if category.product_count %}{{ category.product_count }} {{ 'PRODUCT' if category.product_count == 1 else 'PRODUCTS' }}{% else %}BATHROOM{% endif %}</span>
         <span class="bath-category-copy"><strong>{{ category.title }}</strong><span>View category</span></span>
       </a>
       {% endfor %}
@@ -55,7 +55,7 @@
   .bath-hero-image { background: url("{{ url_for('static', filename='images/sanitaryware/catalog/kohler-bathroom-suite.jpg') }}") center 53%/cover no-repeat; transform: scale(1.01); }
   .bath-hero-shade { background: linear-gradient(90deg,rgba(24,29,27,.74),rgba(24,29,27,.3) 57%,rgba(24,29,27,.08)),linear-gradient(0deg,rgba(20,24,23,.27),transparent 56%); }
   .bath-hero-content { position:relative; z-index:1; padding-top:90px; padding-bottom:clamp(52px,7vw,82px); }
-  .bath-eyebrow,.bath-kicker { color:#8d918c; font-size:.65rem; font-weight:600; letter-spacing:.17em; }
+  .bath-eyebrow,.bath-kicker { color:#8d918c; font-size:.68rem; font-weight:600; letter-spacing:.17em; }
   .bath-eyebrow { color:rgba(255,255,255,.78); margin:0 0 17px; }
   .bath-hero h1 { max-width:780px; margin:0 0 18px; font-size:clamp(3rem,7vw,6.3rem); font-weight:400; letter-spacing:-.065em; line-height:.98; }
   .bath-hero-content > p:not(.bath-eyebrow) { max-width:530px; margin:0; color:rgba(255,255,255,.82); font-size:.95rem; line-height:1.8; }
@@ -66,14 +66,14 @@
   .bath-kicker { margin:0 0 10px; }
   .bath-section-heading h2 { margin:0; color:#2d3330; font-size:clamp(2.3rem,4.8vw,4.1rem); font-weight:400; letter-spacing:-.06em; line-height:1.02; }
   .bath-section-heading > p { margin:0 0 4px; color:#737a75; font-size:.86rem; line-height:1.8; }
-  .bath-category-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:15px; }
-  .bath-category-card { position:relative; display:block; aspect-ratio:.78; overflow:hidden; color:#fff; background:#303432; text-decoration:none; }
+  .bath-category-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; }
+  .bath-category-card { position:relative; display:block; aspect-ratio:.95; overflow:hidden; color:#fff; background:#303432; text-decoration:none; }
   .bath-category-card::after { position:absolute; inset:35% 0 0; content:""; background:linear-gradient(transparent,rgba(12,16,15,.78)); }
   .bath-category-card img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .55s ease; }
   .bath-category-card.has-portrait-cover { background:radial-gradient(ellipse at center,#fff 0,#f4f5f1 72%,#e1e4de 100%); }
   .bath-category-card.has-portrait-cover img { padding:8px; object-fit:contain; filter:drop-shadow(0 10px 12px rgba(20,26,22,.25)); }
   .bath-category-card:hover img { transform:scale(1.045); }
-  .bath-category-count { position:absolute; z-index:1; top:14px; left:14px; padding:7px 9px; color:#3c423e; background:rgba(255,255,255,.88); font-size:.53rem; letter-spacing:.11em; }
+  .bath-category-count { position:absolute; z-index:1; top:14px; left:14px; padding:7px 9px; color:#3c423e; background:rgba(255,255,255,.88); font-size:.66rem; letter-spacing:.11em; }
   .bath-category-copy { position:absolute; z-index:1; right:17px; bottom:16px; left:17px; display:grid; gap:10px; }
   .bath-category-copy strong { font-size:clamp(1rem,1.7vw,1.35rem); font-weight:500; }
   .bath-category-copy > span { display:flex; justify-content:space-between; padding-top:10px; border-top:1px solid rgba(255,255,255,.45); color:rgba(255,255,255,.82); font-size:.68rem; }
@@ -86,7 +86,7 @@
   .bath-brand-picture img { display:block; width:100%; height:100%; min-height:300px; object-fit:cover; transition:transform .5s ease; }
   .bath-brand-picture:hover img { transform:scale(1.03); }
   .bath-brand-card > div { align-self:center; padding:clamp(19px,2.4vw,33px); }
-  .bath-brand-card > div > span { color:#858b86; font-size:.52rem; letter-spacing:.13em; }
+  .bath-brand-card > div > span { color:#858b86; font-size:.66rem; letter-spacing:.13em; }
   .bath-brand-card h3 { margin:12px 0 9px; color:#2d3330; font-size:clamp(1.75rem,3vw,2.5rem); font-weight:400; letter-spacing:-.05em; }
   .bath-brand-name { color:inherit; text-decoration:none; }
   .bath-brand-name:hover { color:#717b74; }
@@ -95,7 +95,7 @@
   .bath-brand-card a b { font-weight:400; }
   .bath-disclaimer { margin:19px 0 0; color:#858b87; font-size:.7rem; line-height:1.7; }
   @media(max-width:991.98px) { .bath-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .bath-brand-grid { grid-template-columns:1fr; } .bath-brand-card { grid-template-columns:1fr 1fr; } }
-  @media(max-width:767.98px) { .bath-hero { min-height:490px; } .bath-hero-image { background-position:58% center; } .bath-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.13)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .bath-hero-content { padding-top:70px; padding-bottom:47px; } .bath-hero h1 { font-size:clamp(2.9rem,12vw,4.5rem); } .bath-hero-content > p:not(.bath-eyebrow) { max-width:410px; font-size:.85rem; } .bath-section-heading { grid-template-columns:1fr; gap:14px; margin-bottom:22px; } .bath-section-heading > p { max-width:520px; font-size:.8rem; } .bath-category-grid { gap:10px; } .bath-category-card { aspect-ratio:.76; } .bath-category-count { top:9px; left:9px; padding:6px 7px; font-size:.45rem; } .bath-category-copy { right:11px; bottom:12px; left:11px; gap:8px; } .bath-category-copy strong { font-size:.93rem; } .bath-category-copy > span { padding-top:7px; font-size:.6rem; } .bath-brand-card { min-height:215px; } .bath-brand-picture,.bath-brand-picture img { min-height:215px; } .bath-brand-card > div { padding:15px 12px; } .bath-brand-card h3 { margin:8px 0; font-size:1.55rem; } .bath-brand-card p { min-height:0; margin-bottom:12px; font-size:.67rem; line-height:1.55; } .bath-brand-enquiry { gap:7px; font-size:.59rem; } }
+  @media(max-width:767.98px) { .bath-hero { min-height:490px; } .bath-hero-image { background-position:58% center; } .bath-hero-shade { background:linear-gradient(90deg,rgba(24,29,27,.66),rgba(24,29,27,.13)),linear-gradient(0deg,rgba(20,24,23,.48),transparent 72%); } .bath-hero-content { padding-top:70px; padding-bottom:47px; } .bath-hero h1 { font-size:clamp(2.9rem,12vw,4.5rem); } .bath-hero-content > p:not(.bath-eyebrow) { max-width:410px; font-size:.85rem; } .bath-section-heading { grid-template-columns:1fr; gap:14px; margin-bottom:22px; } .bath-section-heading > p { max-width:520px; font-size:.8rem; } .bath-category-grid { gap:10px; } .bath-category-card { aspect-ratio:.76; } .bath-category-count { top:9px; left:9px; padding:6px 7px; font-size:.66rem; } .bath-category-copy { right:11px; bottom:12px; left:11px; gap:8px; } .bath-category-copy strong { font-size:.93rem; } .bath-category-copy > span { padding-top:7px; font-size:.68rem; } .bath-brand-card { min-height:215px; } .bath-brand-picture,.bath-brand-picture img { min-height:215px; } .bath-brand-card > div { padding:15px 12px; } .bath-brand-card h3 { margin:8px 0; font-size:1.55rem; } .bath-brand-card p { min-height:0; margin-bottom:12px; font-size:.67rem; line-height:1.55; } .bath-brand-enquiry { gap:7px; font-size:.66rem; } }
   @media(max-width:370px) { .bath-brand-card { grid-template-columns:1fr; } .bath-brand-picture,.bath-brand-picture img { height:190px; min-height:190px; } }
 </style>
 {% endblock %}

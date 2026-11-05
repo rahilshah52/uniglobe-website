@@ -53,29 +53,45 @@
         </div>
       </details>
       {% endfor %}
-      {% if surface_products %}
+      {% set extra_start = tile_catalog_groups|length %}
+      {% for group in series_brand_groups or [] %}
       <details class="catalog-accordion">
         <summary>
-          <span class="catalog-number">{{ '%02d'|format(tile_catalog_groups|length + 1) }}</span>
-          <span class="catalog-title-wrap"><span class="catalog-kicker">SHOWROOM ADDITIONS</span><span class="catalog-title">More tile designs</span></span>
-          <span class="catalog-count">{{ surface_products|length }} designs</span>
+          <span class="catalog-number">{{ '%02d'|format(extra_start + loop.index) }}</span>
+          <span class="catalog-title-wrap"><span class="catalog-kicker">{{ group.brand|upper }} · BY SERIES</span><span class="catalog-title">{{ group.brand }} tile series</span></span>
+          <span class="catalog-count">{{ group.series|length }} series · {{ group.count }} designs</span>
           <span class="catalog-toggle" aria-hidden="true">+</span>
         </summary>
         <div class="catalog-content">
-          <div class="catalog-grid">
-            {% for product in surface_products %}
-            <article class="tile-card">
-              <div class="tile-card-image">{% if product.images %}<img src="{{ url_for('static', filename=product.get('thumbnail') or product.images[0]) }}" alt="{{ product.title }} tile surface" loading="lazy" decoding="async">{% endif %}</div>
-              <div class="tile-card-copy"><p class="tile-card-family">{{ product.category }}{% if product.code %} · {{ product.code }}{% endif %}</p>{% if product.demo %}<span class="tile-preview-badge">Preview example · not a stock listing</span>{% endif %}<h3>{{ product.title }}</h3><p>{{ product.description }}</p><a class="tile-card-spec" href="{% if product.demo %}{{ url_for('tiles_uploaded_product_detail', code=product.code) }}{% else %}{{ url_for('tiles_contact') }}?interest={{ product.title|urlencode }}{% endif %}">{% if product.demo %}See product preview{% else %}Ask about this design{% endif %}</a></div>
-            </article>
+          <div class="series-grid">
+            {% for series in group.series %}
+            <a class="series-tile" href="{{ series.url }}">
+              <span class="series-tile-image">{% if series.image %}<img src="{{ url_for('static', filename=series.image) }}" alt="" loading="lazy" decoding="async">{% endif %}</span>
+              <span class="series-tile-copy"><b>{{ series.name }}</b><small>{{ series.count }} {{ 'design' if series.count == 1 else 'designs' }}</small></span>
+            </a>
             {% endfor %}
           </div>
         </div>
       </details>
+      {% endfor %}
+      {% set extra_start = extra_start + (series_brand_groups or [])|length %}
+      {% if loose_cards %}
+      <details class="catalog-accordion">
+        <summary>
+          <span class="catalog-number">{{ '%02d'|format(extra_start + 1) }}</span>
+          <span class="catalog-title-wrap"><span class="catalog-kicker">SHOWROOM ADDITIONS</span><span class="catalog-title">More tile designs</span></span>
+          <span class="catalog-count">{{ loose_cards|length }} designs</span>
+          <span class="catalog-toggle" aria-hidden="true">+</span>
+        </summary>
+        <div class="catalog-content">
+          <div class="tcards">{% for card in loose_cards %}{% set card_url = None %}{% include '_tile_card.html' %}{% endfor %}</div>
+        </div>
+      </details>
+      {% set extra_start = extra_start + 1 %}
       {% endif %}
       <details class="catalog-accordion">
         <summary>
-          <span class="catalog-number">{{ '%02d'|format(tile_catalog_groups|length + (2 if surface_products else 1)) }}</span>
+          <span class="catalog-number">{{ '%02d'|format(extra_start + 1) }}</span>
           <span class="catalog-title-wrap"><span class="catalog-kicker">MORE TILE CATALOGUES</span><span class="catalog-title">Double Charge &amp; Step &amp; Riser</span></span>
           <span class="catalog-count">2 catalogues</span>
           <span class="catalog-toggle" aria-hidden="true">+</span>
@@ -103,7 +119,7 @@
 <style>
   .eyebrow { margin: 0 0 12px; color: #8a8d88; font-size: .68rem; font-weight: 600; letter-spacing: .16em; }
   .collection-hero { padding: clamp(54px, 8vw, 108px) 0 clamp(48px, 6vw, 76px); background: #f1f1ed; }
-  .collection-hero-inner { max-width: 1440px; }
+  .collection-hero-inner { }
   .collection-hero h1 { margin: 0 0 20px; color: #292e2d; font-size: clamp(2.7rem, 6.1vw, 5.8rem); font-weight: 400; letter-spacing: -.067em; line-height: .99; }
   .collection-hero-inner > p:not(.eyebrow) { max-width: 570px; margin: 0; color: #6d736f; font-size: .98rem; line-height: 1.8; }
   .collection-entry-links { display: flex; gap: 12px; margin-top: 28px; }
@@ -124,7 +140,7 @@
   .catalog-accordion summary::-webkit-details-marker { display: none; }
   .catalog-number { color: #9b9f9b; font-size: .72rem; letter-spacing: .08em; }
   .catalog-title-wrap { display: grid; gap: 4px; }
-  .catalog-kicker { color: #999d99; font-size: .59rem; font-weight: 600; letter-spacing: .15em; }
+  .catalog-kicker { color: #999d99; font-size: .66rem; font-weight: 600; letter-spacing: .15em; }
   .catalog-title { color: #303634; font-size: clamp(1.05rem, 2vw, 1.32rem); letter-spacing: -.025em; }
   .catalog-count { color: #878d89; font-size: .72rem; }
   .catalog-toggle { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #dfe2de; border-radius: 50%; color: #48504c; font-size: 1.1rem; transition: transform .2s ease, background .2s ease; }
@@ -137,18 +153,18 @@
   .tile-card:hover .tile-card-image img { transform: scale(1.035); }
   .tile-card-open { position: absolute; right: 11px; bottom: 11px; display: grid; place-items: center; width: 33px; height: 33px; border-radius: 50%; color: #303634; background: rgba(255,255,255,.92); }
   .tile-card-copy { padding: 15px 15px 17px; }
-  .tile-card-family { margin: 0 0 6px; color: #858b87; font-size: .57rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
-  .tile-preview-badge { display:inline-block; margin:0 0 8px; padding:4px 6px; color:#65593f; background:#f1ecdd; font-size:.61rem; }
+  .tile-card-family { margin: 0 0 6px; color: #858b87; font-size: .66rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .tile-preview-badge { display:inline-block; margin:0 0 8px; padding:4px 6px; color:#65593f; background:#f1ecdd; font-size:.68rem; }
   .tile-card h3 { margin: 0 0 7px; color: #303634; font-size: 1rem; font-weight: 500; }
   .tile-card-copy > p:not(.tile-card-family) { min-height: 41px; margin: 0 0 9px; color: #747a76; font-size: .73rem; line-height: 1.55; }
-  .tile-card-spec { color: #5f6662; font-size: .65rem; line-height: 1.5; }
+  .tile-card-spec { color: #5f6662; font-size: .68rem; line-height: 1.5; }
   .tile-collection-highlights { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 40px; }
   .tile-highlight { position: relative; display: block; height: clamp(220px, 28vw, 370px); overflow: hidden; color: #fff; background: #333; }
   .tile-highlight::after { position: absolute; inset: 25% 0 0; content: ''; background: linear-gradient(transparent, rgba(0,0,0,.68)); }
   .tile-highlight img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
   .tile-highlight:hover img { transform: scale(1.03); }
   .tile-highlight-overlay { position: absolute; z-index: 1; right: 24px; bottom: 22px; left: 24px; display: grid; gap: 6px; }
-  .tile-highlight-overlay .eyebrow { margin: 0; color: rgba(255,255,255,.75); font-size: .58rem; }
+  .tile-highlight-overlay .eyebrow { margin: 0; color: rgba(255,255,255,.75); font-size: .66rem; }
   .tile-highlight-overlay strong { font-size: clamp(1.15rem, 2.4vw, 1.8rem); font-weight: 400; }
   .tile-highlight-overlay > span:last-child { max-width: 460px; color: rgba(255,255,255,.82); font-size: .76rem; }
   .tile-highlight-arrow { position: absolute; z-index: 2; top: 16px; right: 16px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #303634; background: #fff; }
@@ -171,23 +187,34 @@
     .section-heading > p { max-width: 540px; font-size: .82rem; }
     .catalog-accordion summary { grid-template-columns: 28px 1fr auto 30px; gap: 10px; min-height: 78px; }
     .catalog-title { font-size: .96rem; }
-    .catalog-count { font-size: .62rem; }
+    .catalog-count { font-size: .68rem; }
     .catalog-toggle { width: 28px; height: 28px; }
     .catalog-content { padding: 0 0 22px; }
     .catalog-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
     .tile-card-image { aspect-ratio: .88; }
     .tile-card-copy { padding: 11px 10px 13px; }
-    .tile-card-family { font-size: .5rem; letter-spacing: .09em; }
+    .tile-card-family { font-size: .66rem; letter-spacing: .09em; }
     .tile-card h3 { font-size: .88rem; }
     .tile-card-copy > p:not(.tile-card-family) { min-height: 0; font-size: .68rem; }
-    .tile-card-spec { font-size: .58rem; }
+    .tile-card-spec { font-size: .66rem; }
     .tile-collection-highlights { grid-template-columns: 1fr; gap: 12px; margin-top: 25px; }
     .tile-highlight { height: 245px; }
     .tile-highlight-overlay { right: 16px; bottom: 16px; left: 16px; }
     .collection-contact { padding: 48px 0; }
   }
   @media (max-width: 370px) { .catalog-accordion summary { grid-template-columns: 22px 1fr auto 27px; gap: 7px; } .catalog-count { max-width: 45px; text-align: right; } }
+  .series-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:14px; }
+  .series-tile { display:flex; flex-direction:column; color:inherit; background:#fff; border:1px solid #ecece7; text-decoration:none; transition:border-color .2s ease, box-shadow .2s ease; }
+  .series-tile:hover { border-color:#d6d8d1; box-shadow:0 12px 28px rgba(37,43,39,.09); }
+  .series-tile-image { display:block; aspect-ratio:4 / 3; overflow:hidden; background:#eeefeb; }
+  .series-tile-image img { display:block; width:100%; height:100%; object-fit:cover; transition:transform .5s ease; }
+  .series-tile:hover .series-tile-image img { transform:scale(1.04); }
+  .series-tile-copy { display:flex; justify-content:space-between; align-items:baseline; gap:8px; padding:11px 12px 13px; }
+  .series-tile-copy b { color:#2f3532; font-size:.9rem; font-weight:500; }
+  .series-tile-copy small { color:#7d847f; font-size:.74rem; white-space:nowrap; }
+  @media(max-width:767.98px) { .series-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .series-tile-copy { flex-direction:column; gap:2px; padding:9px 10px 11px; } }
 </style>
+{% include '_tile_cards_assets.html' %}
 <script>
   const collectionSectionLinks = document.querySelectorAll('.collection-section-nav a');
   collectionSectionLinks.forEach((link) => link.addEventListener('click', () => {

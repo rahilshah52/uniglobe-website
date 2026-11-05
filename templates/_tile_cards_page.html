@@ -1,0 +1,1 @@
+{% for card in cards %}{% set card_url = url_for('tiles_uploaded_product_detail', code=card.code, brand=brand_slug if brand else None, return_to=return_to) %}{% include '_tile_card.html' %}{% endfor %}

@@ -1,0 +1,47 @@
+{% extends "tiles_base.html" %}
+{% block title %}{% if query %}“{{ query }}” · {% endif %}Search | Uniglobe Surfaces{% endblock %}
+{% block content %}
+<section class="ts-page">
+  <div class="container">
+    <p class="ts-kicker">SEARCH TILES &amp; BATHWARE</p>
+    <form class="ts-form" action="{{ url_for('tiles_search') }}" method="get" role="search">
+      <label class="visually-hidden" for="tsQuery">Search</label>
+      <input id="tsQuery" name="q" type="search" value="{{ query }}" placeholder="Try “Prozzo”, “white marble”, “basin” or a design name" autocomplete="off" {% if not query %}autofocus{% endif %}>
+      <button type="submit">Search</button>
+    </form>
+    {% if query %}
+      {% if not tile_cards and not bath_cards %}
+      <div class="ts-empty"><h2>Nothing found for “{{ query }}”.</h2><p>Check the spelling, try fewer words, or browse the <a href="{{ url_for('tiles_collections') }}">tile collections</a> and <a href="{{ url_for('tiles_bath') }}">bathware</a>. Our team can also help on <a href="https://wa.me/918433988032?text={{ ('Hi, I am looking for ' ~ query)|urlencode }}" target="_blank" rel="noopener">WhatsApp</a>.</p></div>
+      {% endif %}
+      {% if tile_cards %}
+      <div class="ts-head"><h2>Tiles <b>{{ tile_total }}</b></h2>{% if tile_total > tile_cards|length %}<span>Showing the first {{ tile_cards|length }} — add a word to narrow it down.</span>{% endif %}</div>
+      <div class="tcards">{% for card in tile_cards %}{% set card_url = None %}{% include '_tile_card.html' %}{% endfor %}</div>
+      {% endif %}
+      {% if bath_cards %}
+      <div class="ts-head"><h2>Bathware <b>{{ bath_total }}</b></h2>{% if bath_total > bath_cards|length %}<span>Showing the first {{ bath_cards|length }} — add a word to narrow it down.</span>{% endif %}</div>
+      <div class="bath-products">{% for card in bath_cards %}{% include '_bath_product_card.html' %}{% endfor %}</div>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+{% include '_tile_cards_assets.html' %}
+{% include '_bath_products_assets.html' %}
+<style>
+  .ts-page { min-height:60vh; padding:42px 0 90px; background:#f4f4f0; }
+  .ts-kicker { margin:0 0 12px; color:#7d847f; font-size:.72rem; font-weight:600; letter-spacing:.14em; }
+  .ts-form { display:flex; max-width:760px; margin-bottom:34px; border:1px solid #cfd3cd; background:#fff; }
+  .ts-form input { flex:1; min-width:0; min-height:54px; padding:0 18px; border:0; color:#2f3532; background:none; font:inherit; font-size:1rem; }
+  .ts-form input:focus { outline:none; }
+  .ts-form:focus-within { border-color:#303634; box-shadow:0 0 0 1px #303634; }
+  .ts-form button { padding:0 24px; border:0; color:#fff; background:#303634; font:inherit; font-size:.88rem; }
+  .ts-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 16px; margin:34px 0 16px; }
+  .ts-head h2 { margin:0; color:#2f3532; font-size:1.6rem; font-weight:400; letter-spacing:-.03em; }
+  .ts-head h2 b { margin-left:6px; color:#7d847f; font-size:1rem; font-weight:400; }
+  .ts-head span { color:#6f7671; font-size:.82rem; }
+  .ts-empty { padding:34px; border:1px solid #e0e2dd; background:#fff; }
+  .ts-empty h2 { color:#303633; font-size:1.4rem; font-weight:400; }
+  .ts-empty p { max-width:600px; margin:0; color:#5f6662; line-height:1.7; }
+  .ts-empty a { color:#303633; }
+  @media(max-width:767.98px) { .ts-page { padding:26px 0 60px; } .ts-form input { min-height:50px; padding:0 14px; font-size:.95rem; } .ts-form button { padding:0 16px; } }
+</style>
+{% endblock %}
