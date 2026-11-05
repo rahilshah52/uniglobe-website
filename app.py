@@ -1046,6 +1046,17 @@ def tile_product_finishes(product, look_names=None):
     return found
 
 
+def series_title(name):
+    """Show a series name once with the word Series: 'Neo' -> 'Neo Series', 'Neo Series' stays."""
+    name = str(name or '').strip()
+    if not name:
+        return ''
+    return name if name.lower().endswith('series') else f'{name} Series'
+
+
+app.add_template_filter(series_title, 'series_title')
+
+
 def tile_series_for(product, series_by_slug):
     return next((series_by_slug[tag] for tag in sorted(get_product_tile_tags(product)) if tag in series_by_slug), None)
 
@@ -1084,7 +1095,7 @@ def tile_card(product, series_by_slug, look_names=None):
         'code': product.get('code'),
         'title': product.get('title', 'Tile design'),
         'brand': '' if str(product.get('brand', '')).strip() in {'', 'Other / not specified'} else product.get('brand'),
-        'series': series.get('name', '') if series else '',
+        'series': series_title(series.get('name', '')) if series else '',
         'image': cover,
         'thumbnail': card_image_path(cover),
         'kind': kind,
@@ -1248,7 +1259,7 @@ def tiles_category_products(group_slug, category_slug, series_slug=None):
         }
     category = (f'{brand_name} · All tile collections' if all_brand_products else
                 f'{selected_series["name"]} · {category_item["name"]}' if selected_series and group_slug != 'collection' else
-                f'{selected_series["name"]} Series' if selected_series else category_item['name'])
+                series_title(selected_series["name"]) if selected_series else category_item['name'])
     series_image = next((image for item in products for image in item.get('images', []) if image), None)
     category_image = (selected_series.get('hero_image') or category_item.get('hero_image', category_item['image'])) if selected_series else category_item.get('hero_image', category_item['image'])
     return render_template('tiles_category_products.html', group=group, category=category, category_image=category_image, category_image_portrait=is_portrait_surface_image(category_image), products=products, brand=brand_name, brand_slug=brand_slug, filter_groups=filter_groups, available_brands=available_brands, selected_filters=selected, selected_series=selected_series, selected_series_slug=selected_series_slug, cards=cards, card_total=len(products), series_summary=series_summary)
@@ -1446,7 +1457,7 @@ def tiles_uploaded_product_detail(code):
     product = {
         'name': item.get('title', 'Tile design'),
         'group': item.get('category') or 'Tile design',
-        'series_name': series_record.get('name', '') if series_record else '',
+        'series_name': series_title(series_record.get('name', '')) if series_record else '',
         'description': item.get('description', ''),
         'details': details,
     }
@@ -1503,7 +1514,7 @@ def tiles_uploaded_product_detail(code):
         specs.append(('Surface', item['surface']))
     if item.get('body'):
         specs.append(('Body', item['body']))
-    other_looks = [name for name in looks if name not in finishes]
+    other_looks = [name for name in looks if not any(name.lower() in finish.lower() for finish in finishes)]
     if other_looks:
         specs.append(('Look', ' · '.join(other_looks)))
     if colours:
@@ -1521,7 +1532,7 @@ def tiles_uploaded_product_detail(code):
                     and other.get('images') and is_public_surface_product(other, 'tiles')]
     if series_slug:
         related = [other for other in public_tiles if series_slug in get_product_tile_tags(other)]
-        related_label = f"More from the {product['series_name']} series"
+        related_label = f"More from the {product['series_name']}"
     else:
         related = []
     if not related and colours:
@@ -1971,7 +1982,8 @@ def tiles_manage_delete(code):
 
 @app.route('/tiles/services')
 def tiles_services():
-    return render_template('tiles_services.html')
+    # "Our approach" is now part of the About us page.
+    return redirect(url_for('tiles_about') + '#how-we-work', code=301)
 
 @app.route('/tiles/contact', methods=['GET', 'POST'])
 def tiles_contact():

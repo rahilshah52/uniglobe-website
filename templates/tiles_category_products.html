@@ -6,16 +6,16 @@
   <div class="tile-filter-hero-image{% if category_image_portrait %} is-portrait{% endif %}"><img src="{{ url_for('static', filename=category_image) }}" alt="" aria-hidden="true" fetchpriority="high"></div><div class="tile-filter-hero-shade"></div>
   <div class="container tile-filter-hero-copy">
     <a href="{% if selected_series and group.slug != 'collection' %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug or None) }}{% elif brand_slug %}{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges{% else %}{{ url_for('tiles_collections') }}#tile-ranges{% endif %}">← {% if selected_series and group.slug != 'collection' %}Back to {{ group.name|lower }} series{% elif brand %}All {{ brand }} categories{% else %}All tile categories{% endif %}</a>
-    <p>{{ brand|upper ~ ' · ' if brand }}{% if selected_series %}{{ selected_series.name|upper }} SERIES{% else %}{{ group.name|upper }}{% endif %} · TILE DESIGNS</p>
+    <p>{{ brand|upper ~ ' · ' if brand }}{% if selected_series %}{{ selected_series.name|series_title|upper }}{% else %}{{ group.name|upper }}{% endif %} · TILE DESIGNS</p>
     <h1>{{ category }}</h1>
-    <span>{% if selected_series %}Explore the individual colours and formats in the {{ selected_series.name }} series{% if group.slug != 'collection' %}, selected for {{ request.view_args['category_slug']|replace('-', ' ') }}{% endif %}.{% elif brand %}Browse the {{ brand }} tile examples placed in this category.{% else %}Products can appear in more than one category, so you can explore the same tile from different starting points.{% endif %}</span>
+    <span>{% if selected_series %}Explore the individual colours and formats in the {{ selected_series.name|series_title }}{% if group.slug != 'collection' %}, selected for {{ request.view_args['category_slug']|replace('-', ' ') }}{% endif %}.{% elif brand %}Browse the {{ brand }} tile examples placed in this category.{% else %}Products can appear in more than one category, so you can explore the same tile from different starting points.{% endif %}</span>
     {% if brand %}<div class="tile-brand-active"><span>SHOWING BRAND</span><strong>✓ {{ brand }}</strong><a href="{{ url_for('tiles_collection_brand', slug=brand_slug) }}#tile-ranges">Change brand</a></div>{% endif %}
   </div>
 </section>
 <section class="tile-filter-results">
   <div class="container">
     {% if series_summary %}
-    <section class="tseries-intro" aria-label="About the {{ selected_series.name }} series">
+    <section class="tseries-intro" aria-label="About the {{ selected_series.name|series_title }}">
       <div class="tseries-intro-lead">
         <p>ABOUT THE SERIES</p>
         <h2>{{ selected_series.name }}</h2>
@@ -30,10 +30,10 @@
       </dl>
     </section>
     {% endif %}
-    <div class="tile-filter-heading"><div><p>{% if brand %}{{ brand|upper }} · {% endif %}{% if selected_series %}{{ selected_series.name|upper }} SERIES · {% endif %}CURATED FOR THIS CATEGORY</p><h2>{{ products|length }} {{ 'design' if products|length == 1 else 'designs' }} to explore</h2></div><a href="{% if brand %}{{ url_for('tiles_category_products', group_slug='collection', category_slug='all-collections', brand=brand_slug) }}{% else %}{{ url_for('tiles_catalogues') }}{% endif %}">{% if brand %}View all {{ brand }} tiles{% else %}View all catalogue designs{% endif %}</a></div>
+    <div class="tile-filter-heading"><div><p>{% if brand %}{{ brand|upper }} · {% endif %}{% if selected_series %}{{ selected_series.name|series_title|upper }} · {% endif %}CURATED FOR THIS CATEGORY</p><h2>{{ products|length }} {{ 'design' if products|length == 1 else 'designs' }} to explore</h2></div><a href="{% if brand %}{{ url_for('tiles_category_products', group_slug='collection', category_slug='all-collections', brand=brand_slug) }}{% else %}{{ url_for('tiles_catalogues') }}{% endif %}">{% if brand %}View all {{ brand }} tiles{% else %}View all catalogue designs{% endif %}</a></div>
     <form class="tile-refine" method="get" action="{% if selected_series %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], series_slug=selected_series_slug) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug']) }}{% endif %}" aria-label="Refine tile designs">
       {% if brand_slug %}<input type="hidden" name="brand" value="{{ brand_slug }}">{% endif %}
-      <div class="tile-refine-top"><span><i aria-hidden="true"></i>{% if selected_series %} · {{ selected_series.name }} series{% endif %}</span><a href="{% if selected_series %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], series_slug=selected_series_slug, brand=brand_slug or None) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug or None) }}{% endif %}">Clear choices</a></div>
+      <div class="tile-refine-top"><span><i aria-hidden="true"></i>{% if selected_series %} · {{ selected_series.name|series_title }}{% endif %}</span><a href="{% if selected_series %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], series_slug=selected_series_slug, brand=brand_slug or None) }}{% else %}{{ url_for('tiles_category_products', group_slug=group.slug, category_slug=request.view_args['category_slug'], brand=brand_slug or None) }}{% endif %}">Clear choices</a></div>
       <div class="tile-refine-fields">
         <details class="tile-facet"><summary><span>Brand</span><b>{{ selected_filters.filter_brand|length if selected_filters.filter_brand else 'Every brand' }}</b></summary><div class="tile-facet-options">{% for name in available_brands %}<label><input type="checkbox" name="filter_brand" value="{{ name }}" {% if name in selected_filters.filter_brand %}checked{% endif %}><span>{{ name }}</span></label>{% else %}<p>Brands appear here when products are added.</p>{% endfor %}</div></details>
         {% for facet in filter_groups %}

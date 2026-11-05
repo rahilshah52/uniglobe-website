@@ -7,7 +7,7 @@
       {% if card.demo %}<span class="tcard-flag">Preview example</span>{% endif %}
     </div>
     <div class="tcard-copy">
-      <small>{{ card.series ~ ' series' if card.series else (card.brand or 'Tile design') }}</small>
+      <small>{{ card.series or card.brand or 'Tile design' }}</small>
       <h3>{{ card.title }}</h3>
       {% if card.sizes or card.finishes %}
       <div class="tcard-meta">

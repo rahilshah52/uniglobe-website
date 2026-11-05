@@ -31,7 +31,7 @@
     img.loading = 'lazy'; img.alt = ''; if (typeof x.image === 'string' && x.image.charAt(0) === '/') img.src = x.image;
     box.appendChild(img); a.appendChild(box);
     var b = document.createElement('b'); b.textContent = x.name || 'Tile design'; a.appendChild(b);
-    if (x.series) { var s = document.createElement('small'); s.textContent = x.series + ' series'; a.appendChild(s); }
+    if (x.series) { var s = document.createElement('small'); s.textContent = /series$/i.test(x.series) ? x.series : x.series + ' Series'; a.appendChild(s); }
     list.appendChild(a);
   });
   row.hidden = false;

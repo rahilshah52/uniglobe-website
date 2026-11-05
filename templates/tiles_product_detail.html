@@ -24,7 +24,7 @@
       </section>
 
       <section class="tp-info">
-        <p class="tp-kicker">{% if demo %}Preview example{% else %}{{ brand_name ~ ' · ' if brand_name }}{{ product.series_name ~ ' series' if product.series_name else product.group }}{% endif %}</p>
+        <p class="tp-kicker">{% if demo %}Preview example{% else %}{{ brand_name ~ ' · ' if brand_name }}{{ product.series_name or product.group }}{% endif %}</p>
         <h1>{{ product.name }}</h1>
         {% if finishes %}<p class="tp-sub">{{ finishes|join(' · ') }} finish{% if specs and specs|selectattr(0, 'equalto', 'Body')|list %} · {{ (specs|selectattr(0, 'equalto', 'Body')|first)[1] }} body{% endif %}</p>{% endif %}
 
@@ -49,7 +49,7 @@
         {% endif %}
 
         <div class="tp-actions">
-          <a class="tp-whatsapp" id="tpWhatsApp" href="https://wa.me/918433988032?text={{ ('Hi, I would like to know more about ' ~ product.name ~ (' (' ~ product.series_name ~ ' series)' if product.series_name else '') ~ (', size ' ~ first_size.label if first_size else '') ~ '.')|urlencode }}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Ask on WhatsApp</a>
+          <a class="tp-whatsapp" id="tpWhatsApp" href="https://wa.me/918433988032?text={{ ('Hi, I would like to know more about ' ~ product.name ~ (' (' ~ product.series_name ~ ')' if product.series_name else '') ~ (', size ' ~ first_size.label if first_size else '') ~ '.')|urlencode }}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Ask on WhatsApp</a>
           <a class="tp-enquire" id="tpEnquire" href="{{ url_for('tiles_contact') }}?interest={{ (product.name ~ (' · ' ~ first_size.label if first_size else ''))|urlencode }}">Send an enquiry</a>
           <button class="wishlist-toggle tp-save" type="button" data-wishlist-toggle data-wishlist-kind="tile" data-wishlist-id="{{ product.wishlist_id }}" data-wishlist-name="{{ product.name }}" data-wishlist-image="{{ wishlist_image }}" data-wishlist-url="{{ wishlist_url }}" data-wishlist-subtitle="{{ product.series_name or product.group }}{% if size_options %} · {{ size_options|map(attribute='short')|join(', ') }}{% endif %}" aria-pressed="false"><span class="wishlist-heart" aria-hidden="true">♡</span><span class="wishlist-label">Save</span></button>
         </div>
@@ -92,7 +92,7 @@
 
     {% if related_cards %}
     <section class="tp-related">
-      <div class="tp-related-head"><div><p class="tp-kicker">{{ 'THE ' ~ product.series_name|upper ~ ' SERIES' if product.series_name and related_label.startswith('More') else 'YOU MAY ALSO LIKE' }}</p><h2>{{ related_label }}</h2></div>
+      <div class="tp-related-head"><div><p class="tp-kicker">{{ 'THE ' ~ product.series_name|upper if product.series_name and related_label.startswith('More') else 'YOU MAY ALSO LIKE' }}</p><h2>{{ related_label }}</h2></div>
         {% if related_url %}<a href="{{ related_url }}">See all {{ related_total }} designs →</a>{% endif %}</div>
       <div class="tcards tp-related-grid">{% for card in related_cards %}{% set card_url = None %}{% include '_tile_card.html' %}{% endfor %}</div>
     </section>
@@ -242,7 +242,7 @@
   function fmt(n) { return (Math.round(n * 100) / 100).toLocaleString('en-IN'); }
   function updateLinks() {
     var size = sizes[sizeIndex];
-    var text = 'Hi, I would like to know more about ' + productName + (seriesName ? ' (' + seriesName + ' series)' : '') + (size ? ', size ' + size.label : '') + '.' + (lastResult ? ' ' + lastResult : '');
+    var text = 'Hi, I would like to know more about ' + productName + (seriesName ? ' (' + seriesName + ')' : '') + (size ? ', size ' + size.label : '') + '.' + (lastResult ? ' ' + lastResult : '');
     var wa = document.getElementById('tpWhatsApp'); if (wa) wa.href = 'https://wa.me/918433988032?text=' + encodeURIComponent(text);
     var en = document.getElementById('tpEnquire'); if (en) en.href = contactUrl + '?interest=' + encodeURIComponent(productName + (size ? ' · ' + size.label : '') + (lastResult ? ' · ' + lastResult : ''));
   }

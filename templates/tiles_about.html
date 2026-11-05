@@ -18,6 +18,17 @@
     <div><p>Our range brings together GVT, PGVT, full-body and double-charge tiles, including selected 5 mm slim full-body designs. From calm stone-inspired surfaces to more expressive textures, each catalogue offers different formats and finishes to explore.</p><p>We value quality, aesthetics and personal service. Our team can help you compare options and narrow the collection to suit your project; exact specifications and current stock are confirmed with each enquiry.</p></div>
   </div>
 </section>
+<section class="about-approach" id="how-we-work">
+  <div class="container">
+    <div class="about-approach-head"><p class="eyebrow">HOW WE WORK</p><h2>Start with the space.<br><span>Then find your style.</span></h2>
+      <p>Every project has its own character and needs. We begin by understanding the space, then bring together the right tiles, finishes and bathware for it. As official distributors for leading tile and bathware brands, we can offer a complete selection under one roof.</p></div>
+    <div class="about-approach-steps">
+      <article><span>01</span><h3>Understand the space</h3><p>Tell us about the space, the look you're drawn to and what the project needs.</p></article>
+      <article><span>02</span><h3>Explore our brands</h3><p>Compare collections, finishes and formats from the tile and bathware brands in our showroom.</p></article>
+      <article><span>03</span><h3>Refine the details</h3><p>Go through options, specifications and quantities with our team until everything fits your project.</p></article>
+    </div>
+  </div>
+</section>
 <section class="about-values">
   <div class="container">
     <p class="eyebrow">OUR VIEW</p>
@@ -70,5 +81,17 @@
   .about-showroom-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 15px; }
   .about-showroom-actions a { color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.45); padding-bottom: 6px; }
   @media(max-width:767.98px) { .about-hero { padding: 38px 0 0; } .about-hero-grid { grid-template-columns: 1fr; gap: 28px; } .about-hero-image { height: 350px; margin: 0 -12px; } .about-story { padding: 58px 0; } .about-story-grid { grid-template-columns: 1fr; gap: 22px; } .about-values { padding: 54px 0 58px; } .about-values-grid { grid-template-columns: 1fr; gap: 25px; } .about-values h3 { margin-top: 25px; } .about-mission { padding: 48px 0; } .about-mission-grid { grid-template-columns: 1fr; gap: 28px; } .about-showroom { padding: 58px 0; } .about-showroom-inner { align-items: flex-start; flex-direction: column; } }
+  .about-approach { padding: 0 0 88px; }
+  .about-approach-head { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: end; margin-bottom: 44px; }
+  .about-approach-head .eyebrow { grid-column: 1 / -1; margin-bottom: -50px; }
+  .about-approach h2 { color: #292e2d; font-size: clamp(2rem, 3.4vw, 3.2rem); font-weight: 400; letter-spacing: -.05em; line-height: 1.12; margin: 0; }
+  .about-approach h2 span { color: #858b87; }
+  .about-approach-head > p:not(.eyebrow) { color: #6d7370; font-size: .98rem; line-height: 1.85; margin: 0; }
+  .about-approach-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+  .about-approach-steps article { border-top: 1px solid #cdd0cd; padding-top: 18px; }
+  .about-approach-steps span { color: #8b918e; font-size: .75rem; letter-spacing: .12em; }
+  .about-approach-steps h3 { color: #2d3231; font-size: 1.35rem; font-weight: 500; margin: 14px 0 10px; }
+  .about-approach-steps p { max-width: 320px; color: #747a77; font-size: .91rem; line-height: 1.75; margin: 0; }
+  @media(max-width:767.98px) { .about-approach { padding-bottom: 56px; } .about-approach-head { grid-template-columns: 1fr; gap: 16px; margin-bottom: 28px; } .about-approach-head .eyebrow { margin-bottom: 0; } .about-approach-steps { grid-template-columns: 1fr; gap: 26px; } }
 </style>
 {% endblock %}

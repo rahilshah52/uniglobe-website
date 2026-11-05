@@ -115,8 +115,7 @@
           </div>
         </li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path == '/tiles' else '' }}" href="{{ url_for('tiles_home') }}">Home</a></li>
-        <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/about') else '' }}" href="{{ url_for('tiles_about') }}">About us</a></li>
-        <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/services') else '' }}" href="{{ url_for('tiles_services') }}">Our approach</a></li>
+        <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/about') or request.path.startswith('/tiles/services') else '' }}" href="{{ url_for('tiles_about') }}">About us</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/collections') or request.path.startswith('/tiles/catalogues') else '' }}" href="{{ url_for('tiles_collections') }}">Tiles</a></li>
         <li class="nav-item"><a class="nav-link {{ 'active' if request.path.startswith('/tiles/bath') else '' }}" href="{{ url_for('tiles_bath') }}">Bathware</a></li>
         <li class="nav-item"><a class="nav-link tiles-nav-search {{ 'active' if request.path.startswith('/tiles/search') else '' }}" href="{{ url_for('tiles_search') }}" aria-label="Search tiles and bathware"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="d-xl-none"> Search</span></a></li>
