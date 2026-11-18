@@ -2,7 +2,7 @@ import code
 from unicodedata import category
 
 from markupsafe import Markup
-from flask import Flask, render_template, request, redirect, flash, url_for, session, g, has_request_context
+from flask import Flask, render_template, request, redirect, flash, url_for, session, g, has_request_context, abort
 from flask_mail import Mail, Message
 from datetime import datetime, timedelta
 import os
@@ -10,6 +10,7 @@ import json
 import collections
 import itertools
 import re
+import secrets
 from werkzeug.utils import secure_filename
 from PIL import Image, ImageOps
 
@@ -192,7 +193,31 @@ for _name, _page, _finish in _mto_products:
 
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'
+
+
+# Passwords and keys never live in the code. They come from the server's environment
+# variables (cPanel > Setup Python App) or from site_secrets.json next to app.py on the
+# server, which is never stored in Git or sent by a deploy. See DEPLOY.md.
+def _load_site_secrets():
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site_secrets.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+_SITE_SECRETS = _load_site_secrets()
+
+
+def site_setting(name, default=''):
+    return os.environ.get(name) or str(_SITE_SECRETS.get(name) or default)
+
+
+app.secret_key = site_setting('SECRET_KEY') or secrets.token_hex(32)
+ADMIN_PASSWORD = site_setting('ADMIN_PASSWORD')
+GA_MEASUREMENT_ID = site_setting('GA_MEASUREMENT_ID')
 
 UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
 DATA_FILE = os.path.join(app.static_folder, "data", "products.json")
@@ -212,9 +237,9 @@ app.config.update(
     MAIL_PORT=587,
     MAIL_USE_TLS=True,
     MAIL_USE_SSL=False,
-    MAIL_USERNAME='uniglobelifestyles@gmail.com',
-    MAIL_PASSWORD='gmnh dwdq hsrm bnrf',  # Consider using environment variables
-    MAIL_DEFAULT_SENDER='uniglobelifestyles@gmail.com'
+    MAIL_USERNAME=site_setting('MAIL_USERNAME', 'uniglobelifestyles@gmail.com'),
+    MAIL_PASSWORD=site_setting('MAIL_PASSWORD'),
+    MAIL_DEFAULT_SENDER=site_setting('MAIL_USERNAME', 'uniglobelifestyles@gmail.com')
 )
 
 mail = Mail(app)
@@ -232,6 +257,11 @@ class _HttpsBehindProxy:
 
 
 app.wsgi_app = _HttpsBehindProxy(app.wsgi_app)
+
+
+@app.context_processor
+def inject_site_settings():
+    return {'ga_measurement_id': GA_MEASUREMENT_ID}
 
 @app.route('/')
 def home():
@@ -2379,7 +2409,15 @@ def blog():
 
 @app.route("/blog/<slug>")
 def blog_post(slug):
+    # Only real articles: an unknown or mistyped address shows "page not found", not an error.
+    if not re.fullmatch(r'[a-z0-9-]+', slug) or not os.path.isfile(os.path.join(app.template_folder, 'blog', f'{slug}.html')):
+        abort(404)
     return render_template(f"blog/{slug}.html")
+
+
+@app.errorhandler(404)
+def page_not_found(_error):
+    return render_template('404.html', tiles_side=request.path.startswith('/tiles')), 404
 
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -2463,11 +2501,13 @@ def admin_login():
     if request.method == "POST":
         password = request.form.get("password")
 
-        if password == "1234":
+        if ADMIN_PASSWORD and password and secrets.compare_digest(password, ADMIN_PASSWORD):
             session["admin_logged"] = True
             if request.args.get("next") == "tiles_manage":
                 return redirect(url_for("tiles_manage"))
             return redirect(url_for("upload"))
+        elif not ADMIN_PASSWORD:
+            flash("Admin login is switched off until ADMIN_PASSWORD is set on the server.", "danger")
         else:
             flash("Incorrect password", "danger")
 
@@ -2767,4 +2807,4 @@ def admin_logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=os.environ.get('FLASK_DEBUG') == '1')

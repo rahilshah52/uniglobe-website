@@ -1,0 +1,73 @@
+{# Shared footer for both halves of the site. Set footer_side to 'surfaces' or 'furniture' before including. #}
+<style>
+  .tiles-footer { padding: 54px 0 26px; color: #b7bcba; background: #303433; font-size: .86rem; }
+  .tf-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr .8fr; gap: 34px; padding-bottom: 34px; margin-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.1); }
+  .tf-brand img { display: block; width: 230px; max-width: 100%; margin-bottom: 16px; filter: brightness(0) invert(.76); }
+  .tf-brand p { max-width: 320px; margin: 0; color: #a9aeab; line-height: 1.7; }
+  .tf-col { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; }
+  .tf-col h2 { margin: 0 0 6px; color: #fff; font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+  .tf-col address { margin: 0; color: #c9ccca; font-style: normal; line-height: 1.7; }
+  .tf-col a { display: inline-flex; align-items: center; gap: 9px; color: #dfe1df !important; }
+  .tf-col i { width: 16px; color: #9aa09d; text-align: center; }
+  .tf-label { margin-top: 6px; color: #8e9491; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+  .tf-map { margin-top: 4px; }
+  .tiles-footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; color: #9aa09d; font-size: .8rem; }
+  .tiles-footer a { color: #fff; text-decoration: none; }
+  .tiles-footer a:hover { text-decoration: underline; }
+  @media (max-width: 991.98px) { .tf-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 575.98px) {
+    .tiles-footer { padding: 40px 0 84px; }
+    .tf-grid { grid-template-columns: 1fr; gap: 26px; }
+    .tiles-footer-inner { align-items: flex-start; flex-direction: column; gap: 8px; }
+  }
+</style>
+<footer class="tiles-footer">
+  <div class="container">
+    <div class="tf-grid">
+      <div class="tf-brand">
+        <img src="{{ url_for('static', filename='images/Grey.webp') }}" alt="Uniglobe Lifestyles" loading="lazy">
+        {% if footer_side == 'surfaces' %}
+        <p>Tiles, bathware and sanitaryware for homes and projects, with personal guidance from our showroom team in Borivali.</p>
+        {% else %}
+        <p>Furniture, lighting and complete interiors, sourced from Foshan and customised for your home or project, with guidance from our team in Borivali.</p>
+        {% endif %}
+      </div>
+      <div class="tf-col">
+        <h2>Visit the showroom</h2>
+        <address>Shop 13, Soni Tower CHSL,<br>Haridas Nagar, Borivali (West),<br>Mumbai 400092</address>
+        <a class="tf-map" href="https://www.google.com/maps/search/?api=1&query={{ 'Soni Tower, Haridas Nagar, Borivali West, Mumbai 400092'|urlencode }}" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Open in Google Maps</a>
+      </div>
+      <div class="tf-col">
+        <h2>Talk to us</h2>
+        <span class="tf-label">Tiles &amp; bathware</span>
+        <a href="tel:+918433988032"><i class="fa-solid fa-phone" aria-hidden="true"></i> +91 84339 88032</a>
+        <a href="https://wa.me/918433988032" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        <span class="tf-label">Furniture</span>
+        <a href="https://wa.me/919821524678" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> +91 98215 24678</a>
+        <a href="mailto:uniglobelifestyles@gmail.com"><i class="fa-regular fa-envelope" aria-hidden="true"></i> uniglobelifestyles@gmail.com</a>
+      </div>
+      <nav class="tf-col" aria-label="Footer">
+        <h2>Explore</h2>
+        {% if footer_side == 'surfaces' %}
+        <a href="{{ url_for('tiles_collections') }}">Tiles</a>
+        <a href="{{ url_for('tiles_bath') }}">Bathware</a>
+        <a href="{{ url_for('tiles_catalogues') }}">All catalogue designs</a>
+        <a href="{{ url_for('tiles_wishlist') }}">Wishlist</a>
+        <a href="{{ url_for('tiles_about') }}">About us</a>
+        <a href="{{ url_for('tiles_contact') }}">Contact us</a>
+        {% else %}
+        <a href="{{ url_for('products') }}">Furniture</a>
+        <a href="{{ url_for('catalogs') }}">Catalogues</a>
+        <a href="{{ url_for('services') }}">Services</a>
+        <a href="{{ url_for('blog') }}">Guides</a>
+        <a href="{{ url_for('about') }}">About us</a>
+        <a href="{{ url_for('contact') }}">Contact us</a>
+        {% endif %}
+      </nav>
+    </div>
+    <div class="tiles-footer-inner">
+      <span>© 2026 Uniglobe Lifestyles Pvt Ltd</span>
+      <span>{% if footer_side == 'surfaces' %}<a href="{{ url_for('home') }}">Furniture</a>{% else %}<a href="{{ url_for('tiles_home') }}">Tiles &amp; bathware</a>{% endif %}</span>
+    </div>
+  </div>
+</footer>
