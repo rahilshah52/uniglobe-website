@@ -1,0 +1,18 @@
+{% extends "tiles_base.html" if tiles_side else "base.html" %}
+{% block title %}Page not found | Uniglobe Lifestyles{% endblock %}
+{% block meta_description %}This page could not be found. Browse our tiles, bathware and furniture, or visit the Uniglobe Lifestyles showroom in Borivali West, Mumbai.{% endblock %}
+{% block robots %}noindex, follow{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container text-center" style="max-width: 640px; padding-top: 4rem; padding-bottom: 4rem;">
+    <p class="text-uppercase small text-muted" style="letter-spacing: .18em;">Page not found</p>
+    <h1 class="mb-3" style="font-weight: 400;">We couldn't find that page.</h1>
+    <p class="text-muted mb-4">It may have moved, or the address may have a typo. Try one of these instead.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+      <a class="btn btn-dark" href="{{ url_for('tiles_home') }}">Tiles &amp; bathware</a>
+      <a class="btn btn-outline-dark" href="{{ url_for('products') }}">Furniture</a>
+      <a class="btn btn-outline-dark" href="{{ url_for('tiles_contact') if tiles_side else url_for('contact') }}">Contact us</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

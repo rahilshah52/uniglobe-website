@@ -67,6 +67,7 @@ jobs:
             venv/**
             .venv/**
             DEPLOY.md
+            site_secrets.json
 
       - name: Check the site responds
         if: env.HAS_FTP == 'true' && env.MODE == 'deploy'

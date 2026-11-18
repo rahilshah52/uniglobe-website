@@ -264,6 +264,7 @@
 }
 </script>
 {% block structured_data %}{% endblock %}
+{% include "_analytics.html" %}
 </head>
 
 
@@ -305,6 +306,8 @@
 <div class="content">
   {% block content %}{% endblock %}
 </div>
+
+{% set footer_side = 'furniture' %}{% include '_site_footer.html' %}
 
 {% include 'business_choice_modal.html' %}
 

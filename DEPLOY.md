@@ -34,6 +34,21 @@ and put them in your local copy. They are ignored by Git, so they will not be pu
 Never sent by a deploy: static/data, static/uploads, .htaccess (the server's Passenger settings), .well-known.
 After each upload the deploy touches tmp/restart.txt, which makes the server restart the Python app.
 
+## Passwords and keys (server settings)
+No passwords are stored in the code. The site reads them from the server. Set them once in
+cPanel > Setup Python App > your app > Environment variables (then click Restart):
+
+| Name | What it is |
+|---|---|
+| MAIL_PASSWORD | Gmail app password for uniglobelifestyles@gmail.com (enquiry emails). Make a new one at myaccount.google.com > Security > App passwords. |
+| ADMIN_PASSWORD | Password for /admin-login (staff upload and /tiles/manage). Admin login stays switched off until this is set. |
+| SECRET_KEY | Any long random text. Keeps staff logged in across restarts. |
+| GA_MEASUREMENT_ID | Optional. Google Analytics 4 ID (looks like G-XXXXXXXXXX). Analytics stays off until set. |
+
+If the hosting panel has no Environment variables option, put the same names in a file called
+`site_secrets.json` next to app.py on the server, for example `{"MAIL_PASSWORD": "...", "ADMIN_PASSWORD": "..."}`.
+That file is never stored in Git and never sent or overwritten by a deploy.
+
 ## Backups
 A cPanel cron job saves static/data and static/uploads to ~/backups on the 1st and 16th of each month and keeps the last 4.
 To restore, extract the wanted backup over the app folder in cPanel File Manager.

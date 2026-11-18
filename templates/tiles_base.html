@@ -60,21 +60,6 @@
     .tiles-mobile-search { display: grid; place-items: center; width: 42px; height: 42px; color: rgba(255,255,255,.85); font-size: 1.05rem; text-decoration: none; }
     .tiles-mobile-search:hover { color: #fff; }
     .tiles-nav-search i { font-size: .9rem; }
-    .tiles-footer { padding: 54px 0 26px; color: #b7bcba; background: #303433; font-size: .86rem; }
-    .tf-grid { display: grid; grid-template-columns: 1.25fr 1fr 1fr .8fr; gap: 34px; padding-bottom: 34px; margin-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,.1); }
-    .tf-brand img { display: block; width: 230px; max-width: 100%; margin-bottom: 16px; filter: brightness(0) invert(.76); }
-    .tf-brand p { max-width: 320px; margin: 0; color: #a9aeab; line-height: 1.7; }
-    .tf-col { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; }
-    .tf-col h2 { margin: 0 0 6px; color: #fff; font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
-    .tf-col address { margin: 0; color: #c9ccca; font-style: normal; line-height: 1.7; }
-    .tf-col a { display: inline-flex; align-items: center; gap: 9px; color: #dfe1df !important; }
-    .tf-col i { width: 16px; color: #9aa09d; text-align: center; }
-    .tf-map { margin-top: 4px; }
-    .tiles-footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; color: #9aa09d; font-size: .8rem; }
-    @media (max-width: 991.98px) { .tf-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 575.98px) { .tiles-footer { padding: 40px 0 84px; } .tf-grid { grid-template-columns: 1fr; gap: 26px; } }
-    .tiles-footer a { color: #fff; text-decoration: none; }
-    .tiles-footer a:hover { text-decoration: underline; }
     .flash-stack { position: fixed; top: 96px; right: 20px; z-index: 1080; width: min(380px, calc(100vw - 40px)); }
     @media (min-width: 1200px) and (max-width: 1399.98px) {
       .tiles-brand img { width: 210px; }
@@ -93,7 +78,6 @@
     @media (max-width: 575.98px) {
       .tiles-nav-inner { min-height: 70px; }
       .tiles-brand img { width: 180px; max-height: 46px; }
-      .tiles-footer-inner { align-items: flex-start; flex-direction: column; gap: 8px; }
     }
   </style>
   <script type="application/ld+json">
@@ -128,6 +112,7 @@
   }|tojson }}
   </script>
   {% block structured_data %}{% endblock %}
+{% include "_analytics.html" %}
 </head>
 <body data-business-entry="surfaces">
 <nav class="navbar navbar-expand-xl tiles-navbar">
@@ -174,42 +159,7 @@
   {% block content %}{% endblock %}
 </main>
 {% include 'business_choice_modal.html' %}
-<footer class="tiles-footer">
-  <div class="container">
-    <div class="tf-grid">
-      <div class="tf-brand">
-        <img src="{{ url_for('static', filename='images/Grey.webp') }}" alt="Uniglobe Lifestyles" loading="lazy">
-        <p>Tiles, bathware and sanitaryware for homes and projects, with personal guidance from our showroom team in Borivali.</p>
-      </div>
-      <div class="tf-col">
-        <h2>Visit the showroom</h2>
-        <address>Shop 13, Soni Tower CHSL,<br>Haridas Nagar, Borivali (West),<br>Mumbai 400092</address>
-        <a class="tf-map" href="https://www.google.com/maps/search/?api=1&query={{ 'Soni Tower, Haridas Nagar, Borivali West, Mumbai 400092'|urlencode }}" target="_blank" rel="noopener"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Open in Google Maps</a>
-      </div>
-      <div class="tf-col">
-        <h2>Talk to us</h2>
-        <a href="tel:+918433988032"><i class="fa-solid fa-phone" aria-hidden="true"></i> +91 84339 88032</a>
-        <a href="https://wa.me/918433988032" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> WhatsApp us</a>
-        <a href="mailto:uniglobelifestyles@gmail.com"><i class="fa-regular fa-envelope" aria-hidden="true"></i> uniglobelifestyles@gmail.com</a>
-      </div>
-      <nav class="tf-col" aria-label="Footer">
-        <h2>Explore</h2>
-        <a href="{{ url_for('tiles_collections') }}">Tiles</a>
-        <a href="{{ url_for('tiles_bath') }}">Bathware</a>
-        <a href="{{ url_for('tiles_catalogues') }}">All catalogue designs</a>
-        <a href="{{ url_for('tiles_wishlist') }}">Wishlist</a>
-        <a href="{{ url_for('tiles_about') }}">About us</a>
-        <a href="{{ url_for('tiles_contact') }}">Contact us</a>
-      </nav>
-    </div>
-    <div class="tiles-footer-inner">
-      <span>© 2026 Uniglobe Lifestyles · Surfaces</span>
-      <div class="d-flex align-items-center gap-4">
-        <a href="{{ url_for('tiles_manage') }}" rel="nofollow">Manage</a>
-      </div>
-    </div>
-  </div>
-</footer>
+{% set footer_side = 'surfaces' %}{% include '_site_footer.html' %}
 <a class="tiles-whatsapp" href="https://wa.me/918433988032" target="_blank" rel="noopener" aria-label="Chat with Uniglobe Lifestyles Ceramics on WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
 <style>
   .tiles-whatsapp { position: fixed; left: 24px; bottom: 24px; z-index: 1050; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: #25d366; box-shadow: 0 5px 18px rgba(0,0,0,.2); font-size: 29px; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease; }

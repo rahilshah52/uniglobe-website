@@ -26,7 +26,10 @@ document.addEventListener('DOMContentLoaded', function () {
     write(selectedAtKey, String(lastChoiceAt));
   }
 
-  const promptDue = !preferred || !lastChoiceAt || Date.now() - lastChoiceAt >= repeatAfter;
+  // The Furniture / Surfaces switch in the header already lets visitors choose, so the
+  // choice box no longer pops up over the homepage. Set autoPrompt to true to bring it back.
+  const autoPrompt = false;
+  const promptDue = autoPrompt && (!preferred || !lastChoiceAt || Date.now() - lastChoiceAt >= repeatAfter);
   const dismissedThisSession = readSession(dismissedKey) === 'true';
   const choiceModal = new bootstrap.Modal(modalElement);
   let visitorMadeChoice = false;

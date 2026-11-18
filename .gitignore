@@ -9,3 +9,6 @@ __pycache__/
 venv/
 .venv/
 tmp/
+
+# Server-only passwords and keys (see DEPLOY.md)
+site_secrets.json
